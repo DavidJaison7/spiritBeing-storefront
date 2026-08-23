@@ -4,6 +4,8 @@ export default function WhoWeAreSection() {
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const elements = containerRef.current?.querySelectorAll('.reveal-elem');
+    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -11,12 +13,22 @@ export default function WhoWeAreSection() {
           entry.target.classList.remove('opacity-0', 'translate-y-6', 'translate-y-8');
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05, rootMargin: '50px 0px 50px 0px' });
 
-    const elements = containerRef.current?.querySelectorAll('.reveal-elem');
     elements?.forEach(el => observer.observe(el));
 
-    return () => observer.disconnect();
+    // Safety fallback to ensure text and image reveal cleanly on all viewports and Lenis scroll
+    const timer = setTimeout(() => {
+      elements?.forEach(el => {
+        el.classList.add('opacity-100', 'translate-y-0');
+        el.classList.remove('opacity-0', 'translate-y-6', 'translate-y-8');
+      });
+    }, 300);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
   }, []);
 
   return (

@@ -11,21 +11,21 @@ export const INITIAL_PRODUCTS: Product[] = [
     category: 'Apparel',
     image: '/products/product-sec2.png',
     additionalImages: [
-      '/products/product-main.jpg',
-      '/products/product-sec1.jpg',
       '/products/product-sec2.png',
-      '/products/product-sec3.png'
+      '/products/product-sec3.png',
+      '/products/product-main.jpg',
+      '/products/product-sec1.jpg'
     ],
     colorImageMap: {
-      'Black': ['/products/product-sec2.png', '/products/product-sec3.png', '/products/product-sec2.png'],
+      'Blue': ['/products/product-sec2.png', '/products/product-sec3.png', '/products/product-sec2.png', '/products/product-sec3.png'],
+      'Black': ['/products/product-main.jpg', '/products/product-sec1.jpg', '/products/product-main.jpg'],
       'White': ['/products/product-main.jpg', '/products/product-sec1.jpg', '/products/product-main.jpg'],
-      'Grey': ['/products/product-sec1.jpg', '/products/product-sec2.png', '/products/product-sec3.png'],
     },
     description: 'Heavyweight 280 GSM combed cotton drop-shoulder boxy tee with high-density Christian streetwear back typography. Pre-shrunk premium oversized cut.',
     tagline: "YOU'RE GETTING WARMER",
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: ['Black', 'White', 'Grey'],
-    color: 'WASHED HEATHER GREY',
+    colors: ['Blue', 'Black', 'White'],
+    color: 'ELECTRIC BLUE',
     material: '100% COMBED COTTON (280 GSM)',
     origin: 'MADE IN INDIA',
     inStock: true,
