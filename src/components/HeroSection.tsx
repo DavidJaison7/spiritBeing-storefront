@@ -32,8 +32,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
 
     if (!stage || !handLeft || !handRight || !logoLayer) return;
 
-    const baseLeft = { x: 3, y: 0, rot: -2 };
-    const baseRight = { x: -3, y: 2, rot: 2 };
+    const baseLeft = { x: 3, y: -3, rot: -2 };
+    const baseRight = { x: -3, y: 5, rot: 2 };
 
     let targetX = 0, targetY = 0;
     let curX = 0, curY = 0;
@@ -152,15 +152,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
         {/* Mobile Aspect Ratio Wrapper (locks proportions for mobile, slides further down towards center on mobile, centers on PC) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative w-full max-w-[600px] aspect-[550/1195] md:max-w-none md:w-full md:h-full md:aspect-auto pointer-events-auto translate-y-16 sm:translate-y-20 md:translate-y-0">
-            {/* Layer 2 — left hand (Mobile: top-[-6%]; PC: slid slightly upwards md:top-[40%] pointing directly at letter 'S') */}
+            {/* Layer 2 — left hand (Mobile: slid slightly upwards top-[-6%]; PC: slid slightly upwards top-[42%]) */}
             <div
               ref={handLeftRef}
-              className="absolute top-[-6%] md:top-[40%] md:-translate-y-1/2 left-0 md:left-[1%] w-[84.6%] md:w-[42vw] max-w-[660px] pointer-events-none will-change-transform opacity-100 transition-transform duration-150 ease-out z-[4] rotate-[42.3deg] md:-rotate-[4deg] origin-top-left md:origin-center"
+              className="absolute top-[-6%] md:top-[42%] md:-translate-y-1/2 left-0 md:left-[-5%] w-[84.6%] md:w-[44vw] max-w-[680px] pointer-events-none will-change-transform opacity-100 transition-transform duration-150 ease-out z-[4] rotate-[42.3deg] md:rotate-0 origin-top-left md:origin-center"
             >
               <img src="/hand-left.png" alt="hand reaching toward S" className="w-full block" />
             </div>
 
-            {/* Layer 3 — logo image (Centered) */}
+            {/* Layer 3 — logo image (Mobile: increased size w-[68%]; PC: dead center) */}
             <div
               ref={logoLayerRef}
               className="absolute left-1/2 md:left-0 top-[38%] md:top-0 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 md:translate-y-0 md:inset-0 md:flex md:items-center md:justify-center md:pt-0 w-[68%] sm:w-[62%] md:w-auto will-change-transform transition-transform duration-150 ease-out z-[5]"
@@ -168,10 +168,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
               <img src="/sb-blue.png" alt="Spirit Being logo" className="w-full md:w-[min(32vw,480px)] drop-shadow-[0_0_40px_rgba(0,0,0,0.55)] select-none pointer-events-none" />
             </div>
 
-            {/* Layer 4 — right hand (Mobile: top-[62%]; PC: slid slightly downwards md:top-[60%] pointing directly at letter 'g') */}
+            {/* Layer 4 — right hand (Mobile: slid slightly downwards top-[62%]; PC: slid slightly downwards top-[58%]) */}
             <div
               ref={handRightRef}
-              className="absolute top-[62%] md:top-[60%] md:-translate-y-1/2 right-[-22%] md:right-[1%] w-[70%] md:w-[42vw] max-w-[660px] pointer-events-none will-change-transform opacity-100 transition-transform duration-150 ease-out z-[4] rotate-[50deg] md:rotate-[4deg] origin-right md:origin-center"
+              className="absolute top-[62%] md:top-[58%] md:-translate-y-1/2 right-[-22%] md:right-[-5%] w-[70%] md:w-[44vw] max-w-[680px] pointer-events-none will-change-transform opacity-100 transition-transform duration-150 ease-out z-[4] rotate-[50deg] md:rotate-0 origin-right md:origin-center"
             >
               <img src="/hand-right.png" alt="hand reaching toward g" className="w-full block" />
             </div>
