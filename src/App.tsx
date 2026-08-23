@@ -10,6 +10,7 @@ import { ProductDetailView } from './components/ProductDetailView';
 import { CartDrawer } from './components/CartDrawer';
 import { ShopifySyncModal } from './components/ShopifySyncModal';
 import { CheckoutModal } from './components/CheckoutModal';
+import { InstagramFeedSection } from './components/InstagramFeedSection';
 import { Footer } from './components/Footer';
 import { fetchProductsFromShopify, createShopifyCheckout } from './lib/shopify';
 import Lenis from 'lenis';
@@ -70,6 +71,8 @@ export default function App() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
+
+    (window as any).lenis = lenis;
 
     lenis.on('scroll', ScrollTrigger.update);
 
@@ -192,6 +195,9 @@ export default function App() {
             onSelectProduct={(p) => {
               setSelectedProduct(p);
               window.scrollTo(0, 0);
+              if ((window as any).lenis) {
+                (window as any).lenis.scrollTo(0, { immediate: true });
+              }
             }}
             onAddToCart={handleAddToCart}
           />
@@ -276,6 +282,7 @@ export default function App() {
       />
 
       {/* Editorial Footer */}
+      <InstagramFeedSection />
       <Footer />
     </div>
   );

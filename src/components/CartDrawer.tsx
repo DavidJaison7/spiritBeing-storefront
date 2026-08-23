@@ -23,6 +23,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [discount, setDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState('');
 
+  React.useEffect(() => {
+    if (isOpen) {
+      if ((window as any).lenis) {
+        (window as any).lenis.stop();
+      }
+      document.body.style.overflow = 'hidden';
+    } else {
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const subtotal = items.reduce(
@@ -47,12 +68,20 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity">
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity"
+      data-lenis-prevent
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+    >
       {/* Background click to dismiss */}
       <div className="flex-1" onClick={onClose} />
 
       {/* Cart Panel */}
-      <div className="w-full max-w-md bg-[#F9F7F4] text-[#1A1A1A] h-full flex flex-col border-l border-black/10 shadow-2xl relative z-10 font-sans">
+      <div
+        className="w-full max-w-md bg-[#F9F7F4] text-[#1A1A1A] h-full flex flex-col border-l border-black/10 shadow-2xl relative z-10 font-sans"
+        data-lenis-prevent
+      >
         {/* Header */}
         <div className="p-6 border-b border-black/10 flex items-center justify-between bg-white/80">
           <div className="flex items-center gap-2 font-sans font-bold text-lg uppercase tracking-wider text-[#1A1A1A]">
@@ -68,7 +97,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         </div>
 
         {/* Item List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 overscroll-contain" data-lenis-prevent>
           {/* Complimentary Gifts Banner */}
           <div className="bg-[#f0f9ff] border border-[#2040FF]/20 rounded-xl p-4 flex items-center gap-3 shadow-xs">
             <div className="w-9 h-9 rounded-full bg-[#2040FF] text-white flex items-center justify-center shrink-0 font-bold text-xs">

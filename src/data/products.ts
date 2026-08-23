@@ -9,7 +9,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Heavyweight Drop Shoulder Tee',
     price: 999,
     category: 'Apparel',
-    image: '/archive/image 1327.png',
+    image: '/products/product-sec2.png',
+    additionalImages: [
+      '/products/product-main.jpg',
+      '/products/product-sec1.jpg',
+      '/products/product-sec2.png',
+      '/products/product-sec3.png'
+    ],
+    colorImageMap: {
+      'Black': ['/products/product-sec2.png', '/products/product-sec3.png', '/products/product-sec2.png'],
+      'White': ['/products/product-main.jpg', '/products/product-sec1.jpg', '/products/product-main.jpg'],
+      'Grey': ['/products/product-sec1.jpg', '/products/product-sec2.png', '/products/product-sec3.png'],
+    },
     description: 'Heavyweight 280 GSM combed cotton drop-shoulder boxy tee with high-density Christian streetwear back typography. Pre-shrunk premium oversized cut.',
     tagline: "YOU'RE GETTING WARMER",
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],

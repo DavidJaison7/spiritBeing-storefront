@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
               : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
           }`}
         >
-          <img src="/Header_logo.png" alt="Spirit Being Logo" className="h-6 md:h-8 object-contain" />
+          <img src="/sb-blue-header.png" alt="Spirit Being Logo" className="h-7 md:h-9 object-contain" />
         </button>
       </div>
 

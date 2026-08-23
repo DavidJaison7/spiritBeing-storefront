@@ -41,6 +41,13 @@ export async function fetchProductsFromShopify(
                   id
                   title
                   availableForSale
+                  image {
+                    url
+                  }
+                  selectedOptions {
+                    name
+                    value
+                  }
                   price {
                     amount
                   }
@@ -88,15 +95,42 @@ export async function fetchProductsFromShopify(
       const variants = node.variants.edges.map((e: any) => e.node);
       
       // We assume variant titles are sizes if they aren't "Default Title"
-      const sizes = variants
-        .map((v: any) => v.title)
-        .filter((t: string) => t.toLowerCase() !== 'default title');
+      const sizes = Array.from(new Set(
+        variants
+          .map((v: any) => {
+            const sizeOpt = v.selectedOptions?.find((opt: any) => opt.name.toLowerCase() === 'size');
+            return sizeOpt ? sizeOpt.value : v.title;
+          })
+          .filter((t: string) => t.toLowerCase() !== 'default title')
+      ));
 
+      const colorImageMap: Record<string, string[]> = {};
+      const colorsSet = new Set<string>();
+
+      variants.forEach((v: any) => {
+        const colorOpt = v.selectedOptions?.find((opt: any) =>
+          opt.name.toLowerCase() === 'color' || opt.name.toLowerCase() === 'colour'
+        );
+        if (colorOpt && colorOpt.value) {
+          const colorName = colorOpt.value;
+          colorsSet.add(colorName);
+          if (!colorImageMap[colorName]) {
+            colorImageMap[colorName] = [];
+          }
+          if (v.image?.url && !colorImageMap[colorName].includes(v.image.url)) {
+            colorImageMap[colorName].push(v.image.url);
+          }
+        }
+      });
+
+      Object.keys(colorImageMap).forEach((colorKey) => {
+        if (colorImageMap[colorKey].length === 0) {
+          colorImageMap[colorKey] = images;
+        }
+      });
+
+      const colors = Array.from(colorsSet);
       const isAvailable = variants.some((v: any) => v.availableForSale);
-
-      // We need a shopify variant ID map for checkout. 
-      // The simplest way to handle size -> variant ID mapping is storing it on the product.
-      // But for our generic cart, we'll map sizes back to variants during checkout creation.
 
       return {
         id: node.id,
@@ -107,8 +141,11 @@ export async function fetchProductsFromShopify(
         category: node.productType || 'Apparel',
         image: mainImage,
         additionalImages: images.slice(1),
-        description: node.description,
+        colorImageMap: Object.keys(colorImageMap).length > 0 ? colorImageMap : undefined,
+        colors: colors.length > 0 ? colors : undefined,
+        color: colors.length > 0 ? colors[0] : undefined,
         sizes: sizes.length > 0 ? sizes : ['ONE SIZE'],
+        description: node.description,
         inStock: isAvailable,
         // We'll keep the raw variants array so we can find variant IDs for checkout
         shopifyVariants: variants,

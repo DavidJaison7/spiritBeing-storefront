@@ -9,6 +9,7 @@ export interface Product {
   category: 'Apparel' | 'Accessories' | 'Home' | 'Goods';
   image: string;
   additionalImages?: string[];
+  colorImageMap?: Record<string, string[]>;
   description: string;
   tagline?: string;
   sizes?: string[];
