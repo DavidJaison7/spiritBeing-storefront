@@ -1,5 +1,21 @@
 @import "tailwindcss";
-@import "lenis/dist/lenis.css";
+
+/* Lenis Smooth Scroll Base Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
 
 @layer base {
   body {
@@ -10,6 +26,10 @@
   }
 
   .font-headline {
+    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+  }
+
+  .font-sans {
     font-family: 'Hanken Grotesk', 'Inter', sans-serif;
   }
 
@@ -26,7 +46,7 @@
   }
 
   .font-space {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
   }
 }
 

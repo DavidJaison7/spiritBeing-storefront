@@ -158,7 +158,7 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({ products = [],
   };
 
   return (
-    <div ref={containerRef} className="showcase-wrapper relative w-full text-[#F2F0EA] font-space select-none" id="showcase">
+    <div ref={containerRef} className="showcase-wrapper relative w-full text-[#F2F0EA] font-sans select-none" id="showcase">
       {/* Showcase Scroll Track (700vh) */}
       <div className="showcase h-[700vh] relative">
         <div className="stage sticky top-0 h-screen w-full overflow-hidden bg-[#080808]">
