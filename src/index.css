@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@layer base {
+  body {
+    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    background-color: #fbf9f9;
+    color: #1b1c1c;
+    overflow-x: hidden;
+  }
+
+  .font-headline {
+    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+  }
+
+  .font-body-garamond {
+    font-family: 'EB Garamond', serif;
+  }
+
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-anton {
+    font-family: 'Anton', sans-serif;
+  }
+
+  .font-space {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* Glass Panels & Minimal Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-panel-elevated {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Continuous Marquee & Ticker Animations */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: ticker 30s linear infinite;
+}
+
+/* Floating wiggle — inspired by companystore.webflow.io theme-02 */
+@keyframes float-wiggle-1 {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(4deg) translateY(-35px); }
+}
+
+@keyframes float-wiggle-2 {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(-5deg) translateY(-45px); }
+}
+
+@keyframes float-wiggle-3 {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(6deg) translateY(-25px); }
+}
+
+@keyframes float-wiggle-4 {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(-7deg) translateY(-50px); }
+}
+
+@keyframes float-wiggle-5 {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(8deg) translateY(-40px); }
+}
+
+.marquee-float-1 { animation: float-wiggle-1 3s ease-in-out infinite; }
+.marquee-float-2 { animation: float-wiggle-2 3.5s ease-in-out infinite; }
+.marquee-float-3 { animation: float-wiggle-3 4.5s ease-in-out infinite; }
+.marquee-float-4 { animation: float-wiggle-4 3s ease-in-out infinite; }
+.marquee-float-5 { animation: float-wiggle-5 4.5s ease-in-out infinite; }
+
+.marquee-item-offset-1 { margin-top: 0; }
+.marquee-item-offset-2 { margin-top: -3rem; }
+.marquee-item-offset-3 { margin-top: 2rem; }
+.marquee-item-offset-4 { margin-top: -1.5rem; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.animate-bob {
+  animation: bob 2.2s ease-in-out infinite;
+}
+.marquee-item-offset-5 { margin-top: 2.5rem; }
+
+/* Product Card Hover Effects */
+.product-hover {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+}
+
+.product-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Hide scrollbars */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
