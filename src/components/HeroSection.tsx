@@ -160,10 +160,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
               <img src="/hand-left.png" alt="hand reaching toward S" className="w-full block" />
             </div>
 
-            {/* Layer 3 — logo image (Mobile: increased size w-[68%]; PC: dead center) */}
+            {/* Layer 3 — logo image (Mobile: increased size w-[78%]; PC: dead center) */}
             <div
               ref={logoLayerRef}
-              className="absolute left-1/2 md:left-0 top-[38%] md:top-0 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 md:translate-y-0 md:inset-0 md:flex md:items-center md:justify-center md:pt-0 w-[68%] sm:w-[62%] md:w-auto will-change-transform transition-transform duration-150 ease-out z-[5]"
+              className="absolute left-1/2 md:left-0 top-[38%] md:top-0 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 md:translate-y-0 md:inset-0 md:flex md:items-center md:justify-center md:pt-0 w-[78%] sm:w-[72%] md:w-auto will-change-transform transition-transform duration-150 ease-out z-[5]"
             >
               <img src="/sb-blue.png" alt="Spirit Being logo" className="w-full md:w-[min(32vw,480px)] drop-shadow-[0_0_40px_rgba(0,0,0,0.55)] select-none pointer-events-none" />
             </div>
