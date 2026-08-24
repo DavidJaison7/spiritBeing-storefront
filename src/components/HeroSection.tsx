@@ -78,30 +78,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Single Scroll handler (ultra-smooth scroll to ShowcaseSection on downward scroll/swipe)
+    // Single Scroll handler (silky-smooth 1.4s scroll transition to Statement & Discord Section)
     let isScrollTriggered = false;
     const triggerSingleScroll = () => {
       if (isScrollTriggered) return;
+      if (window.scrollY > window.innerHeight * 0.4) return;
       isScrollTriggered = true;
-      const showcase = document.getElementById('showcase');
-      if (showcase) {
+      const targetSection = document.getElementById('sbStatement') || document.getElementById('collections-section') || document.getElementById('products-grid');
+      if (targetSection) {
         if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(showcase, {
-            duration: 1.8,
-            easing: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+          (window as any).lenis.scrollTo(targetSection, {
+            duration: 1.4,
+            easing: (t: number) => 1 - Math.pow(1 - t, 3.5),
+            lock: true,
           });
         } else {
-          showcase.scrollIntoView({ behavior: 'smooth' });
+          targetSection.scrollIntoView({ behavior: 'smooth' });
         }
       }
       setTimeout(() => {
         isScrollTriggered = false;
-      }, 2000);
+      }, 1600);
     };
 
     const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 8) {
-        triggerSingleScroll();
+      if (e.deltaY > 0) {
+        if (window.scrollY < window.innerHeight * 0.4) {
+          e.preventDefault();
+          triggerSingleScroll();
+        }
       }
     };
 
@@ -111,16 +116,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
     };
     const onTouchMove = (e: TouchEvent) => {
       const currentY = e.touches[0].clientY;
-      if (startY - currentY > 20) {
-        triggerSingleScroll();
+      if (startY - currentY > 5) {
+        if (window.scrollY < window.innerHeight * 0.4) {
+          e.preventDefault();
+          triggerSingleScroll();
+        }
       }
     };
 
     stage.addEventListener('mousemove', onMouseMove);
     stage.addEventListener('mouseleave', onMouseLeave);
-    stage.addEventListener('wheel', onWheel, { passive: true });
+    stage.addEventListener('wheel', onWheel, { passive: false });
     stage.addEventListener('touchstart', onTouchStart, { passive: true });
-    stage.addEventListener('touchmove', onTouchMove, { passive: true });
+    stage.addEventListener('touchmove', onTouchMove, { passive: false });
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {

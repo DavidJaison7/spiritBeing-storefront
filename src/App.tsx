@@ -3,8 +3,8 @@ import { Product, CartItem, ShopifyConfig } from './types';
 import { INITIAL_PRODUCTS } from './data/products';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
-import { ShowcaseSection } from './components/ShowcaseSection';
-import WhoWeAreSection from './components/WhoWeAreSection';
+import { StatementDiscordSection } from './components/StatementDiscordSection';
+import { CollectionsCarousel } from './components/CollectionsCarousel';
 import { ProductGrid } from './components/ProductGrid';
 import { ProductDetailView } from './components/ProductDetailView';
 import { CartDrawer } from './components/CartDrawer';
@@ -212,17 +212,11 @@ export default function App() {
               }}
             />
 
-            {/* Showcase Section */}
-            <ShowcaseSection
-              products={products}
-              onSelectProduct={(p) => {
-                setSelectedProduct(p);
-                window.scrollTo(0, 0);
-              }}
-            />
+            {/* Statement & Discord Community Section */}
+            <StatementDiscordSection />
 
-            {/* Who We Are */}
-            <WhoWeAreSection />
+            {/* Sticky Collections Scroll Carousel */}
+            <CollectionsCarousel />
 
             {/* Product Grid */}
             <ProductGrid

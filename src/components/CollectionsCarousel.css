@@ -1,0 +1,402 @@
+.collections-carousel-wrapper {
+  position: relative;
+  height: 500vh; /* 5 slides * 100vh */
+  background: #080808;
+  color: #F2F0EA;
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.collections-carousel-wrapper .stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4vw;
+  padding: 0 7vw;
+  box-sizing: border-box;
+  overflow: hidden;
+  --charcoal: #151515;
+  --gray: #8A8A8A;
+  --warm: #F2F0EA;
+  --white: #FFFFFF;
+}
+
+/* Scroll snap targets in wrapper flow */
+.collections-carousel-wrapper .step {
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Image frame */
+.collections-carousel-wrapper .frame {
+  position: relative;
+  border-radius: 30px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  width: min(44%, 72vh);
+  aspect-ratio: 1/1;
+  background: var(--charcoal);
+  transform: translateZ(0);
+}
+
+.collections-carousel-wrapper .panel {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+}
+
+.collections-carousel-wrapper .panel.active {
+  clip-path: inset(0 0 0 0);
+}
+
+.collections-carousel-wrapper .panel .ph {
+  position: absolute;
+  inset: -6% 0;
+  will-change: transform;
+}
+
+.collections-carousel-wrapper .panel .ph img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.collections-carousel-wrapper .fl {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.collections-carousel-wrapper .bob {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.collections-carousel-wrapper .model {
+  height: 86%;
+  width: auto;
+  max-width: 94%;
+  object-fit: contain;
+  filter: drop-shadow(0 34px 44px rgba(0,0,0,.5));
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+.collections-carousel-wrapper .frame .tag {
+  position: absolute;
+  top: 22px;
+  left: 24px;
+  z-index: 10;
+  font-size: 10px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: rgba(242,240,234,.9);
+  mix-blend-mode: difference;
+}
+
+.collections-carousel-wrapper .frame .findex {
+  position: absolute;
+  bottom: 20px;
+  right: 26px;
+  z-index: 10;
+  font-family: 'Anton', sans-serif;
+  font-size: 15px;
+  letter-spacing: .14em;
+  color: rgba(242,240,234,.9);
+  mix-blend-mode: difference;
+}
+
+/* Content column */
+.collections-carousel-wrapper .content {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 34rem;
+  height: 64vh;
+}
+
+.collections-carousel-wrapper .txt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.collections-carousel-wrapper .txt.active {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.collections-carousel-wrapper .txt > * {
+  will-change: transform, opacity;
+}
+
+.collections-carousel-wrapper .num {
+  font-size: 12px;
+  letter-spacing: .5em;
+  color: var(--gray);
+}
+
+.collections-carousel-wrapper h2 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(40px, 5vw, 86px);
+  line-height: .98;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin: 20px 0 24px;
+}
+
+.collections-carousel-wrapper h2 .title-part {
+  display: block;
+}
+
+.collections-carousel-wrapper .desc {
+  font-size: 13px;
+  letter-spacing: .22em;
+  line-height: 2.1;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.collections-carousel-wrapper .verse {
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: #5a5a5a;
+}
+
+.collections-carousel-wrapper .price {
+  margin-top: 26px;
+  font-size: 15px;
+  letter-spacing: .2em;
+  color: var(--warm);
+}
+
+.collections-carousel-wrapper .actions {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.collections-carousel-wrapper .view {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--warm);
+  border-bottom: 1px solid rgba(242,240,234,.3);
+  padding-bottom: 9px;
+  transition: border-color .3s, gap .3s;
+}
+
+.collections-carousel-wrapper .view:hover {
+  border-color: var(--warm);
+  gap: 20px;
+}
+
+.collections-carousel-wrapper .wish {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gray);
+  transition: color .3s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.collections-carousel-wrapper .wish:hover {
+  color: var(--warm);
+}
+
+.collections-carousel-wrapper .wish .heart {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.collections-carousel-wrapper .wish .heart svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  transition: fill .3s, stroke .3s;
+}
+
+.collections-carousel-wrapper .wish.active {
+  color: var(--warm);
+}
+
+.collections-carousel-wrapper .wish.active .heart svg {
+  fill: var(--warm);
+  stroke: var(--warm);
+}
+
+/* Rail */
+.collections-carousel-wrapper .rail {
+  position: absolute;
+  right: 38px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.collections-carousel-wrapper .rail .count {
+  font-size: 11px;
+  letter-spacing: .3em;
+  color: var(--gray);
+  margin-bottom: 22px;
+  white-space: nowrap;
+}
+
+.collections-carousel-wrapper .rail .count b {
+  color: var(--warm);
+  font-weight: 500;
+}
+
+.collections-carousel-wrapper .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3a3a3a;
+  transition: background .4s, transform .4s;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.collections-carousel-wrapper .dot.active {
+  background: var(--white);
+  transform: scale(1.5);
+}
+
+.collections-carousel-wrapper .rail .line {
+  width: 1px;
+  height: 24px;
+  background: #2a2a2a;
+}
+
+/* Hint */
+.collections-carousel-wrapper .hint {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 40;
+  font-size: 10px;
+  letter-spacing: .44em;
+  text-transform: uppercase;
+  color: #4a4a4a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: opacity .5s;
+}
+
+.collections-carousel-wrapper .hint::after {
+  content: '';
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(to bottom, #4a4a4a, transparent);
+  animation: drip 2.2s ease-in-out infinite;
+}
+
+@keyframes drip {
+  0% { transform: scaleY(.2); transform-origin: top; opacity: 0; }
+  40% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); transform-origin: top; opacity: 0; }
+}
+
+/* Responsive mobile adjustments */
+@media (max-width: 860px) {
+  .collections-carousel-wrapper .stage {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 9vh 6vw 3vh;
+  }
+  .collections-carousel-wrapper .frame {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    height: 46vh;
+    border-radius: 22px;
+  }
+  .collections-carousel-wrapper .content {
+    max-width: none;
+    height: auto;
+    flex: 1 1 auto;
+    margin-top: 3.5vh;
+  }
+  .collections-carousel-wrapper .txt {
+    justify-content: flex-start;
+  }
+  .collections-carousel-wrapper h2 {
+    font-size: clamp(34px, 9.5vw, 50px);
+    margin: 12px 0 14px;
+  }
+  .collections-carousel-wrapper .desc {
+    font-size: 11px;
+    line-height: 2;
+  }
+  .collections-carousel-wrapper .price {
+    margin-top: 16px;
+  }
+  .collections-carousel-wrapper .actions {
+    margin-top: 18px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .collections-carousel-wrapper .model {
+    filter: none;
+  }
+  .collections-carousel-wrapper .ph img {
+    will-change: auto;
+  }
+  .collections-carousel-wrapper .rail {
+    right: 12px;
+  }
+  .collections-carousel-wrapper .hint {
+    display: none;
+  }
+  .collections-carousel-wrapper h2 .title-part {
+    display: inline;
+  }
+  .collections-carousel-wrapper h2 .title-part:not(:last-child)::after {
+    content: ' ';
+    white-space: pre;
+  }
+}
