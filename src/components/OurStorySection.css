@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Rouge+Script&family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
+
+.sb-our-story {
+  --black: #080808;
+  --gray: #8A8A8A;
+  --dim: #2b2b2b;
+  --warm: #F2F0EA;
+  --white: #FFFFFF;
+  --blue: #074DFF;
+  background: var(--black);
+  color: var(--warm);
+  font-family: 'Space Grotesk', sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 8vh;
+  box-sizing: border-box;
+}
+
+/* ---------- giant title ---------- */
+.sb-our-story .title-wrap {
+  padding: 16vh 6vw 6vh;
+  overflow: hidden;
+}
+
+.sb-our-story .title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(90px, 17vw, 300px);
+  line-height: .86;
+  letter-spacing: .005em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin: 0;
+}
+
+.sb-our-story .title .script {
+  display: block;
+  font-family: 'Rouge Script', cursive;
+  text-transform: none;
+  color: var(--blue);
+  font-size: .42em;
+  line-height: .9;
+  margin: .04em 0 0 .08em;
+}
+
+/* ---------- story layout ---------- */
+.sb-our-story .story-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr);
+  gap: 6vw;
+  padding: 8vh 6vw 10vh;
+  align-items: start;
+}
+
+/* left: follow links */
+.sb-our-story .follow {
+  position: sticky;
+  top: 18vh;
+}
+
+.sb-our-story .follow h3 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(26px, 2.6vw, 44px);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 5vh;
+  margin-top: 0;
+}
+
+.sb-our-story .follow ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sb-our-story .follow li {
+  overflow: hidden;
+}
+
+.sb-our-story .follow a {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(22px, 2.2vw, 36px);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--warm);
+  padding: .28em 0;
+  position: relative;
+  transition: color .35s ease, transform .5s cubic-bezier(.22,1,.36,1);
+}
+
+.sb-our-story .follow a .arr {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .7em;
+  color: var(--blue);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity .35s ease, transform .5s cubic-bezier(.22,1,.36,1);
+}
+
+.sb-our-story .follow a:hover {
+  color: var(--blue);
+  transform: translateX(10px);
+}
+
+.sb-our-story .follow a:hover .arr {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* right: story copy */
+.sb-our-story .copy {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  line-height: 2;
+  color: #c9c7c1;
+  max-width: 62ch;
+}
+
+.sb-our-story .copy .lede {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(28px, 3vw, 48px);
+  line-height: 1.08;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6vh;
+  margin-top: 0;
+}
+
+.sb-our-story .copy .lede em {
+  font-family: 'Rouge Script', cursive;
+  font-style: normal;
+  text-transform: none;
+  color: var(--blue);
+  font-size: 1.28em;
+}
+
+.sb-our-story .copy p {
+  margin-bottom: 3.2em;
+}
+
+.sb-our-story .copy .principle {
+  border-left: 2px solid var(--blue);
+  padding: 1.4em 0 1.4em 2em;
+  margin: 0 0 3.2em;
+  color: var(--warm);
+}
+
+.sb-our-story .copy .signoff {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(20px, 2vw, 30px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-top: 1em;
+}
+
+/* scroll reveal */
+.sb-our-story .rv-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+}
+
+.sb-our-story .rv-up.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Global Fixed Bottom Strip ---------- */
+.fixed-bottom-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 45; /* Below modals and cart drawer, above main elements */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+  background: transparent;
+  pointer-events: none; /* Let clicks pass through to standard elements behind it */
+  mix-blend-mode: difference; /* Beautiful color inversion over light backgrounds */
+}
+
+.fixed-bottom-strip * {
+  /* Enable pointer events on child text/graphics if needed, or keep none for transparency */
+}
+
+.fixed-bottom-strip .ticks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 14px;
+}
+
+.fixed-bottom-strip .ticks i {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor; /* Inherits text color */
+}
+
+.fixed-bottom-strip .ticks i:nth-child(1) { width: 14px; }
+.fixed-bottom-strip .ticks i:nth-child(2) { width: 4px; }
+.fixed-bottom-strip .ticks i:nth-child(3) { width: 9px; }
+.fixed-bottom-strip .ticks i:nth-child(4) { width: 4px; }
+
+.fixed-bottom-strip .left {
+  display: flex;
+  align-items: center;
+}
+
+/* ---------- mobile adjustments ---------- */
+@media (max-width: 860px) {
+  .sb-our-story .title-wrap {
+    padding: 14vh 6vw 4vh;
+  }
+  .sb-our-story .story-grid {
+    grid-template-columns: 1fr;
+    gap: 8vh;
+    padding: 4vh 6vw 14vh;
+  }
+  .sb-our-story .follow {
+    position: relative;
+    top: auto;
+  }
+  .sb-our-story .copy {
+    font-size: 13px;
+    line-height: 1.95;
+  }
+  .fixed-bottom-strip {
+    padding: 16px 20px;
+    font-size: 9px;
+    letter-spacing: .2em;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-our-story .rv-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .sb-our-story .follow a,
+  .sb-our-story .follow a .arr {
+    transition: none;
+  }
+}

@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { StatementDiscordSection } from './components/StatementDiscordSection';
 import { CollectionsCarousel } from './components/CollectionsCarousel';
+import { OurStorySection } from './components/OurStorySection';
 import { ProductGrid } from './components/ProductGrid';
 import { ProductDetailView } from './components/ProductDetailView';
 import { CartDrawer } from './components/CartDrawer';
@@ -139,7 +140,9 @@ export default function App() {
         return [...prev, { product, selectedSize: size, selectedColor: color, quantity: 1 }];
       }
     });
-    setIsCartOpen(true);
+    setTimeout(() => {
+      setIsCartOpen(true);
+    }, 900);
   };
 
   const handleUpdateQuantity = (productId: string, size: string, color: string | undefined, delta: number) => {
@@ -218,6 +221,9 @@ export default function App() {
             {/* Sticky Collections Scroll Carousel */}
             <CollectionsCarousel />
 
+            {/* Our Story Section */}
+            <OurStorySection />
+
             {/* Product Grid */}
             <ProductGrid
               products={products}
@@ -278,6 +284,20 @@ export default function App() {
       {/* Editorial Footer */}
       <InstagramFeedSection />
       <Footer />
+
+      {/* Global Transparent Fixed Bottom Strip */}
+      <footer className="fixed-bottom-strip">
+        <span className="left">
+          <span className="ticks">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          Faith. Identity. Purpose.
+        </span>
+        <span>Only at spiritbeing.in</span>
+      </footer>
     </div>
   );
 }

@@ -38,6 +38,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
   const mobileScrollRef = React.useRef<HTMLDivElement>(null);
 
+  const [isBouncing, setIsBouncing] = useState<boolean>(false);
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; scale: number; delay: number; color: string }[]>([]);
+
   const galleryImages = [
     product.image,
     ...(product.additionalImages && product.additionalImages.length > 0
@@ -75,9 +78,33 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     }
   }, [product]);
 
+  const triggerParticles = () => {
+    const newParticles = Array.from({ length: 18 }).map((_, i) => {
+      const angle = (i / 18) * 360 + (Math.random() - 0.5) * 15;
+      const distance = 45 + Math.random() * 85;
+      const x = Math.cos((angle * Math.PI) / 180) * distance;
+      const y = Math.sin((angle * Math.PI) / 180) * distance;
+      const colors = ['#2040FF', '#6366F1', '#8B00FF', '#A020F0', '#4F46E5', '#D946EF', '#4338CA', '#a5f3fc'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id: Date.now() + i,
+        x,
+        y,
+        scale: 0.4 + Math.random() * 0.7,
+        delay: Math.random() * 0.08,
+        color: randomColor,
+      };
+    });
+    setParticles(newParticles);
+    setTimeout(() => setParticles([]), 1000);
+  };
+
   const handleAddToCart = () => {
     onAddToCart(product, selectedSize, selectedColor);
     setAdded(true);
+    setIsBouncing(true);
+    triggerParticles();
+    setTimeout(() => setIsBouncing(false), 600);
     setTimeout(() => setAdded(false), 1800);
   };
 
@@ -272,7 +299,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     onClick={() => isAvailable && setSelectedSize(size)}
                     className={`w-12 h-12 rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
                       !isAvailable
-                        ? 'bg-[#f5f4f0] text-gray-300 line-through opacity-50 cursor-not-allowed'
+                        ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
                         : isSelected
                         ? 'bg-black text-white shadow-md scale-[1.03]'
                         : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
@@ -289,9 +316,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           {product.colors && product.colors.length > 0 && (
             <div className="space-y-3 w-full mb-8 text-left">
               <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2.5">
-                COLOR: <span className="text-gray-500 font-normal ml-1">{selectedColor || product.color || 'BLACK'}</span>
+                COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
               </span>
-              <div className="flex gap-3 flex-wrap pt-1">
+              <div className="flex gap-2.5 flex-wrap pt-1">
                 {product.colors.map((color) => {
                   const isSelected = selectedColor === color;
                   const colorHex = getColorHex(color);
@@ -305,15 +332,22 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                           mobileScrollRef.current.scrollTo({ left: 0 });
                         }
                       }}
-                      className={`w-11 h-11 rounded-[16px] cursor-pointer transition-all flex items-center justify-center ${
+                      className={`flex items-center gap-2.5 px-4 py-2.5 rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${
                         isSelected
-                          ? 'ring-2 ring-black ring-offset-2 scale-[1.03]'
-                          : 'border border-black/10 hover:scale-[1.02]'
+                          ? 'border-black bg-black text-white shadow-md scale-[1.03]'
+                          : 'border-black/10 bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
                       }`}
-                      style={{ backgroundColor: colorHex }}
                       title={color}
                       aria-label={`Select ${color}`}
-                    />
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border ${
+                          isSelected ? 'border-white/40' : 'border-black/10'
+                        }`}
+                        style={{ backgroundColor: colorHex }}
+                      />
+                      <span>{color.toUpperCase()}</span>
+                    </button>
                   );
                 })}
               </div>
@@ -324,18 +358,46 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <div className="w-full mb-8">
             <button
               onClick={handleAddToCart}
-              className={`w-full border-2 border-black rounded-full py-4 text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
+              style={{ overflow: 'visible' }}
+              className={`w-full border-2 border-black rounded-full py-4 text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md relative ${
                 added ? 'bg-black text-white' : 'bg-transparent'
-              }`}
+              } ${isBouncing ? 'animate-bounce-click' : ''}`}
             >
-              {added ? (
-                <>
-                  <Check className="w-5 h-5 text-emerald-400" />
-                  <span>ADDED TO BAG</span>
-                </>
-              ) : (
-                <span>ADD TO BAG</span>
-              )}
+              {/* Confetti Particles */}
+              {particles.map((p) => (
+                <span
+                  key={p.id}
+                  className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    backgroundColor: p.color,
+                    '--tx': `${p.x}px`,
+                    '--ty': `${p.y}px`,
+                    '--scale': p.scale,
+                    animationDelay: `${p.delay}s`,
+                  } as React.CSSProperties}
+                />
+              ))}
+
+              {/* Text Slide transition container */}
+              <div className="relative h-6 overflow-hidden w-full flex justify-center items-center pointer-events-none">
+                <span
+                  className={`flex items-center justify-center gap-2 transition-all duration-300 absolute ${
+                    added ? 'opacity-0 -translate-y-6' : 'opacity-100 translate-y-0'
+                  }`}
+                >
+                  ADD TO BAG
+                </span>
+                <span
+                  className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${
+                    added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                  }`}
+                >
+                  <Check className="w-5 h-5 stroke-[2.5]" />
+                  <span className="text-white">ADDED TO BAG</span>
+                </span>
+              </div>
             </button>
           </div>
 
@@ -473,6 +535,34 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </div>
       )}
+      <style>{`
+        @keyframes particle-burst {
+          0% {
+            transform: translate(0, 0) scale(0);
+            opacity: 1;
+          }
+          85% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(var(--tx), var(--ty)) scale(var(--scale));
+            opacity: 0;
+          }
+        }
+        .animate-particle {
+          animation: particle-burst 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes button-bounce {
+          0% { transform: scale(1); }
+          15% { transform: scale(0.92); }
+          50% { transform: scale(1.05); }
+          75% { transform: scale(0.98); }
+          100% { transform: scale(1); }
+        }
+        .animate-bounce-click {
+          animation: button-bounce 0.55s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+      `}</style>
     </div>
   );
 };
