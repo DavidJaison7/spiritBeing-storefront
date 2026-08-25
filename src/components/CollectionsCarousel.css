@@ -287,19 +287,40 @@
 }
 
 .collections-carousel-wrapper .dot {
-  width: 5px;
-  height: 5px;
+  position: relative;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #3a3a3a;
-  transition: background .4s, transform .4s;
+  background: #4a4a4a;
+  transition: background .4s, transform .4s, box-shadow .4s;
   padding: 0;
   cursor: pointer;
   border: none;
 }
 
+/* Expanded accessible tap target area */
+.collections-carousel-wrapper .dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.collections-carousel-wrapper .dot:hover {
+  background: var(--white);
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
 .collections-carousel-wrapper .dot.active {
   background: var(--white);
-  transform: scale(1.5);
+  transform: scale(1.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .collections-carousel-wrapper .rail .line {

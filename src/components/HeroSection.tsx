@@ -84,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
       if (isScrollTriggered) return;
       if (window.scrollY > window.innerHeight * 0.4) return;
       isScrollTriggered = true;
-      const targetSection = document.getElementById('sbStatement') || document.getElementById('collections-section') || document.getElementById('products-grid');
+      const targetSection = document.getElementById('collections-section') || document.getElementById('products-grid');
       if (targetSection) {
         if ((window as any).lenis) {
           (window as any).lenis.scrollTo(targetSection, {

@@ -23,20 +23,10 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      const statementSection = document.getElementById('sbStatement');
-      if (statementSection) {
-        const r = statementSection.getBoundingClientRect();
-        if (r.bottom <= 60) {
-          setIsScrolledPastHero(true);
-        } else {
-          setIsScrolledPastHero(false);
-        }
+      if (window.scrollY > window.innerHeight - 60) {
+        setIsScrolledPastHero(true);
       } else {
-        if (window.scrollY > window.innerHeight * 2.0 - 60) {
-          setIsScrolledPastHero(true);
-        } else {
-          setIsScrolledPastHero(false);
-        }
+        setIsScrolledPastHero(false);
       }
     };
 

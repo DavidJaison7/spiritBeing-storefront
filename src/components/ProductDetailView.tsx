@@ -247,7 +247,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   key={idx}
                   src={imgUrl}
                   alt={`${product.title} detail view ${idx + 1}`}
-                  className={`w-full h-[calc(100vh-140px)] min-h-[580px] max-h-[900px] rounded-[20px] bg-[#e8e5de] ${
+                  className={`w-full h-auto rounded-[20px] bg-[#e8e5de] ${
                     isPng ? 'object-contain p-4' : 'object-cover object-center'
                   }`}
                 />

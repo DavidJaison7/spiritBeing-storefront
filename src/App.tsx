@@ -3,8 +3,8 @@ import { Product, CartItem, ShopifyConfig } from './types';
 import { INITIAL_PRODUCTS } from './data/products';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
-import { StatementDiscordSection } from './components/StatementDiscordSection';
 import { CollectionsCarousel } from './components/CollectionsCarousel';
+import { StatementParticlesSection } from './components/StatementParticlesSection';
 import { OurStorySection } from './components/OurStorySection';
 import { ProductGrid } from './components/ProductGrid';
 import { ProductDetailView } from './components/ProductDetailView';
@@ -215,14 +215,11 @@ export default function App() {
               }}
             />
 
-            {/* Statement & Discord Community Section */}
-            <StatementDiscordSection />
-
             {/* Sticky Collections Scroll Carousel */}
             <CollectionsCarousel />
 
-            {/* Our Story Section */}
-            <OurStorySection />
+            {/* Statement Particles Section */}
+            <StatementParticlesSection />
 
             {/* Product Grid */}
             <ProductGrid
@@ -233,6 +230,9 @@ export default function App() {
               }}
               onAddToCart={handleAddToCart}
             />
+
+            {/* Our Story Section */}
+            <OurStorySection />
           </>
         )}
       </main>

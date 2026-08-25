@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500&family=Yellowtail&display=swap');
+
+.sb-statement {
+  position: relative;
+  width: 100%;
+  min-height: 760px;
+  height: 100svh;
+  overflow: hidden;
+  background: #000000;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
+  /* Local custom properties */
+  --void: #000000;
+  --chrome: #EDEEF2;
+  --ash: #8A8D95;
+  --steel: #43464D;
+  --dim: #26282D;
+  --electric: #0B3DFF;
+  --blurple: #5865F2;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* physics canvas fills the section; packets settle around the copy */
+#sbStage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  touch-action: pan-y;
+}
+
+/* ============ COPY (centre column, particles stay clear of it) ============ */
+.sb-copy {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(56px, 11vh, 132px) clamp(20px, 5vw, 56px) 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;   /* CTA re-enables below */
+}
+
+/* ---- headline ---- */
+.sb-copy h2 {
+  margin: 0;
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(30px, 5.4vw, 74px);
+  line-height: 1;
+  letter-spacing: .005em;
+  white-space: nowrap;
+}
+
+.sb-copy h2 .row {
+  display: block;
+}
+
+.sb-copy h2 .row.script {
+  font-family: 'Yellowtail', cursive;
+  text-transform: none;
+  font-size: 1.22em;
+  line-height: .9;
+  letter-spacing: 0;
+  margin-top: -.06em;
+  padding: 0 .2em .06em;
+}
+
+.sb-statement .word {
+  display: inline-block;
+  color: var(--dim);
+  transform: translateY(.3em);
+  transition: color .55s ease, transform .75s cubic-bezier(.16, 1, .3, 1);
+}
+
+.sb-statement .word.lit {
+  color: #fff;
+  transform: translateY(0);
+}
+
+.sb-statement .word.dim-final.lit {
+  color: var(--electric);
+}
+
+/* ---- description ---- */
+.sb-context {
+  margin: clamp(26px, 4.4vh, 44px) 0 0;
+  max-width: 46rem;
+  font-size: clamp(11px, 1.02vw, 13.5px);
+  letter-spacing: .16em;
+  line-height: 2.05;
+  text-transform: capitalize;
+  color: var(--ash);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .9s ease .1s, transform .9s ease .1s;
+}
+
+.sb-context.lit {
+  opacity: 1;
+  transform: none;
+}
+
+.sb-refs {
+  margin: clamp(18px, 2.8vh, 30px) 0 0;
+  font-size: 10px;
+  letter-spacing: .36em;
+  text-transform: uppercase;
+  color: var(--steel);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .9s ease .28s, transform .9s ease .28s;
+}
+
+.sb-refs.lit {
+  opacity: 1;
+  transform: none;
+}
+
+.sb-refs i {
+  font-style: normal;
+  color: #2E3138;
+  padding: 0 .55em;
+}
+
+.sb-context .mb {
+  display: none;
+}
+
+/* ---- community + CTA ---- */
+.sb-community {
+  margin-top: clamp(30px, 5.4vh, 58px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(16px, 2.4vh, 26px);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .9s ease .45s, transform .9s ease .45s;
+}
+
+.sb-community.lit {
+  opacity: 1;
+  transform: none;
+}
+
+.sb-community .invite {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: #E6E7EB;
+}
+
+.discord-cta {
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  pointer-events: auto;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 38px;
+  border: 1px solid var(--blurple);
+  border-radius: 999px;
+  font-size: 11.5px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--blurple);
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .7s var(--ease-out), box-shadow .7s var(--ease-out), color .45s ease .05s;
+}
+
+.discord-cta::before {
+  content: '';
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  top: -10%;
+  bottom: -10%;
+  z-index: -1;
+  background: var(--blurple);
+  border-radius: 46%;
+  transform: translateY(112%);
+  transition: transform .7s var(--ease-out), border-radius .7s var(--ease-out);
+  will-change: transform;
+}
+
+.discord-cta svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--blurple);
+  flex: 0 0 auto;
+  transition: fill .45s ease .05s, transform .8s cubic-bezier(.34, 1.3, .64, 1);
+}
+
+.discord-cta .arr {
+  display: inline-block;
+  margin-left: 2px;
+  transition: transform .6s var(--ease-out);
+}
+
+.discord-cta:hover {
+  transform: translateY(-3px);
+  color: #fff;
+  box-shadow: 0 16px 38px rgba(88, 101, 242, .32);
+  transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out), color .4s ease .08s;
+}
+
+.discord-cta:hover::before {
+  transform: translateY(0);
+  border-radius: 0%;
+  transition: transform .55s var(--ease-out), border-radius .9s var(--ease-out);
+}
+
+.discord-cta:hover svg {
+  fill: #fff;
+  transform: rotate(-6deg) scale(1.1);
+}
+
+.discord-cta:hover .arr {
+  transform: translateX(8px);
+  transition-delay: .07s;
+}
+
+.discord-cta:focus-visible {
+  outline: 2px solid var(--blurple);
+  outline-offset: 4px;
+}
+
+.discord-cta:active {
+  transform: translateY(-1px);
+}
+
+/* ---- interaction hint ---- */
+.sb-statement .hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 9.5px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: #3a3d44;
+  transition: opacity .6s ease;
+}
+
+.sb-statement .hint.is-hidden {
+  opacity: 0;
+}
+
+.sb-statement .hint .key {
+  border: 1px solid #1b1d22;
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: #6e7178;
+}
+
+/* no-physics fallback */
+.fallback {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 10px;
+  flex-wrap: wrap;
+}
+
+.fallback img {
+  width: min(96px, 12vw);
+  height: auto;
+  margin-bottom: -10px;
+}
+
+@media (max-width: 900px) {
+  .sb-copy h2 {
+    white-space: normal;
+    font-size: clamp(27px, 6.6vw, 46px);
+  }
+  .sb-copy h2 .row.script {
+    font-size: 1.3em;
+  }
+}
+
+@media (max-width: 640px) {
+  .sb-statement {
+    height: auto;
+    min-height: 100svh;
+    padding-bottom: clamp(170px, 26vh, 240px);
+  }
+  .sb-copy {
+    padding-top: clamp(48px, 8vh, 80px);
+  }
+  .sb-context {
+    max-width: 23rem;
+    font-size: 11px;
+    letter-spacing: .08em;
+    line-height: 1.95;
+  }
+  .sb-context .mb {
+    display: inline;
+  }
+  .sb-refs {
+    font-size: 8.5px;
+    letter-spacing: .2em;
+    line-height: 2;
+  }
+  .discord-cta {
+    padding: 16px 30px;
+    font-size: 10.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-statement .word {
+    transition: none;
+    transform: none;
+    color: #fff;
+  }
+  .sb-statement .word.dim-final {
+    color: var(--electric);
+  }
+  .sb-context, .sb-refs, .sb-community {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .discord-cta, .discord-cta::before, .discord-cta svg, .discord-cta .arr {
+    transition: none;
+  }
+  .sb-statement .hint {
+    transition: none;
+  }
+}
