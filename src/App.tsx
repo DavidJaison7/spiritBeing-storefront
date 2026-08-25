@@ -24,7 +24,6 @@ export default function App() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showLogin, setShowLogin] = useState(false);
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -40,6 +39,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isShopifySyncOpen, setIsShopifySyncOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isLoginView, setIsLoginView] = useState(false);
 
   // Shopify configuration
   const [shopifyConfig, setShopifyConfig] = useState<ShopifyConfig>(() => {
@@ -175,6 +175,17 @@ export default function App() {
 
   const totalCartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+  if (isLoginView) {
+    return (
+      <LoginView
+        onNavigateHome={() => {
+          setIsLoginView(false);
+          window.scrollTo(0, 0);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fbf9f9] text-[#1b1c1c] selection:bg-black selection:text-white">
       {/* Top Header */}
@@ -184,12 +195,11 @@ export default function App() {
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
           setSelectedProduct(null);
-          setShowLogin(false);
           window.scrollTo(0, 0);
         }}
+        onOpenLogin={() => setIsLoginView(true)}
         shopifyConfig={shopifyConfig}
-        currentView={selectedProduct ? 'product_detail' : showLogin ? 'login' : 'home'}
-        onOpenLogin={() => setShowLogin(true)}
+        currentView={selectedProduct ? 'product_detail' : 'home'}
       />
 
       {/* Main View switching */}
@@ -208,8 +218,6 @@ export default function App() {
             }}
             onAddToCart={handleAddToCart}
           />
-        ) : showLogin ? (
-          <LoginView onBackToShop={() => setShowLogin(false)} />
         ) : (
           <>
             {/* Cinematic Hero */}
