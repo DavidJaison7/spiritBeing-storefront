@@ -133,14 +133,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome }) => {
             </div>
           </div>
 
-          <div className="gif-slot">
-            <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <path d="M21 15l-5-5L5 21" />
-            </svg>
-            <div className="label">Drop your loop here</div>
-            <div className="hint">GIF / video placeholder — 16:10</div>
+          <div className="gif-slot-filled">
+            <img
+              src="/login-ambient.gif"
+              alt="SpiritBeing ambient loop"
+              className="w-full h-full object-cover rounded-[20px]"
+            />
           </div>
 
           <div className="right-caption">a space to find your center</div>

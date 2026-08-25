@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
 
 .login-page-container {
   --bg-light:   #F6F4F1;
   --ink:        #16141C;
   --ink-soft:   #6E6A76;
   --line:       #E4E0DA;
-  --deep:       #1B1330;
-  --deep-2:     #2A1E4D;
-  --glow:       #B9A6FF;
-  --glow-2:     #7C6AE8;
+  --deep:       #060A24;
+  --deep-2:     #0B195C;
+  --glow:       #89A5FF;
+  --glow-2:     #0B3DFF;
   --field-bg:   #FFFFFF;
 
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Playfair Display', serif;
   --font-body: 'Inter', sans-serif;
 
   width: 100vw;
@@ -310,7 +310,7 @@
   overflow: hidden;
   background:
     radial-gradient(120% 90% at 20% 15%, var(--deep-2) 0%, transparent 55%),
-    radial-gradient(100% 80% at 85% 90%, #3B2A73 0%, transparent 50%),
+    radial-gradient(100% 80% at 85% 90%, #0D2099 0%, transparent 50%),
     var(--deep);
   display: flex;
   align-items: center;
@@ -331,7 +331,7 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, rgba(185, 166, 255, 0.55), rgba(124, 106, 232, 0.12) 55%, transparent 72%);
+  background: radial-gradient(circle at 40% 35%, rgba(137, 165, 255, 0.55), rgba(11, 61, 255, 0.12) 55%, transparent 72%);
   filter: blur(6px);
   animation: loginBreathe 6s ease-in-out infinite;
 }
@@ -344,7 +344,7 @@
 .login-page-container .aura .ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(185, 166, 255, 0.25);
+  border: 1px solid rgba(137, 165, 255, 0.25);
 }
 
 .login-page-container .aura .ring.r1 { width: 420px; height: 420px; animation: loginSpin 40s linear infinite; }
@@ -377,6 +377,18 @@
   50%      { transform: translateY(-22px); opacity: .9; }
 }
 
+.login-page-container .gif-slot-filled {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+}
+
 .login-page-container .gif-slot {
   position: relative;
   z-index: 2;
@@ -384,7 +396,7 @@
   max-width: 460px;
   aspect-ratio: 16 / 10;
   border-radius: 20px;
-  border: 1.5px dashed rgba(185, 166, 255, 0.45);
+  border: 1.5px dashed rgba(137, 165, 255, 0.45);
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(2px);
   display: flex;
@@ -399,7 +411,7 @@
 }
 
 .login-page-container .gif-slot:hover {
-  border-color: rgba(185, 166, 255, 0.85);
+  border-color: rgba(137, 165, 255, 0.85);
   background: rgba(255, 255, 255, 0.05);
 }
 
