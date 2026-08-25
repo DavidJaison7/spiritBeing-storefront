@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > window.innerHeight - 60) {
+      if (window.scrollY > window.innerHeight - 50) {
         setIsScrolledPastHero(true);
       } else {
         setIsScrolledPastHero(false);
@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   const textColor = showHeaderStyle ? 'text-black' : 'text-white';
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-3 md:py-4 transition-all duration-500 ${headerBg} ${textColor}`}>
+    <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-500 ${headerBg} ${textColor}`}>
       {/* Left nav - SHOP or BACK TO STORE */}
       <div className="flex items-center gap-6 w-1/3">
         {currentView === 'product_detail' ? (
@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
               : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
           }`}
         >
-          <img src="/sb-blue-header.png" alt="Spirit Being Logo" className="h-7 md:h-9 object-contain" />
+          <img src="/sb-blue-header.png" alt="Spirit Being Logo" className="h-[22px] md:h-[28px] object-contain" />
         </button>
       </div>
 
