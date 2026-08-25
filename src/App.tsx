@@ -8,6 +8,7 @@ import { StatementParticlesSection } from './components/StatementParticlesSectio
 import { OurStorySection } from './components/OurStorySection';
 import { ProductGrid } from './components/ProductGrid';
 import { ProductDetailView } from './components/ProductDetailView';
+import { LoginView } from './components/LoginView';
 import { CartDrawer } from './components/CartDrawer';
 import { ShopifySyncModal } from './components/ShopifySyncModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -23,6 +24,7 @@ export default function App() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showLogin, setShowLogin] = useState(false);
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -182,10 +184,12 @@ export default function App() {
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
           setSelectedProduct(null);
+          setShowLogin(false);
           window.scrollTo(0, 0);
         }}
         shopifyConfig={shopifyConfig}
-        currentView={selectedProduct ? 'product_detail' : 'home'}
+        currentView={selectedProduct ? 'product_detail' : showLogin ? 'login' : 'home'}
+        onOpenLogin={() => setShowLogin(true)}
       />
 
       {/* Main View switching */}
@@ -204,6 +208,8 @@ export default function App() {
             }}
             onAddToCart={handleAddToCart}
           />
+        ) : showLogin ? (
+          <LoginView onBackToShop={() => setShowLogin(false)} />
         ) : (
           <>
             {/* Cinematic Hero */}

@@ -8,7 +8,8 @@ interface HeaderProps {
   onOpenShopifySync: () => void;
   onNavigateHome: () => void;
   shopifyConfig: ShopifyConfig;
-  currentView: 'home' | 'product_detail';
+  currentView: 'home' | 'product_detail' | 'login';
+  onOpenLogin: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateHome,
   shopifyConfig,
   currentView,
+  onOpenLogin,
 }) => {
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
 
@@ -35,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const showHeaderStyle = currentView === 'product_detail' || isScrolledPastHero;
+  const showHeaderStyle = currentView === 'product_detail' || currentView === 'login' || isScrolledPastHero;
   
   // Dynamic classes for header visibility
   const headerBg = showHeaderStyle ? 'bg-[#fbf9f9] drop-shadow-sm' : 'bg-transparent';
@@ -45,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-500 ${headerBg} ${textColor}`}>
       {/* Left nav - SHOP or BACK TO STORE */}
       <div className="flex items-center gap-6 w-1/3">
-        {currentView === 'product_detail' ? (
+        {currentView === 'product_detail' || currentView === 'login' ? (
           <button
             onClick={onNavigateHome}
             className="text-sm font-semibold hover:opacity-70 transition-opacity flex items-center gap-1 cursor-pointer"
@@ -81,8 +83,16 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </div>
 
-      {/* Right nav - CART */}
+      {/* Right nav - ACCOUNT & CART */}
       <div className="w-1/3 flex justify-end items-center gap-4 md:gap-6">
+        {currentView !== 'login' && (
+          <button
+            onClick={onOpenLogin}
+            className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer"
+          >
+            ACCOUNT
+          </button>
+        )}
         <button
           onClick={onOpenCart}
           className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity flex items-center gap-2 cursor-pointer"
