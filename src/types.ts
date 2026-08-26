@@ -19,6 +19,7 @@ export interface Product {
   origin?: string;
   inStock: boolean;
   isFeatured?: boolean;
+  likesCount?: number;
 }
 
 export interface CartItem {

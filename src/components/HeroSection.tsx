@@ -78,65 +78,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Single Scroll handler (silky-smooth 1.4s scroll transition to Statement & Discord Section)
-    let isScrollTriggered = false;
-    const triggerSingleScroll = () => {
-      if (isScrollTriggered) return;
-      if (window.scrollY > window.innerHeight * 0.4) return;
-      isScrollTriggered = true;
-      const targetSection = document.getElementById('collections-section') || document.getElementById('products-grid');
-      if (targetSection) {
-        if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(targetSection, {
-            duration: 1.4,
-            easing: (t: number) => 1 - Math.pow(1 - t, 3.5),
-            lock: true,
-          });
-        } else {
-          targetSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-      setTimeout(() => {
-        isScrollTriggered = false;
-      }, 1600);
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
-        if (window.scrollY < window.innerHeight * 0.4) {
-          e.preventDefault();
-          triggerSingleScroll();
-        }
-      }
-    };
-
-    let startY = 0;
-    const onTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      const currentY = e.touches[0].clientY;
-      if (startY - currentY > 5) {
-        if (window.scrollY < window.innerHeight * 0.4) {
-          e.preventDefault();
-          triggerSingleScroll();
-        }
-      }
-    };
-
     stage.addEventListener('mousemove', onMouseMove);
     stage.addEventListener('mouseleave', onMouseLeave);
-    stage.addEventListener('wheel', onWheel, { passive: false });
-    stage.addEventListener('touchstart', onTouchStart, { passive: true });
-    stage.addEventListener('touchmove', onTouchMove, { passive: false });
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       stage.removeEventListener('mousemove', onMouseMove);
       stage.removeEventListener('mouseleave', onMouseLeave);
-      stage.removeEventListener('wheel', onWheel);
-      stage.removeEventListener('touchstart', onTouchStart);
-      stage.removeEventListener('touchmove', onTouchMove);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

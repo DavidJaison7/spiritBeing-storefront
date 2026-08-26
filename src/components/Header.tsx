@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, RefreshCw, Github, ArrowLeft, User } from 'lucide-react';
 import { ShopifyConfig } from '../types';
 
@@ -8,8 +8,9 @@ interface HeaderProps {
   onOpenShopifySync: () => void;
   onNavigateHome: () => void;
   onOpenLogin: () => void;
+  onNavigateOurStory: () => void;
   shopifyConfig: ShopifyConfig;
-  currentView: 'home' | 'product_detail';
+  currentView: 'home' | 'product_detail' | 'our_story';
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,10 +19,13 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenShopifySync,
   onNavigateHome,
   onOpenLogin,
+  onNavigateOurStory,
   shopifyConfig,
   currentView,
 }) => {
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,17 +41,39 @@ export const Header: React.FC<HeaderProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const showHeaderStyle = currentView === 'product_detail' || isScrolledPastHero;
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isDropdownOpen]);
+
+  const isOurStoryView = currentView === 'our_story';
+  const showHeaderStyle = (currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView;
+  const showLogo = showHeaderStyle || isOurStoryView;
   
   // Dynamic classes for header visibility
-  const headerBg = showHeaderStyle ? 'bg-[#fbf9f9] drop-shadow-sm' : 'bg-transparent';
-  const textColor = showHeaderStyle ? 'text-black' : 'text-white';
+  const headerBg = isOurStoryView
+    ? 'bg-[#080808]/90 backdrop-blur-md border-b border-white/10 shadow-md'
+    : showHeaderStyle
+    ? 'bg-[#fbf9f9] drop-shadow-sm'
+    : 'bg-transparent';
+  const textColor = isOurStoryView ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
+
+  const cornerColor = isOurStoryView
+    ? 'text-[#080808]/90'
+    : showHeaderStyle
+    ? 'text-[#fbf9f9]'
+    : 'text-transparent';
 
   return (
     <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-500 ${headerBg} ${textColor}`}>
       {/* Left nav - SHOP or BACK TO STORE */}
       <div className="flex items-center gap-6 w-1/3">
-        {currentView === 'product_detail' ? (
+        {currentView === 'product_detail' || currentView === 'our_story' ? (
           <button
             onClick={onNavigateHome}
             className="text-sm font-semibold hover:opacity-70 transition-opacity flex items-center gap-1 cursor-pointer"
@@ -74,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onNavigateHome}
           className={`transition-all duration-300 cursor-pointer hover:opacity-70 ${
-            showHeaderStyle
+            showLogo
               ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
               : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
           }`}
@@ -83,26 +109,108 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </div>
 
-      {/* Right nav - CART & PROFILE */}
-      <div className="w-1/3 flex justify-end items-center gap-4 md:gap-6">
+      {/* Right nav - OUR STORY, BLOG, CART, MENU */}
+      <div className="w-1/3 flex justify-end items-center gap-4 md:gap-6 relative">
         <button
-          onClick={onOpenLogin}
-          className="hover:opacity-70 transition-opacity flex items-center justify-center cursor-pointer"
-          aria-label="Login / Account"
+          onClick={onNavigateOurStory}
+          className="hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
         >
-          <User className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] stroke-[2]" />
+          OUR STORY
+        </button>
+        <button
+          onClick={() => alert('Blog section coming soon!')}
+          className="hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
+        >
+          BLOG
         </button>
         <button
           onClick={onOpenCart}
-          className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity flex items-center gap-2 cursor-pointer"
+          className="text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
         >
-          <span>CART ({cartCount})</span>
+          CART ({cartCount})
         </button>
+        
+        {/* Toggle Dropdown Menu (Two horizontal lines `=`) */}
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="flex flex-col justify-center items-center gap-[4px] w-6 h-6 hover:opacity-70 transition-opacity cursor-pointer"
+          aria-label="Toggle Menu"
+        >
+          <span className="w-[18px] h-[1.8px] bg-current rounded-full transition-all"></span>
+          <span className="w-[18px] h-[1.8px] bg-current rounded-full transition-all"></span>
+        </button>
+
+        {/* Dropdown Menu popover */}
+        {isDropdownOpen && (
+          <div 
+            ref={dropdownRef}
+            className="absolute top-full right-0 mt-3.5 w-[290px] bg-[#fbf9f9] border border-black/10 rounded-2xl shadow-xl z-50 text-black p-5 flex flex-col gap-4 text-left select-none"
+            style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.08))' }}
+          >
+            <div>
+              <h3 className="font-playfair text-lg font-medium text-black">Welcome</h3>
+              <p className="font-sans text-[11px] text-gray-500 mt-1 leading-normal">
+                To access account and manage orders
+              </p>
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  onOpenLogin();
+                }}
+                className="w-full mt-3.5 bg-black text-white text-[11px] font-bold py-3 rounded-xl tracking-wider hover:bg-black/80 transition-all cursor-pointer text-center uppercase"
+              >
+                Login / Signup
+              </button>
+            </div>
+            
+            <div className="h-[1px] bg-black/10 my-0.5"></div>
+            
+            <div className="flex flex-col gap-3.5 pb-1">
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  alert('Order tracking integration is coming soon!');
+                }}
+                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
+              >
+                Track your order
+              </button>
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  alert('Returns & exchanges portal coming soon!');
+                }}
+                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
+              >
+                Returns & Exchanges
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  alert('Our support team is available 24/7. Reach out to support@spiritbeing.in');
+                }}
+                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
+              >
+                Support
+              </button>
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  alert('FAQ section is coming soon!');
+                }}
+                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
+              >
+                FAQ
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Inverted Corner - Left */}
       <svg 
-        className={`absolute top-full left-0 w-6 h-6 transition-colors duration-500 ${showHeaderStyle ? 'text-[#fbf9f9]' : 'text-transparent'}`} 
+        className={`absolute top-full left-0 w-6 h-6 transition-colors duration-500 ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >
@@ -111,7 +219,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Inverted Corner - Right */}
       <svg 
-        className={`absolute top-full right-0 w-6 h-6 transition-colors duration-500 ${showHeaderStyle ? 'text-[#fbf9f9]' : 'text-transparent'}`} 
+        className={`absolute top-full right-0 w-6 h-6 transition-colors duration-500 ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >

@@ -24,6 +24,27 @@ export default function App() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProductColor, setSelectedProductColor] = useState<string | undefined>(undefined);
+
+  // Wishlist state persisted in localStorage
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('spiritbeing_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleToggleWishlist = (productId: string) => {
+    setWishlist((prev) => {
+      const updated = prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId];
+      localStorage.setItem('spiritbeing_wishlist', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -40,6 +61,33 @@ export default function App() {
   const [isShopifySyncOpen, setIsShopifySyncOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isLoginView, setIsLoginView] = useState(false);
+  const [isOurStoryView, setIsOurStoryView] = useState(false);
+
+  // Bottom strip visibility (Only in Hero and Collections Carousel till end of 6th slide)
+  const [showBottomStrip, setShowBottomStrip] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (selectedProduct || isOurStoryView) {
+        setShowBottomStrip(false);
+        return;
+      }
+
+      const carouselElem = document.getElementById('collections-carousel-section');
+      if (carouselElem) {
+        const rect = carouselElem.getBoundingClientRect();
+        // Keep fixed bottom strip active while in Hero or anywhere in Collections Carousel till end of 6th slide
+        // Hides immediately as soon as StatementParticlesSection enters from bottom of window
+        setShowBottomStrip(rect.bottom > window.innerHeight + 20);
+      } else {
+        setShowBottomStrip(window.scrollY < window.innerHeight * 5.5);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [selectedProduct, isOurStoryView]);
 
   // Shopify configuration
   const [shopifyConfig, setShopifyConfig] = useState<ShopifyConfig>(() => {
@@ -70,9 +118,10 @@ export default function App() {
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 0.9,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      touchMultiplier: 1.5,
     });
 
     (window as any).lenis = lenis;
@@ -84,7 +133,6 @@ export default function App() {
     };
 
     gsap.ticker.add(updateLenis);
-    gsap.ticker.lagSmoothing(0);
 
     return () => {
       gsap.ticker.remove(updateLenis);
@@ -195,11 +243,17 @@ export default function App() {
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
           setSelectedProduct(null);
+          setIsOurStoryView(false);
           window.scrollTo(0, 0);
         }}
         onOpenLogin={() => setIsLoginView(true)}
+        onNavigateOurStory={() => {
+          setIsOurStoryView(true);
+          setSelectedProduct(null);
+          window.scrollTo(0, 0);
+        }}
         shopifyConfig={shopifyConfig}
-        currentView={selectedProduct ? 'product_detail' : 'home'}
+        currentView={selectedProduct ? 'product_detail' : isOurStoryView ? 'our_story' : 'home'}
       />
 
       {/* Main View switching */}
@@ -207,10 +261,17 @@ export default function App() {
         {selectedProduct ? (
           <ProductDetailView
             product={selectedProduct}
+            initialColor={selectedProductColor}
             allProducts={products}
-            onBackToShop={() => setSelectedProduct(null)}
-            onSelectProduct={(p) => {
+            wishlist={wishlist}
+            onToggleWishlist={handleToggleWishlist}
+            onBackToShop={() => {
+              setSelectedProduct(null);
+              setSelectedProductColor(undefined);
+            }}
+            onSelectProduct={(p, color) => {
               setSelectedProduct(p);
+              setSelectedProductColor(color);
               window.scrollTo(0, 0);
               if ((window as any).lenis) {
                 (window as any).lenis.scrollTo(0, { immediate: true });
@@ -218,6 +279,8 @@ export default function App() {
             }}
             onAddToCart={handleAddToCart}
           />
+        ) : isOurStoryView ? (
+          <OurStorySection />
         ) : (
           <>
             {/* Cinematic Hero */}
@@ -225,12 +288,27 @@ export default function App() {
               products={products}
               onSelectProduct={(p) => {
                 setSelectedProduct(p);
+                setSelectedProductColor(undefined);
                 window.scrollTo(0, 0);
               }}
             />
 
             {/* Sticky Collections Scroll Carousel */}
-            <CollectionsCarousel />
+            <div id="collections-carousel-section">
+              <CollectionsCarousel
+                onSelectProductByHandle={(handle) => {
+                  const found = products.find(p => p.handle === handle);
+                  if (found) {
+                    setSelectedProduct(found);
+                    setSelectedProductColor(undefined);
+                    window.scrollTo(0, 0);
+                    if ((window as any).lenis) {
+                      (window as any).lenis.scrollTo(0, { immediate: true });
+                    }
+                  }
+                }}
+              />
+            </div>
 
             {/* Statement Particles Section */}
             <StatementParticlesSection />
@@ -238,15 +316,15 @@ export default function App() {
             {/* Product Grid */}
             <ProductGrid
               products={products}
-              onSelectProduct={(p) => {
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
+              onSelectProduct={(p, color) => {
                 setSelectedProduct(p);
+                setSelectedProductColor(color);
                 window.scrollTo(0, 0);
               }}
               onAddToCart={handleAddToCart}
             />
-
-            {/* Our Story Section */}
-            <OurStorySection />
           </>
         )}
       </main>
@@ -256,6 +334,11 @@ export default function App() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
+        products={products}
+        onSelectProduct={(p) => {
+          setSelectedProduct(p);
+          setIsCartOpen(false);
+        }}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={async () => {
@@ -299,19 +382,21 @@ export default function App() {
       <InstagramFeedSection />
       <Footer />
 
-      {/* Global Transparent Fixed Bottom Strip */}
-      <footer className="fixed-bottom-strip">
-        <span className="left">
-          <span className="ticks">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
+      {/* Global Transparent Fixed Bottom Strip (Only in Hero & Collections Carousel) */}
+      {!selectedProduct && !isOurStoryView && showBottomStrip && (
+        <footer className="fixed-bottom-strip">
+          <span className="left">
+            <span className="ticks">
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+            Faith. Identity. Purpose.
           </span>
-          Faith. Identity. Purpose.
-        </span>
-        <span>Only at spiritbeing.in</span>
-      </footer>
+          <span>Only at spiritbeing.in</span>
+        </footer>
+      )}
     </div>
   );
 }

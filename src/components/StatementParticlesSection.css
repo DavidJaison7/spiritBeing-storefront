@@ -3,13 +3,15 @@
 .sb-statement {
   position: relative;
   width: 100%;
-  min-height: 760px;
-  height: 100svh;
+  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
   background: #000000;
   isolation: isolate;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   /* Local custom properties */
   --void: #000000;
   --chrome: #EDEEF2;
@@ -40,7 +42,8 @@
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: clamp(56px, 11vh, 132px) clamp(20px, 5vw, 56px) 0;
+  padding: clamp(20px, 4vh, 44px) clamp(20px, 5vw, 56px) clamp(80px, 14vh, 140px);
+  transform: translateY(-44px);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -98,7 +101,7 @@
   letter-spacing: .16em;
   line-height: 2.05;
   text-transform: capitalize;
-  color: var(--ash);
+  color: #EDEEF2;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity .9s ease .1s, transform .9s ease .1s;
@@ -114,7 +117,7 @@
   font-size: 10px;
   letter-spacing: .36em;
   text-transform: uppercase;
-  color: var(--steel);
+  color: var(--ash);
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .9s ease .28s, transform .9s ease .28s;
@@ -127,7 +130,7 @@
 
 .sb-refs i {
   font-style: normal;
-  color: #2E3138;
+  color: var(--steel);
   padding: 0 .55em;
 }
 

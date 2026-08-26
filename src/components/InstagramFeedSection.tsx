@@ -63,7 +63,7 @@ const INSTAGRAM_POSTS: InstagramPost[] = [
 
 export const InstagramFeedSection: React.FC = () => {
   return (
-    <section className="w-full bg-[#f5f4f0] py-14 border-t border-b border-black/10 relative z-10 font-sans">
+    <section className="w-full bg-black pt-8 md:pt-10 relative z-10 font-sans">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 text-center md:text-left">
@@ -74,10 +74,10 @@ export const InstagramFeedSection: React.FC = () => {
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-base md:text-lg text-black uppercase tracking-wider flex items-center gap-2 justify-center md:justify-start">
+              <h3 className="font-bold text-base md:text-lg text-white uppercase tracking-wider flex items-center gap-2 justify-center md:justify-start">
                 <span>@SPIRITBEING.STUDIO</span>
               </h3>
-              <p className="text-xs text-gray-500 font-sans tracking-wide">
+              <p className="text-xs text-gray-400 font-sans tracking-wide">
                 INSTAGRAM ADVERTISING & ARCHIVE COMMUNITY
               </p>
             </div>
@@ -87,7 +87,7 @@ export const InstagramFeedSection: React.FC = () => {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="border border-black bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+            className="border border-white bg-white text-black px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs"
           >
             <span>FOLLOW ON INSTAGRAM</span>
             <ExternalLink className="w-3.5 h-3.5" />

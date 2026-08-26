@@ -46,33 +46,6 @@ export const OurStorySection: React.FC = () => {
 
       {/* Story Layout Grid */}
       <main className="story-grid">
-        {/* Left Side: Social Follow Links */}
-        <aside className="follow rv-up">
-          <h3>Walk With Us On</h3>
-          <ul>
-            <li>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                Instagram <span className="arr">&#8594;</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://discord.gg" target="_blank" rel="noopener noreferrer">
-                Discord <span className="arr">&#8594;</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer">
-                WhatsApp <span className="arr">&#8594;</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
-                YouTube <span className="arr">&#8594;</span>
-              </a>
-            </li>
-          </ul>
-        </aside>
-
         {/* Right Side: Copy Text */}
         <article className="copy">
           <h2 className="lede rv-up">

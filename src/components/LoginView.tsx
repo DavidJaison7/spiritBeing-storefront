@@ -111,8 +111,19 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome }) => {
             </div>
 
             {/* Hover signature animation */}
-            <div className="wordmark-wrap">
-              <span className="wordmark" onClick={onNavigateHome}>
+            <div 
+              className="wordmark-wrap cursor-pointer group" 
+              onClick={onNavigateHome}
+              title="Return to Store Homepage"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onNavigateHome();
+                }
+              }}
+            >
+              <span className="wordmark">
                 {wordmarkText.split('').map((char, index) => (
                   <span key={index}>{char}</span>
                 ))}

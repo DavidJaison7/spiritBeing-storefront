@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ArrowLeft, Check, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Check, Plus, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { ProductReviewsSection } from './ProductReviewsSection';
 
 interface ProductDetailViewProps {
   product: Product;
   allProducts: Product[];
+  initialColor?: string;
+  wishlist?: string[];
+  onToggleWishlist?: (productId: string) => void;
   onBackToShop: () => void;
-  onSelectProduct: (product: Product) => void;
+  onSelectProduct: (product: Product, selectedColor?: string) => void;
   onAddToCart: (product: Product, size: string, color?: string) => void;
 }
 const getColorHex = (colorName: string) => {
@@ -20,9 +24,296 @@ const getColorHex = (colorName: string) => {
   return '#cccccc';
 };
 
+interface RelatedProductCardProps {
+  product: Product;
+  onSelect: () => void;
+  onAddToCart: (e: React.MouseEvent, size: string, color?: string) => void;
+  isAdded: boolean;
+  wishlist?: string[];
+  onToggleWishlist?: (productId: string) => void;
+}
+
+const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
+  product,
+  onSelect,
+  onAddToCart,
+  isAdded,
+  wishlist = [],
+  onToggleWishlist,
+}) => {
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(
+    product.colors && product.colors.length > 0 ? product.colors[0] : undefined
+  );
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'M'
+  );
+  const [activeIndex, setActiveIndex] = useState(0);
+  const pointerStartXRef = React.useRef<number | null>(null);
+  const isDraggingRef = React.useRef<boolean>(false);
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const lastStepTimeRef = React.useRef<number>(0);
+
+  const isWishlisted = wishlist.includes(product.id);
+
+  const getProductImages = () => {
+    const images: string[] = [];
+    if (selectedColor && product.colorImageMap && product.colorImageMap[selectedColor] && product.colorImageMap[selectedColor].length > 0) {
+      return product.colorImageMap[selectedColor];
+    }
+    if (product.image) images.push(product.image);
+    if (product.additionalImages) {
+      product.additionalImages.forEach(img => {
+        if (!images.includes(img)) images.push(img);
+      });
+    }
+    return images.length > 0 ? images : [product.image];
+  };
+
+  const productImages = getProductImages();
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerStartXRef.current = e.clientX;
+    isDraggingRef.current = false;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (pointerStartXRef.current === null) return;
+    if (Math.abs(e.clientX - pointerStartXRef.current) > 8) {
+      isDraggingRef.current = true;
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (pointerStartXRef.current === null) return;
+    const diffX = pointerStartXRef.current - e.clientX;
+    pointerStartXRef.current = null;
+
+    if (Math.abs(diffX) > 25 && productImages.length > 1) {
+      const now = Date.now();
+      if (now - lastStepTimeRef.current > 250) {
+        lastStepTimeRef.current = now;
+        if (diffX > 0) {
+          setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+        } else if (diffX < 0) {
+          setActiveIndex((prev) => Math.max(prev - 1, 0));
+        }
+      }
+    }
+
+    setTimeout(() => {
+      isDraggingRef.current = false;
+    }, 50);
+  };
+
+  React.useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+
+    const handleNativeWheel = (e: WheelEvent) => {
+      if (productImages.length <= 1) return;
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 12) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const now = Date.now();
+        if (now - lastStepTimeRef.current < 380) return;
+        lastStepTimeRef.current = now;
+
+        if (e.deltaX > 0) {
+          setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+        } else if (e.deltaX < 0) {
+          setActiveIndex((prev) => Math.max(prev - 1, 0));
+        }
+      }
+    };
+
+    el.addEventListener('wheel', handleNativeWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', handleNativeWheel);
+    };
+  }, [productImages.length]);
+
+  return (
+    <div
+      onClick={() => {
+        if (isDraggingRef.current) return;
+        onSelect();
+      }}
+      className="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1 select-none"
+    >
+      {/* Curved Flashcard Image Frame */}
+      <div 
+        ref={frameRef}
+        className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white border border-black/5 shadow-sm touch-pan-y"
+        style={{ overscrollBehaviorX: 'none' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
+        {/* Horizontal CSS Transform Slider */}
+        <div
+          className="w-full h-full flex transition-transform duration-500 ease-out pointer-events-none"
+          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+        >
+          {productImages.map((imgUrl, idx) => (
+            <img
+              key={idx}
+              src={imgUrl}
+              alt={`${product.title} view ${idx + 1}`}
+              draggable={false}
+              className="w-full h-full object-cover shrink-0 group-hover:scale-102 transition-transform duration-700 ease-out select-none"
+            />
+          ))}
+        </div>
+
+        {/* Carousel Indicator Dots in Bottom Center */}
+        {productImages.length > 1 && (
+          <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+            {productImages.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveIndex(idx);
+                }}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  idx === activeIndex ? 'w-3.5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/60 hover:bg-white'
+                } shadow-sm`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Row of Selectors: Sizes on Left, Colors on Right */}
+      <div className="flex items-center justify-between pt-3 px-1">
+        {product.sizes && product.sizes.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            {product.sizes.slice(0, 2).map((size) => {
+              const isSelected = selectedSize === size;
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedSize(size);
+                  }}
+                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-black text-black bg-white font-semibold shadow-sm'
+                      : 'border-black/15 text-[#666666] bg-transparent hover:border-black/30'
+                  }`}
+                  aria-label={`Select size ${size}`}
+                >
+                  {size}
+                </button>
+              );
+            })}
+            {product.sizes.length > 2 && (
+              <div
+                className="w-7 h-7 flex items-center justify-center text-[10px] font-sans text-[#666666] rounded-md border border-black/15 bg-transparent"
+                title={`${product.sizes.length - 2} more sizes available`}
+              >
+                +{product.sizes.length - 2}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Colors Selector */}
+        {(() => {
+          const displayColors = product.colors && product.colors.length > 0 ? product.colors : product.color ? [product.color] : ['Black'];
+          return (
+            <div className="flex items-center gap-1.5">
+              {displayColors.map((color) => {
+                const isSelected = selectedColor === color || (!selectedColor && displayColors.length === 1);
+                const bgHex = getColorHex(color);
+                return (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedColor(color);
+                      setActiveIndex(0);
+                    }}
+                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${
+                      isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
+                    }`}
+                    style={{ backgroundColor: bgHex }}
+                    title={color}
+                    aria-label={`Select ${color} color`}
+                  />
+                );
+              })}
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* Card Footer: Title & Price + Hover Add to Bag + Wishlist Heart */}
+      <div className="flex items-start justify-between px-1 pt-2">
+        <div className="pr-2 flex-grow">
+          <h4 className="font-sans font-medium text-[14px] sm:text-[15px] text-[#1a1a1a] tracking-tight leading-snug group-hover:text-black">
+            {product.title}
+          </h4>
+          <div className="relative h-5 mt-1 overflow-hidden w-full">
+            <p className="absolute inset-x-0 top-0 font-sans text-[13px] sm:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
+              Rs. {product.price.toLocaleString()}
+            </p>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCart(e, selectedSize, selectedColor);
+              }}
+              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
+                isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
+              }`}
+            >
+              {isAdded ? 'Added ✓' : 'Add to Bag'}
+            </button>
+          </div>
+        </div>
+
+        {onToggleWishlist && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(product.id);
+            }}
+            className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${
+              isWishlisted
+                ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm scale-105'
+                : 'bg-white/80 border-black/10 text-gray-700 hover:bg-rose-50/70 hover:text-rose-600 hover:border-rose-200'
+            }`}
+            title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
+            aria-label={isWishlisted ? 'Unlike product' : 'Like product'}
+          >
+            <Heart
+              className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
+              }`}
+            />
+            <span>{(product.likesCount || 280) + (isWishlisted ? 1 : 0)}</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   product,
   allProducts,
+  initialColor,
+  wishlist = [],
+  onToggleWishlist,
   onBackToShop,
   onSelectProduct,
   onAddToCart,
@@ -40,6 +331,25 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; scale: number; delay: number; color: string }[]>([]);
+  const [isTallViewport, setIsTallViewport] = useState<boolean>(false);
+
+  const isProductLiked = wishlist.includes(product.id);
+
+  React.useEffect(() => {
+    const checkViewportHeight = () => {
+      // True fullscreen OR window height >= 800px (meaning no searchbars/toolbars shrinking height)
+      const isFullscreen = !!document.fullscreenElement;
+      setIsTallViewport(isFullscreen || window.innerHeight >= 800);
+    };
+
+    checkViewportHeight();
+    window.addEventListener('resize', checkViewportHeight);
+    document.addEventListener('fullscreenchange', checkViewportHeight);
+    return () => {
+      window.removeEventListener('resize', checkViewportHeight);
+      document.removeEventListener('fullscreenchange', checkViewportHeight);
+    };
+  }, []);
 
   const galleryImages = [
     product.image,
@@ -52,10 +362,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         ])
   ];
 
-  const handleRelatedPlusClick = (e: React.MouseEvent, relProduct: Product) => {
+  const handleRelatedPlusClick = (e: React.MouseEvent, relProduct: Product, size?: string, color?: string) => {
     e.stopPropagation();
-    const defaultSize = relProduct.sizes && relProduct.sizes.length > 0 ? relProduct.sizes[0] : 'M';
-    onAddToCart(relProduct, defaultSize, undefined);
+    const targetSize = size || (relProduct.sizes && relProduct.sizes.length > 0 ? relProduct.sizes[0] : 'M');
+    onAddToCart(relProduct, targetSize, color);
     
     setJustAddedId(relProduct.id);
     setTimeout(() => {
@@ -108,384 +418,429 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     setTimeout(() => setAdded(false), 1800);
   };
 
+  const relatedSectionRef = React.useRef<HTMLDivElement>(null);
+  const relatedTrackRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const section = relatedSectionRef.current;
+      const track = relatedTrackRef.current;
+      if (!section || !track) return;
+
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const totalScrollableDistance = section.clientHeight - windowHeight;
+
+      if (totalScrollableDistance <= 0) return;
+
+      // Calculate how far we've scrolled vertically inside this sticky section wrapper
+      const currentScroll = -rect.top;
+      const progress = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
+
+      const maxTranslateX = track.scrollWidth - (track.parentElement?.clientWidth || window.innerWidth);
+      if (maxTranslateX > 0) {
+        track.style.transform = `translate3d(-${progress * maxTranslateX}px, 0, 0)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
   const relatedProducts = allProducts
     .filter((p) => p.id !== product.id)
-    .slice(0, 3);
+    .slice(0, 6);
 
   // Dynamic images for the selected product and selected color variant
   const activeColorImages = (selectedColor && product.colorImageMap && product.colorImageMap[selectedColor] && product.colorImageMap[selectedColor].length > 0)
     ? product.colorImageMap[selectedColor]
     : (product.additionalImages && product.additionalImages.length > 0)
       ? [product.image, ...product.additionalImages]
-      : [product.image, product.image, product.image, product.image];
+      : [product.image, product.image, product.image, product.image, product.image];
 
   const mainFixedImage = activeColorImages[0] || product.image;
   const secondaryImagesStack = activeColorImages.length > 1
     ? activeColorImages.slice(1)
-    : [mainFixedImage, mainFixedImage, mainFixedImage];
+    : [mainFixedImage, mainFixedImage, mainFixedImage, mainFixedImage];
 
   const mobileGalleryImages = [mainFixedImage, ...secondaryImagesStack];
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-20 md:pt-28 flex flex-col gap-20">
-
-      {/* Main Product Layout: 60% Left (Images) and 40% Right (Details) */}
-      <section className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12 items-start">
-        {/* MOBILE GALLERY: Horizontal Swipe Carousel with Curved Square Arrow Controls (md:hidden) */}
-        <div className="md:hidden w-full flex flex-col gap-3.5">
-          <div
-            ref={mobileScrollRef}
-            onScroll={(e) => {
-              const target = e.currentTarget;
-              if (target.clientWidth > 0) {
-                const idx = Math.round(target.scrollLeft / target.clientWidth);
-                setMobileActiveIndex(idx);
-              }
-            }}
-            className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-none rounded-[20px]"
-          >
-            {mobileGalleryImages.map((imgUrl, idx) => {
-              const isPng = imgUrl.endsWith('.png');
-              return (
-                <div key={idx} className="w-full shrink-0 snap-center">
-                  <img
-                    src={imgUrl}
-                    alt={`${product.title} view ${idx + 1}`}
-                    className={`w-full h-[68vh] min-h-[460px] rounded-[20px] bg-[#e8e5de] ${
-                      isPng ? 'object-contain p-4' : 'object-cover object-center'
-                    }`}
-                  />
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Curved Square Arrow Bubble Controls & Indicators */}
-          <div className="flex items-center justify-between px-2 pt-1">
-            {/* Left Curved Square Arrow Button */}
-            <button
-              type="button"
-              onClick={() => {
-                const nextIdx = Math.max(0, mobileActiveIndex - 1);
-                if (mobileScrollRef.current) {
-                  mobileScrollRef.current.scrollTo({
-                    left: nextIdx * mobileScrollRef.current.clientWidth,
-                    behavior: 'smooth'
-                  });
+    <div className="w-full pb-12 pt-12 md:pt-16 flex flex-col gap-6 sm:gap-8">
+      {/* Top Section: Main Product Details (White Background Container) */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12 items-start">
+          {/* MOBILE GALLERY: Horizontal Swipe Carousel with Curved Square Arrow Controls (md:hidden) */}
+          <div className="md:hidden w-full flex flex-col gap-3.5">
+            <div
+              ref={mobileScrollRef}
+              onScroll={(e) => {
+                const target = e.currentTarget;
+                if (target.clientWidth > 0) {
+                  const idx = Math.round(target.scrollLeft / target.clientWidth);
+                  setMobileActiveIndex(idx);
                 }
               }}
-              disabled={mobileActiveIndex === 0}
-              className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
-                mobileActiveIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-              }`}
-              aria-label="Previous image"
+              className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
             >
-              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
-            </button>
-
-            {/* Indicator Dots */}
-            <div className="flex items-center gap-2">
-              {mobileGalleryImages.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    if (mobileScrollRef.current) {
-                      mobileScrollRef.current.scrollTo({
-                        left: idx * mobileScrollRef.current.clientWidth,
-                        behavior: 'smooth'
-                      });
-                    }
-                  }}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    idx === mobileActiveIndex ? 'w-6 bg-black' : 'w-2 bg-black/25'
-                  }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
+              {mobileGalleryImages.map((imgUrl, idx) => {
+                return (
+                  <div key={idx} className="w-full shrink-0 snap-center">
+                    <img
+                      src={imgUrl}
+                      alt={`${product.title} view ${idx + 1}`}
+                      className="w-full h-[68vh] min-h-[460px] object-cover"
+                    />
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Right Curved Square Arrow Button */}
-            <button
-              type="button"
-              onClick={() => {
-                const nextIdx = Math.min(mobileGalleryImages.length - 1, mobileActiveIndex + 1);
-                if (mobileScrollRef.current) {
-                  mobileScrollRef.current.scrollTo({
-                    left: nextIdx * mobileScrollRef.current.clientWidth,
-                    behavior: 'smooth'
-                  });
-                }
-              }}
-              disabled={mobileActiveIndex === mobileGalleryImages.length - 1}
-              className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
-                mobileActiveIndex === mobileGalleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-              }`}
-              aria-label="Next image"
-            >
-              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-            </button>
-          </div>
-        </div>
-
-        {/* DESKTOP GALLERY: 60% Width (lg:col-span-6) -> 30% Stationary Main + 30% Vertical Scrolling Stack (hidden md:grid) */}
-        <div className="hidden md:grid lg:col-span-6 w-full grid-cols-2 gap-2.5 items-start">
-          {/* Sub-column 1: 30% Width - Completely Stationary Main Image */}
-          <div className="md:sticky md:top-24 w-full self-start">
-            <img
-              src={mainFixedImage}
-              alt={product.title}
-              className="w-full h-[calc(100vh-140px)] min-h-[580px] max-h-[900px] object-cover object-center rounded-[20px] bg-[#e8e5de]"
-            />
-          </div>
-
-          {/* Sub-column 2: 30% Width - Vertical Scrolling Secondary Stack */}
-          <div className="flex flex-col gap-2.5 w-full">
-            {secondaryImagesStack.map((imgUrl, idx) => {
-              const isPng = imgUrl.endsWith('.png');
-              return (
-                <img
-                  key={idx}
-                  src={imgUrl}
-                  alt={`${product.title} detail view ${idx + 1}`}
-                  className={`w-full h-auto rounded-[20px] bg-[#e8e5de] ${
-                    isPng ? 'object-contain p-4' : 'object-cover object-center'
-                  }`}
-                />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right Column: 40% Width (lg:col-span-4) - Product Details & Actions (with Mobile Side Padding) */}
-        <div className="lg:col-span-4 flex flex-col items-center text-center max-w-lg mx-auto w-full lg:sticky lg:top-28 self-start px-4 sm:px-6 md:px-0">
-          <div className="space-y-2 mb-5">
-            <p className="text-[#2040FF] font-headline text-sm font-bold tracking-wider uppercase mb-1">
-              {product.tagline || "YOU'RE GETTING WARMER"}
-            </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-playfair font-normal text-black leading-tight">
-              {product.title}
-            </h1>
-            <p className="text-2xl font-body-garamond font-bold mt-2 text-[#1b1c1c]">
-              Rs. {product.price}
-            </p>
-          </div>
-
-          <p className="text-gray-800 font-sans text-sm md:text-base leading-relaxed mb-8 text-justify">
-            {product.description}
-          </p>
-
-          {/* Sizes & Size Guide */}
-          <div className="space-y-3 w-full mb-8 text-left">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
-                SELECT SIZE
-              </span>
+            {/* Curved Square Arrow Bubble Controls & Indicators */}
+            <div className="flex items-center justify-between px-2 pt-1">
               <button
                 type="button"
-                onClick={() => setShowSizeGuideModal(true)}
-                className="text-[11px] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
+                onClick={() => {
+                  const nextIdx = Math.max(0, mobileActiveIndex - 1);
+                  if (mobileScrollRef.current) {
+                    mobileScrollRef.current.scrollTo({
+                      left: nextIdx * mobileScrollRef.current.clientWidth,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                disabled={mobileActiveIndex === 0}
+                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
+                  mobileActiveIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
+                }`}
+                aria-label="Previous image"
               >
-                SIZE GUIDE
+                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {mobileGalleryImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      if (mobileScrollRef.current) {
+                        mobileScrollRef.current.scrollTo({
+                          left: idx * mobileScrollRef.current.clientWidth,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      idx === mobileActiveIndex ? 'w-6 bg-black' : 'w-2 bg-black/25'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const nextIdx = Math.min(mobileGalleryImages.length - 1, mobileActiveIndex + 1);
+                  if (mobileScrollRef.current) {
+                    mobileScrollRef.current.scrollTo({
+                      left: nextIdx * mobileScrollRef.current.clientWidth,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                disabled={mobileActiveIndex === mobileGalleryImages.length - 1}
+                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
+                  mobileActiveIndex === mobileGalleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
+                }`}
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
               </button>
             </div>
-            <div className="flex gap-2.5 flex-wrap pt-1">
-              {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
-                const isAvailable = (product.sizes && product.sizes.length > 0) ? product.sizes.includes(size) : true;
-                const isSelected = selectedSize === size;
+          </div>
+
+          {/* DESKTOP GALLERY: 60% Width (lg:col-span-6) -> 30% Stationary Main + 30% Vertical Scrolling Stack (hidden md:grid) */}
+          <div className="hidden md:grid lg:col-span-6 w-full grid-cols-2 gap-1 items-start">
+            {/* Sub-column 1: 30% Width - Completely Stationary Main Image */}
+            <div className="md:sticky md:top-16 w-full self-start">
+              <img
+                src={mainFixedImage}
+                alt={product.title}
+                className="w-full h-[calc(100vh-80px)] object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
+              />
+            </div>
+
+            {/* Sub-column 2: 30% Width - Vertical Scrolling Secondary Stack */}
+            <div className="flex flex-col gap-1 w-full">
+              {secondaryImagesStack.map((imgUrl, idx) => {
                 return (
-                  <button
-                    key={size}
-                    disabled={!isAvailable}
-                    onClick={() => isAvailable && setSelectedSize(size)}
-                    className={`w-12 h-12 rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
-                      !isAvailable
-                        ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
-                        : isSelected
-                        ? 'bg-black text-white shadow-md scale-[1.03]'
-                        : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
-                    }`}
-                  >
-                    {size}
-                  </button>
+                  <img
+                    key={idx}
+                    src={imgUrl}
+                    alt={`${product.title} detail view ${idx + 1}`}
+                    className="w-full h-auto object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
+                  />
                 );
               })}
             </div>
           </div>
 
-          {/* Colors */}
-          {product.colors && product.colors.length > 0 && (
-            <div className="space-y-3 w-full mb-8 text-left">
-              <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2.5">
-                COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
-              </span>
-              <div className="flex gap-2.5 flex-wrap pt-1">
-                {product.colors.map((color) => {
-                  const isSelected = selectedColor === color;
-                  const colorHex = getColorHex(color);
+          {/* Right Column: 40% Width (lg:col-span-4) - Product Details & Actions (with Mobile Side Padding) */}
+          <div className={`lg:col-span-4 flex flex-col items-center text-center max-w-lg mx-auto w-full lg:sticky self-start px-4 sm:px-6 md:px-0 scrollbar-none transition-all duration-300 ${
+            isTallViewport
+              ? 'lg:top-28 lg:pt-16 lg:max-h-none'
+              : 'lg:top-14 xl:top-16 lg:pt-0 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto'
+          }`}>
+            <div className="space-y-1 2xl:space-y-2 mb-3 lg:mb-4 2xl:mb-7">
+              <p className="text-[#2040FF] font-headline text-xs 2xl:text-sm font-bold tracking-wider uppercase mb-0.5">
+                {product.tagline || "YOU'RE GETTING WARMER"}
+              </p>
+              <h1 className="text-3xl sm:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-playfair font-normal text-black leading-tight">
+                {product.title}
+              </h1>
+              <p className="text-xl sm:text-2xl 2xl:text-3xl font-body-garamond font-bold mt-1 2xl:mt-2 text-[#1b1c1c]">
+                Rs. {product.price}
+              </p>
+            </div>
+
+            <p className="text-gray-800 font-sans text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base leading-relaxed mb-4 lg:mb-5 2xl:mb-8 text-justify">
+              {product.description}
+            </p>
+
+            {/* Sizes & Size Guide */}
+            <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-4 lg:mb-5 2xl:mb-8 text-left">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
+                  SELECT SIZE
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowSizeGuideModal(true)}
+                  className="text-[11px] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
+                >
+                  SIZE GUIDE
+                </button>
+              </div>
+              <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
+                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
+                  const isAvailable = (product.sizes && product.sizes.length > 0) ? product.sizes.includes(size) : true;
+                  const isSelected = selectedSize === size;
                   return (
                     <button
-                      key={color}
-                      onClick={() => {
-                        setSelectedColor(color);
-                        setMobileActiveIndex(0);
-                        if (mobileScrollRef.current) {
-                          mobileScrollRef.current.scrollTo({ left: 0 });
-                        }
-                      }}
-                      className={`flex items-center gap-2.5 px-4 py-2.5 rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${
-                        isSelected
-                          ? 'border-black bg-black text-white shadow-md scale-[1.03]'
-                          : 'border-black/10 bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                      key={size}
+                      disabled={!isAvailable}
+                      onClick={() => isAvailable && setSelectedSize(size)}
+                      className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                        !isAvailable
+                          ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
+                          : isSelected
+                          ? 'bg-black text-white shadow-md scale-[1.03]'
+                          : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
                       }`}
-                      title={color}
-                      aria-label={`Select ${color}`}
                     >
-                      <span
-                        className={`w-4 h-4 rounded-full border ${
-                          isSelected ? 'border-white/40' : 'border-black/10'
-                        }`}
-                        style={{ backgroundColor: colorHex }}
-                      />
-                      <span>{color.toUpperCase()}</span>
+                      {size}
                     </button>
                   );
                 })}
               </div>
             </div>
-          )}
 
-          {/* Add to Bag Button */}
-          <div className="w-full mb-8">
-            <button
-              onClick={handleAddToCart}
-              style={{ overflow: 'visible' }}
-              className={`w-full border-2 border-black rounded-full py-4 text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md relative ${
-                added ? 'bg-black text-white' : 'bg-transparent'
-              } ${isBouncing ? 'animate-bounce-click' : ''}`}
-            >
-              {/* Confetti Particles */}
-              {particles.map((p) => (
-                <span
-                  key={p.id}
-                  className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    backgroundColor: p.color,
-                    '--tx': `${p.x}px`,
-                    '--ty': `${p.y}px`,
-                    '--scale': p.scale,
-                    animationDelay: `${p.delay}s`,
-                  } as React.CSSProperties}
-                />
-              ))}
-
-              {/* Text Slide transition container */}
-              <div className="relative h-6 overflow-hidden w-full flex justify-center items-center pointer-events-none">
-                <span
-                  className={`flex items-center justify-center gap-2 transition-all duration-300 absolute ${
-                    added ? 'opacity-0 -translate-y-6' : 'opacity-100 translate-y-0'
-                  }`}
-                >
-                  ADD TO BAG
+            {/* Colors */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-4 lg:mb-5 2xl:mb-8 text-left">
+                <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2 2xl:mb-2.5">
+                  COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
                 </span>
-                <span
-                  className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${
-                    added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
+                  {product.colors.map((color) => {
+                    const isSelected = selectedColor === color;
+                    const colorHex = getColorHex(color);
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          setSelectedColor(color);
+                          setMobileActiveIndex(0);
+                          if (mobileScrollRef.current) {
+                            mobileScrollRef.current.scrollTo({ left: 0 });
+                          }
+                        }}
+                        className={`flex items-center gap-2 2xl:gap-2.5 px-3.5 py-2 2xl:px-4 2xl:py-2.5 rounded-[14px] 2xl:rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${
+                          isSelected
+                            ? 'border-black bg-black text-white shadow-md scale-[1.03]'
+                            : 'border-black/10 bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                        }`}
+                        title={color}
+                        aria-label={`Select ${color}`}
+                      >
+                        <span
+                          className={`w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full border ${
+                            isSelected ? 'border-white/40' : 'border-black/10'
+                          }`}
+                          style={{ backgroundColor: colorHex }}
+                        />
+                        <span>{color.toUpperCase()}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Add to Bag & Community Like Buttons */}
+            <div className="w-full flex flex-col sm:flex-row gap-3 mb-4 lg:mb-6 2xl:mb-8">
+              <button
+                onClick={handleAddToCart}
+                style={{ overflow: 'visible' }}
+                className={`flex-1 border-2 border-black rounded-full py-3.5 2xl:py-4 text-sm sm:text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md relative ${
+                  added ? 'bg-black text-white' : 'bg-transparent'
+                } ${isBouncing ? 'animate-bounce-click' : ''}`}
+              >
+                {/* Confetti Particles */}
+                {particles.map((p) => (
+                  <span
+                    key={p.id}
+                    className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
+                    style={{
+                      left: '50%',
+                      top: '50%',
+                      backgroundColor: p.color,
+                      '--tx': `${p.x}px`,
+                      '--ty': `${p.y}px`,
+                      '--scale': p.scale,
+                      animationDelay: `${p.delay}s`,
+                    } as React.CSSProperties}
+                  />
+                ))}
+                {/* Text Slide transition container */}
+                <div className="relative h-6 overflow-hidden w-full flex justify-center items-center pointer-events-none">
+                  <span
+                    className={`flex items-center justify-center gap-2 transition-all duration-300 absolute ${
+                      added ? 'opacity-0 -translate-y-6' : 'opacity-100 translate-y-0'
+                    }`}
+                  >
+                    ADD TO BAG
+                  </span>
+                  <span
+                    className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${
+                      added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                    }`}
+                  >
+                    <Check className="w-5 h-5 stroke-[2.5]" />
+                    <span className="text-white">ADDED TO BAG</span>
+                  </span>
+                </div>
+              </button>
+
+              {/* Community Like Button */}
+              {onToggleWishlist && (
+                <button
+                  type="button"
+                  onClick={() => onToggleWishlist(product.id)}
+                  className={`px-4 sm:px-5 2xl:px-6 py-3.5 2xl:py-4 rounded-full border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer shadow-sm shrink-0 ${
+                    isProductLiked
+                      ? 'border-rose-500 bg-rose-50 text-rose-600 shadow-md'
+                      : 'border-black/20 bg-white text-black hover:border-rose-500 hover:text-rose-600'
                   }`}
+                  title={isProductLiked ? 'Liked by you! Click to unlike' : 'Like this drop'}
                 >
-                  <Check className="w-5 h-5 stroke-[2.5]" />
-                  <span className="text-white">ADDED TO BAG</span>
+                  <Heart className={`w-4 h-4 transition-transform duration-300 ${isProductLiked ? 'fill-rose-500 text-rose-500 scale-110' : 'text-black'}`} />
+                  <span>{isProductLiked ? 'LIKED' : 'LIKE DROP'}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-black/5 text-[11px] font-mono font-bold">
+                    {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Spec Meta */}
+            <div className="w-full pt-5 2xl:pt-8 border-t border-gray-300">
+              <div className="text-[11px] md:text-[12px] text-gray-700 font-sans uppercase tracking-[0.08em] space-y-1.5 2xl:space-y-2 font-bold text-left">
+                {product.material && <p>MATERIAL: {product.material}</p>}
+                <p>COLOR: {selectedColor || product.color || 'BLACK'}</p>
+                {product.origin && <p>ORIGIN: {product.origin}</p>}
+                <p>WASH CARE: REVERSE WASH ONLY</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Middle Section: Full-Width Pitch Black Reviews (Straight Edges, No Curved Borders) */}
+      <div className="w-full bg-[#000000] text-white border-y border-white/10 pt-10 pb-3 sm:pt-14 sm:pb-4 mt-0 mb-0">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+          <ProductReviewsSection product={product} />
+        </div>
+      </div>
+
+      {/* Bottom Section: Scroll-Driven Pinned Horizontal Track for YOU MAY ALSO LIKE */}
+      <div ref={relatedSectionRef} className="w-full h-[180vh] relative bg-[#fbf9f9]">
+        <div className="sticky top-20 w-full pt-0 pb-4 overflow-hidden bg-[#fbf9f9]">
+          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
+            <div className="border-b border-gray-200 pb-4">
+              {/* Eyebrow */}
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
+                <span className="text-xs uppercase tracking-[0.3em] text-[#8A8D95] font-semibold font-mono">
+                  CURATED DROPS
                 </span>
               </div>
-            </button>
-          </div>
 
-          {/* Spec Meta */}
-          <div className="w-full pt-6 border-t border-gray-300">
-            <div className="text-[11px] md:text-[12px] text-gray-700 font-sans uppercase tracking-[0.08em] space-y-1.5 font-bold text-left">
-              {product.material && <p>MATERIAL: {product.material}</p>}
-              <p>COLOR: {selectedColor || product.color || 'BLACK'}</p>
-              {product.origin && <p>ORIGIN: {product.origin}</p>}
-              <p>WASH CARE: REVERSE WASH ONLY</p>
+              {/* Main Headline with Electric Blue Cursive Script "Like" */}
+              <div className="flex items-baseline justify-between flex-wrap gap-4">
+                <h2 className="text-3xl sm:text-5xl font-headline uppercase font-bold text-black tracking-tight flex items-baseline gap-3">
+                  <span>YOU MAY ALSO</span>
+                  <span className="text-[#0B3DFF] font-script text-4xl sm:text-6xl capitalize font-normal">
+                    Like
+                  </span>
+                </h2>
+                <span className="text-xs font-sans text-gray-500 uppercase tracking-widest hidden sm:inline-block font-semibold">
+                  SCROLL DOWN TO EXPLORE →
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full overflow-hidden pt-2 pb-4">
+              <div
+                ref={relatedTrackRef}
+                className="flex gap-3.5 transition-transform duration-75 ease-out will-change-transform"
+              >
+                {relatedProducts.map((rel) => {
+                  const isAdded = justAddedId === rel.id;
+
+                  return (
+                    <div
+                      key={rel.id}
+                      className="w-[78vw] sm:w-[44vw] md:w-[calc((100%-2.625rem)/4)] lg:w-[calc((100%-2.625rem)/4)] shrink-0"
+                    >
+                      <RelatedProductCard
+                        product={rel}
+                        wishlist={wishlist}
+                        onToggleWishlist={onToggleWishlist}
+                        onSelect={() => {
+                          onSelectProduct(rel);
+                          window.scrollTo(0, 0);
+                          if ((window as any).lenis) {
+                            (window as any).lenis.scrollTo(0, { immediate: true });
+                          }
+                        }}
+                        onAddToCart={(e, size, color) => handleRelatedPlusClick(e, rel, size, color)}
+                        isAdded={isAdded}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Related Products Section */}
-      <section className="space-y-8 pt-12 border-t border-gray-200">
-        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-          <h2 className="text-lg font-sans font-bold tracking-wider uppercase text-black">
-            YOU MAY ALSO LIKE
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {relatedProducts.map((rel) => {
-            const isAdded = justAddedId === rel.id;
-
-            return (
-              <div
-                key={rel.id}
-                onClick={() => {
-                  onSelectProduct(rel);
-                  window.scrollTo(0, 0);
-                  if ((window as any).lenis) {
-                    (window as any).lenis.scrollTo(0, { immediate: true });
-                  }
-                }}
-                className="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1"
-              >
-                {/* Curved Flashcard Image Frame */}
-                <div className="relative aspect-[3/4] w-full rounded-[20px] sm:rounded-[24px] overflow-hidden bg-[#e8e5de] border border-black/5 shadow-sm">
-                  <img
-                    src={rel.image}
-                    alt={rel.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                  {/* Carousel Indicator Dots in Bottom Center */}
-                  <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 pointer-events-none">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 shadow-sm" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 shadow-sm" />
-                  </div>
-                </div>
-
-                {/* Card Footer: Title & Price + Plus / Added Button */}
-                <div className="flex items-start justify-between pt-3.5 px-1">
-                  <div className="pr-2">
-                    <h4 className="font-sans font-medium text-[14px] sm:text-[15px] text-[#1a1a1a] tracking-tight leading-snug group-hover:text-black">
-                      {rel.title}
-                    </h4>
-                    <p className="font-sans text-[13px] sm:text-[14px] text-[#333333] mt-1 font-normal tracking-tight">
-                      Rs. {rel.price.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => handleRelatedPlusClick(e, rel)}
-                    className={`w-7 h-7 shrink-0 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer mt-0.5 ${
-                      isAdded
-                        ? 'bg-black text-white scale-110'
-                        : 'text-[#111111] hover:bg-black/10 hover:scale-105'
-                    }`}
-                    title={isAdded ? 'Added to cart' : 'Add to cart'}
-                    aria-label="Add to cart"
-                  >
-                    {isAdded ? (
-                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                    ) : (
-                      <Plus className="w-4 h-4 stroke-[1.5]" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      </div>
 
       {/* Size Guide Modal Overlay */}
       {showSizeGuideModal && (

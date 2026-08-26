@@ -3,6 +3,29 @@ import Matter from 'matter-js';
 import { TEX } from '../data/statementTextures';
 import './StatementParticlesSection.css';
 
+let cachedImages: HTMLImageElement[] | null = null;
+let decodePromise: Promise<HTMLImageElement[]> | null = null;
+
+function getCachedImages(): Promise<HTMLImageElement[]> {
+  if (cachedImages) return Promise.resolve(cachedImages);
+  if (decodePromise) return decodePromise;
+
+  const images = TEX.map(src => {
+    const img = new Image();
+    img.src = src;
+    return img;
+  });
+
+  decodePromise = Promise.all(
+    images.map(i => (i.decode ? i.decode().catch(() => {}) : Promise.resolve()))
+  ).then(() => {
+    cachedImages = images;
+    return images;
+  });
+
+  return decodePromise;
+}
+
 export const StatementParticlesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,6 +35,7 @@ export const StatementParticlesSection: React.FC = () => {
   const communityRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let isMounted = true;
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     const hint = hintRef.current;
@@ -24,6 +48,7 @@ export const StatementParticlesSection: React.FC = () => {
     const words = [...section.querySelectorAll('.word')];
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
+    const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     function litAll() {
       words.forEach(w => w.classList.add('lit'));
@@ -87,15 +112,16 @@ export const StatementParticlesSection: React.FC = () => {
 
     const hintTimeout = setTimeout(() => hint.classList.add('is-hidden'), 5200);
 
-    const images = TEX.map(src => {
-      const img = new Image();
-      img.src = src;
-      return img;
-    });
+    let images: HTMLImageElement[] = [];
 
-    Promise.all(images.map(i => (i.decode ? i.decode().catch(() => {}) : Promise.resolve()))).then(() => {
+    getCachedImages().then((imgs) => {
+      if (!isMounted) return;
+      images = imgs;
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(build);
+        document.fonts.ready.then(() => {
+          if (!isMounted) return;
+          build();
+        });
       } else {
         build();
       }
@@ -118,6 +144,7 @@ export const StatementParticlesSection: React.FC = () => {
     }
 
     function build() {
+      if (!isMounted) return;
       teardown();
 
       const rect = section!.getBoundingClientRect();
@@ -132,8 +159,8 @@ export const StatementParticlesSection: React.FC = () => {
 
       engine = Engine.create({ enableSleeping: true });
       engine.gravity.y = 0.62;
-      engine.positionIterations = 8;
-      engine.velocityIterations = 8;
+      engine.positionIterations = 6;
+      engine.velocityIterations = 6;
 
       const t = 200;
       walls = [
@@ -201,7 +228,7 @@ export const StatementParticlesSection: React.FC = () => {
       if (raf) cancelAnimationFrame(raf);
       if (runner) Runner.stop(runner);
       if (engine) {
-        Events.off(engine);
+        Events.off(engine, 'beforeUpdate', step);
         Composite.clear(engine.world, false);
         Engine.clear(engine);
       }
@@ -280,7 +307,13 @@ export const StatementParticlesSection: React.FC = () => {
     }
 
     function draw() {
-      if (!ctx || !canvas) return;
+      if (!isMounted) return;
+
+      if (!ctx || !canvas) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.clearRect(0, 0, W, H);
 
       if (!reduced) {
@@ -365,7 +398,7 @@ export const StatementParticlesSection: React.FC = () => {
     const onResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        if (engine) build();
+        if (isMounted && engine) build();
       }, 220);
     };
     window.addEventListener('resize', onResize);
@@ -375,12 +408,18 @@ export const StatementParticlesSection: React.FC = () => {
       observer = new IntersectionObserver(
         entries =>
           entries.forEach(entry => {
-            if (!runner) return;
-            runner.enabled = entry.isIntersecting;
-            if (entry.isIntersecting && !raf) draw();
-            if (!entry.isIntersecting && raf) {
-              cancelAnimationFrame(raf);
-              raf = null;
+            if (!isMounted || !runner || !engine) return;
+            if (entry.isIntersecting) {
+              runner.enabled = true;
+              Runner.run(runner, engine);
+              if (!raf) draw();
+            } else {
+              runner.enabled = false;
+              Runner.stop(runner);
+              if (raf) {
+                cancelAnimationFrame(raf);
+                raf = null;
+              }
             }
           }),
         { threshold: 0.02 }
@@ -394,6 +433,7 @@ export const StatementParticlesSection: React.FC = () => {
 
     // Cleanup
     return () => {
+      isMounted = false;
       clearTimeout(hintTimeout);
       clearTimeout(resizeTimeout);
       if (scrollListener) window.removeEventListener('scroll', scrollListener);

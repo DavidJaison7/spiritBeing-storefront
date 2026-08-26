@@ -17,6 +17,10 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+html, body {
+  overscroll-behavior-x: none !important;
+}
+
 @layer base {
   body {
     font-family: 'Hanken Grotesk', 'Inter', sans-serif;
@@ -47,6 +51,10 @@ html.lenis, html.lenis body {
 
   .font-space {
     font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+  }
+
+  .font-space-mono {
+    font-family: 'Space Mono', monospace;
   }
 }
 

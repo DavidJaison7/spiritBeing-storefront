@@ -12,7 +12,8 @@
   font-family: 'Space Grotesk', sans-serif;
   position: relative;
   overflow: hidden;
-  padding-bottom: 8vh;
+  padding-bottom: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   box-sizing: border-box;
 }
 
@@ -47,7 +48,7 @@
   display: grid;
   grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr);
   gap: 6vw;
-  padding: 8vh 6vw 10vh;
+  padding: 8vh 6vw 4vh;
   align-items: start;
 }
 
@@ -112,6 +113,7 @@
 
 /* right: story copy */
 .sb-our-story .copy {
+  grid-column: 2;
   font-family: 'Space Mono', monospace;
   font-size: 15px;
   line-height: 2;
@@ -227,13 +229,14 @@
   .sb-our-story .story-grid {
     grid-template-columns: 1fr;
     gap: 8vh;
-    padding: 4vh 6vw 14vh;
+    padding: 4vh 6vw 4vh;
   }
   .sb-our-story .follow {
     position: relative;
     top: auto;
   }
   .sb-our-story .copy {
+    grid-column: 1;
     font-size: 13px;
     line-height: 1.95;
   }

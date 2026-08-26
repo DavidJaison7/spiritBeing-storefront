@@ -3,31 +3,36 @@ import { Camera, Briefcase, Globe, ArrowUpRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-[#fbf9f9] text-black border-t border-black/10 relative z-10 overflow-hidden pt-8">
+    <footer className="w-full bg-[#fbf9f9] text-black relative z-10 overflow-hidden pt-10">
       {/* Blue Marquee Ticker */}
-      <div className="w-full overflow-hidden bg-[#f5f3f3] text-[#2040FF] py-3.5 border-t border-b border-black/10 whitespace-nowrap">
-        <div className="animate-ticker text-xs font-headline font-bold tracking-widest uppercase">
+      <div className="w-full overflow-hidden bg-transparent text-[#2040FF] pb-8 whitespace-nowrap">
+        <div className="animate-ticker text-sm sm:text-base font-space-mono font-bold tracking-[0.2em] uppercase leading-none">
           <div className="inline-flex items-center gap-12 px-6">
             <span>24/7 ONLINE STORE • SHIPPING ACROSS INDIA</span>
-            <span>•</span>
+            <span></span>
             <span>SPIRITBEING • CHRISTIAN STREETWEAR & DROP SHOULDER TEES</span>
-            <span>•</span>
+            <span></span>
             <span>DESIGNED FOR THE CHOSEN ONES • EST. 2026 INDIA</span>
-            <span>•</span>
+            <span></span>
 
             {/* Repeat for continuous loop */}
             <span>24/7 ONLINE STORE • SHIPPING ACROSS INDIA</span>
-            <span>•</span>
+            <span></span>
             <span>SPIRITBEING • CHRISTIAN STREETWEAR & DROP SHOULDER TEES</span>
-            <span>•</span>
+            <span></span>
             <span>DESIGNED FOR THE CHOSEN ONES • EST. 2026 INDIA</span>
-            <span>•</span>
+            <span></span>
           </div>
         </div>
       </div>
 
+      {/* Horizontal divider line aligned with footer padding */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 pb-8">
+        <div className="border-t border-black/10" />
+      </div>
+
       {/* Links & Info Grid */}
-      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 py-10 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8 items-center">
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-0 pb-10 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8 items-center">
         
         {/* Left: Connect & Support Links */}
         <div className="flex gap-16 md:gap-24">
@@ -81,8 +86,13 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
+      {/* Horizontal divider line above Giant Wordmark (Exact same length max-w-[1600px] px-6 md:px-12) */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12">
+        <div className="border-t border-black/10" />
+      </div>
+
       {/* Giant Wordmark */}
-      <div className="w-full text-center relative flex items-center justify-center pt-4 pb-6 overflow-hidden border-t border-black/10 select-none">
+      <div className="w-full text-center relative flex items-center justify-center py-4 md:py-6 pb-6 md:pb-8 overflow-hidden select-none">
         <h2 className="text-[17vw] leading-[0.75] font-headline font-black tracking-tighter text-black uppercase">
           SPIRITBEING
         </h2>
