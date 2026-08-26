@@ -301,10 +301,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         {/* Score Card */}
         <div className="md:col-span-5 flex flex-col justify-center pr-0 md:pr-6 md:border-r md:border-white/10">
           <div className="flex items-baseline gap-3">
-            <span className="font-headline text-6xl sm:text-7xl font-bold text-white tracking-tighter">
+            <span className="font-headline text-7xl sm:text-8xl lg:text-[110px] font-bold text-white tracking-tighter leading-none">
               {avgScore}
             </span>
-            <span className="text-xs text-[#5B5E66] uppercase tracking-widest">OUT OF 5</span>
+            <span className="text-xs sm:text-sm text-[#5B5E66] font-mono tracking-widest">Out of 5</span>
           </div>
 
           <div className="flex items-center gap-1.5 mt-3">

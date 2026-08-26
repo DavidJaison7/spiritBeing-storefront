@@ -8,6 +8,7 @@ interface CartDrawerProps {
   items: CartItem[];
   products?: Product[];
   onSelectProduct?: (product: Product) => void;
+  onShopNow?: () => void;
   onUpdateQuantity: (productId: string, size: string, color: string | undefined, delta: number) => void;
   onRemoveItem: (productId: string, size: string, color: string | undefined) => void;
   onProceedToCheckout: () => void;
@@ -19,6 +20,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   items,
   products = [],
   onSelectProduct,
+  onShopNow,
   onUpdateQuantity,
   onRemoveItem,
   onProceedToCheckout,
@@ -88,7 +90,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         </div>
 
         {/* Item List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 overscroll-contain flex flex-col justify-between" data-lenis-prevent>
+        <div className="flex-1 overflow-y-auto p-6 space-y-3.5 overscroll-contain flex flex-col justify-start" data-lenis-prevent>
           {items.length === 0 ? (
             <div className="h-full flex flex-col justify-between pt-4 pb-2">
               <div className="text-left space-y-2">
@@ -99,7 +101,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   Let's get started
                 </p>
                 <button
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    if (onShopNow) {
+                      onShopNow();
+                    } else {
+                      setTimeout(() => {
+                        const el = document.getElementById('products-grid') || document.getElementById('product-grid');
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth' });
+                          if ((window as any).lenis) {
+                            (window as any).lenis.scrollTo(el);
+                          }
+                        }
+                      }, 100);
+                    }
+                  }}
                   className="mt-6 inline-flex items-center gap-1.5 text-sm font-sans font-bold text-black border-b-2 border-black pb-0.5 hover:opacity-70 transition-all cursor-pointer"
                 >
                   <span>Shop now</span>
@@ -163,19 +180,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
               </div>
 
-              {items.map((item) => (
-                <div
-                  key={`${item.product.id}-${item.selectedSize}-${item.selectedColor || 'default'}`}
-                  className="flex gap-4 p-4 rounded-2xl border border-black/6 bg-white shadow-sm hover:shadow-md transition-all relative group"
-                >
-                  {/* Image Thumbnail */}
-                  <div className="w-20 h-24 shrink-0 rounded-xl bg-[#f5f3ef] border border-black/5 overflow-hidden flex items-center justify-center p-1.5">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.title}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
+              {items.map((item) => {
+                const displayImage =
+                  item.selectedColor &&
+                  item.product.colorImageMap &&
+                  item.product.colorImageMap[item.selectedColor]?.[0]
+                    ? item.product.colorImageMap[item.selectedColor][0]
+                    : item.product.image;
+
+                return (
+                  <div
+                    key={`${item.product.id}-${item.selectedSize}-${item.selectedColor || 'default'}`}
+                    className="flex gap-4 p-4 rounded-2xl border border-black/6 bg-white shadow-sm hover:shadow-md transition-all relative group"
+                  >
+                    {/* Image Thumbnail */}
+                    <div className="w-20 h-24 shrink-0 rounded-xl bg-[#f5f3ef] border border-black/5 overflow-hidden flex items-center justify-center p-1.5">
+                      <img
+                        src={displayImage}
+                        alt={item.product.title}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
 
                   {/* Details */}
                   <div className="flex-1 flex flex-col justify-between">
@@ -240,7 +265,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </>
           )}
         </div>

@@ -339,6 +339,20 @@ export default function App() {
           setSelectedProduct(p);
           setIsCartOpen(false);
         }}
+        onShopNow={() => {
+          setSelectedProduct(null);
+          setIsOurStoryView(false);
+          setIsCartOpen(false);
+          setTimeout(() => {
+            const el = document.getElementById('products-grid') || document.getElementById('product-grid');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+              if ((window as any).lenis) {
+                (window as any).lenis.scrollTo(el);
+              }
+            }
+          }, 150);
+        }}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={async () => {
