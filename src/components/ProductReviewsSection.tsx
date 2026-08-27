@@ -339,8 +339,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               </div>
 
               <p className="text-xs text-[#8A8D95] mt-4 leading-relaxed">
-                <b className="text-white font-semibold">{totalCount}</b> spirits rated this drop<br />
-                <span className="text-[#5B5E66]">{reviews.filter((r) => r.body).length} left a written review</span>
+                <b className="text-white font-semibold">{totalCount}</b> spirits rated this drop
               </p>
 
               <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B3DFF]/40 bg-[#0B3DFF]/10 text-[#9FB3FF] text-[10px] uppercase tracking-widest self-start">

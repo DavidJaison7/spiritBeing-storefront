@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, RefreshCw, Github, ArrowLeft, User } from 'lucide-react';
 import { ShopifyConfig } from '../types';
 import { CollectionsMegaMenu } from './CollectionsMegaMenu';
+import { ShopMegaMenu } from './ShopMegaMenu';
 
 interface HeaderProps {
   cartCount: number;
@@ -35,6 +36,10 @@ export const Header: React.FC<HeaderProps> = ({
   const openTimer = useRef<NodeJS.Timeout | null>(null);
   const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
+  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
+  const shopOpenTimer = useRef<NodeJS.Timeout | null>(null);
+  const shopCloseTimer = useRef<NodeJS.Timeout | null>(null);
+
   const handleMegaMenuEnter = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     if (isMegaMenuOpen) return;
@@ -45,6 +50,18 @@ export const Header: React.FC<HeaderProps> = ({
     if (openTimer.current) clearTimeout(openTimer.current);
     if (!isMegaMenuOpen) return;
     closeTimer.current = setTimeout(() => setIsMegaMenuOpen(false), 220);
+  };
+
+  const handleShopMenuEnter = () => {
+    if (shopCloseTimer.current) clearTimeout(shopCloseTimer.current);
+    if (isShopMenuOpen) return;
+    shopOpenTimer.current = setTimeout(() => setIsShopMenuOpen(true), 70);
+  };
+
+  const handleShopMenuLeave = () => {
+    if (shopOpenTimer.current) clearTimeout(shopOpenTimer.current);
+    if (!isShopMenuOpen) return;
+    shopCloseTimer.current = setTimeout(() => setIsShopMenuOpen(false), 220);
   };
 
   useEffect(() => {
@@ -74,12 +91,12 @@ export const Header: React.FC<HeaderProps> = ({
   const isOurStoryView = currentView === 'our_story';
   const isBlogView = currentView === 'blog';
   
-  // Force white header if mega menu is open
-  const showHeaderStyle = isMegaMenuOpen || ((currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
+  // Force white header if either mega menu is open
+  const showHeaderStyle = isMegaMenuOpen || isShopMenuOpen || ((currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
   const showLogo = showHeaderStyle || isOurStoryView || isBlogView;
   
   // Dynamic classes for header visibility
-  const headerBg = isMegaMenuOpen 
+  const headerBg = (isMegaMenuOpen || isShopMenuOpen)
     ? 'bg-[#fbf9f9]' // Remove drop shadow so it blends perfectly with the mega menu
     : (isOurStoryView || isBlogView)
     ? 'bg-[#080808]/90 backdrop-blur-md border-b border-white/10 shadow-md'
@@ -87,11 +104,11 @@ export const Header: React.FC<HeaderProps> = ({
     ? 'bg-[#fbf9f9] drop-shadow-sm'
     : 'bg-transparent';
     
-  const textColor = isMegaMenuOpen 
+  const textColor = (isMegaMenuOpen || isShopMenuOpen)
     ? 'text-black'
     : (isOurStoryView || isBlogView) ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
 
-  const cornerColor = isMegaMenuOpen
+  const cornerColor = (isMegaMenuOpen || isShopMenuOpen)
     ? 'text-transparent' // Hide inverted corners when mega menu drops down to prevent them cutting into the panel
     : (isOurStoryView || isBlogView)
     ? 'text-[#080808]/90'
@@ -114,15 +131,16 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           <>
             <button
-              onClick={() => {
-                const el = document.getElementById('products-grid');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                }
+              className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
+              onMouseEnter={handleShopMenuEnter}
+              onMouseLeave={handleShopMenuLeave}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsShopMenuOpen(!isShopMenuOpen);
               }}
-              className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer"
             >
               SHOP
+              <span className={`text-[9px] transition-transform duration-300 ${isShopMenuOpen ? 'rotate-180' : ''}`}>▼</span>
             </button>
             <button
               className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
@@ -282,9 +300,20 @@ export const Header: React.FC<HeaderProps> = ({
         onMouseEnter={handleMegaMenuEnter}
         onMouseLeave={handleMegaMenuLeave}
       />
+      <ShopMegaMenu
+        isOpen={isShopMenuOpen}
+        onClose={() => setIsShopMenuOpen(false)}
+        onMouseEnter={handleShopMenuEnter}
+        onMouseLeave={handleShopMenuLeave}
+        onNavigateShop={() => {
+          setIsShopMenuOpen(false);
+          const el = document.getElementById('products-grid');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      />
     </header>
     </>
   );
 };
-
-

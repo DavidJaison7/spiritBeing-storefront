@@ -123,7 +123,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
         <nav className="text-[11px] tracking-[0.26em] uppercase text-gray-400 flex items-center gap-2 mb-6">
           <button onClick={onClose} className="hover:text-black transition-colors">Home</button>
           <span>/</span>
-          <span className="text-gray-800">Blogs / News</span>
+          <span className="text-gray-800">Blogs</span>
         </nav>
         
         <h1 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal mt-6">
