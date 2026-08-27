@@ -73,18 +73,27 @@ export const Header: React.FC<HeaderProps> = ({
 
   const isOurStoryView = currentView === 'our_story';
   const isBlogView = currentView === 'blog';
-  const showHeaderStyle = (currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView;
+  
+  // Force white header if mega menu is open
+  const showHeaderStyle = isMegaMenuOpen || ((currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
   const showLogo = showHeaderStyle || isOurStoryView || isBlogView;
   
   // Dynamic classes for header visibility
-  const headerBg = (isOurStoryView || isBlogView)
+  const headerBg = isMegaMenuOpen 
+    ? 'bg-[#fbf9f9]' // Remove drop shadow so it blends perfectly with the mega menu
+    : (isOurStoryView || isBlogView)
     ? 'bg-[#080808]/90 backdrop-blur-md border-b border-white/10 shadow-md'
     : showHeaderStyle
     ? 'bg-[#fbf9f9] drop-shadow-sm'
     : 'bg-transparent';
-  const textColor = (isOurStoryView || isBlogView) ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
+    
+  const textColor = isMegaMenuOpen 
+    ? 'text-black'
+    : (isOurStoryView || isBlogView) ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
 
-  const cornerColor = (isOurStoryView || isBlogView)
+  const cornerColor = isMegaMenuOpen
+    ? 'text-transparent' // Hide inverted corners when mega menu drops down to prevent them cutting into the panel
+    : (isOurStoryView || isBlogView)
     ? 'text-[#080808]/90'
     : showHeaderStyle
     ? 'text-[#fbf9f9]'
@@ -92,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-    <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-500 ${headerBg} ${textColor}`}>
+    <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${headerBg} ${textColor}`}>
       {/* Left nav - SHOP or BACK TO STORE */}
       <div className="flex items-center gap-6 w-1/3">
         {currentView === 'product_detail' || currentView === 'our_story' || currentView === 'blog' ? (
@@ -188,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
             style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.08))' }}
           >
             <div>
-              <h3 className="font-playfair text-lg font-medium text-black">Welcome</h3>
+              <h3 className="font-sans text-lg font-bold text-black uppercase tracking-wide">Welcome</h3>
               <p className="font-sans text-[11px] text-gray-500 mt-1 leading-normal">
                 To access account and manage orders
               </p>

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Rouge+Script&family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
-
 .sb-our-story {
   --black: #080808;
   --gray: #8A8A8A;
@@ -9,7 +7,7 @@
   --blue: #074DFF;
   background: var(--black);
   color: var(--warm);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Archivo', sans-serif;
   position: relative;
   overflow: hidden;
   padding-bottom: 0;
@@ -35,7 +33,7 @@
 
 .sb-our-story .title .script {
   display: block;
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Yellowtail', cursive;
   text-transform: none;
   color: var(--blue);
   font-size: .42em;
@@ -93,7 +91,7 @@
 }
 
 .sb-our-story .follow a .arr {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: .7em;
   color: var(--blue);
   opacity: 0;
@@ -114,7 +112,7 @@
 /* right: story copy */
 .sb-our-story .copy {
   grid-column: 2;
-  font-family: 'Space Mono', monospace;
+  font-family: 'Archivo', sans-serif;
   font-size: 15px;
   line-height: 2;
   color: #c9c7c1;
@@ -133,7 +131,7 @@
 }
 
 .sb-our-story .copy .lede em {
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Yellowtail', cursive;
   font-style: normal;
   text-transform: none;
   color: var(--blue);

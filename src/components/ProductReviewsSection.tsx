@@ -16,6 +16,17 @@ export interface ReviewItem {
   userHelpful?: boolean;
 }
 
+const getStarLabel = (stars: number) => {
+  switch (stars) {
+    case 5: return 'Absolutely Holy Grail';
+    case 4: return 'REALLY GREAT';
+    case 3: return 'DECENT';
+    case 2: return 'Not my Vibe';
+    case 1: return 'Fell Short';
+    default: return `${stars} STARS`;
+  }
+};
+
 interface ProductReviewsSectionProps {
   product: Product;
 }
@@ -276,87 +287,103 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
   };
 
   return (
-    <section className="w-full bg-transparent text-[#EDEEF2] font-mono relative">
-      {/* Header Eyebrow */}
-      <div className="flex items-center gap-3 mb-4">
-        <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
-        <span className="text-xs uppercase tracking-[0.3em] text-[#8A8D95] font-semibold">REVIEWS</span>
-      </div>
-
-      {/* Main Headline */}
-      <div className="mb-3">
-        <h2 className="text-4xl sm:text-6xl font-anton uppercase text-white tracking-normal">
-          WHAT OTHER SPIRIT BEINGS
-          <span className="block text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal mt-1 mb-2.5 sm:mb-3.5">
-            Are Saying
-          </span>
-        </h2>
-        <p className="text-xs uppercase tracking-widest text-[#5B5E66] pt-1">
-          About {product.title}
-        </p>
-      </div>
-
-      {/* Rating Summary Section */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-8 p-6 rounded-2xl bg-[#0D0E11] border border-white/8">
-        {/* Score Card */}
-        <div className="md:col-span-5 flex flex-col justify-center pr-0 md:pr-6 md:border-r md:border-white/10">
-          <div className="flex items-baseline gap-3">
-            <span className="font-headline text-7xl sm:text-8xl lg:text-[110px] font-bold text-white tracking-tighter leading-none">
-              {avgScore}
-            </span>
-            <span className="text-xs sm:text-sm text-[#5B5E66] font-mono tracking-widest">Out of 5</span>
+    <section className="w-full bg-transparent text-[#EDEEF2] font-mono relative pb-[40px]">
+      <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start relative">
+        
+        {/* LEFT COLUMN: Sticky Summary */}
+        <div className="lg:col-span-4 lg:sticky lg:top-28 mb-10 lg:mb-0">
+          {/* Header Eyebrow */}
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
+            <span className="text-xs uppercase tracking-[0.3em] text-[#8A8D95] font-semibold">REVIEWS</span>
           </div>
 
-          <div className="flex items-center gap-1.5 mt-3">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <Star
-                key={s}
-                className={`w-5 h-5 ${
-                  s <= Math.round(Number(avgScore))
-                    ? 'fill-[#0B3DFF] text-[#0B3DFF]'
-                    : 'fill-white/10 text-white/10'
-                }`}
-              />
-            ))}
-          </div>
-
-          <p className="text-xs text-[#8A8D95] mt-4 leading-relaxed">
-            <b className="text-white font-semibold">{totalCount}</b> spirits rated this drop<br />
-            <span className="text-[#5B5E66]">{reviews.filter((r) => r.body).length} left a written review</span>
-          </p>
-
-          <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B3DFF]/40 bg-[#0B3DFF]/10 text-[#9FB3FF] text-[10px] uppercase tracking-widest self-start">
-            <span>RECOMMENDED BY {recPercent}%</span>
-          </div>
-        </div>
-
-        {/* Rating Breakdown Bars */}
-        <div className="md:col-span-7 flex flex-col justify-center space-y-2.5">
-          {starCounts.map(({ stars, count, percent }) => (
-            <button
-              key={stars}
-              type="button"
-              onClick={() => setFilterStar(filterStar === stars ? null : stars)}
-              className={`w-full grid grid-cols-12 items-center gap-3 text-left py-1 px-2 rounded-lg transition-colors cursor-pointer ${
-                filterStar === stars ? 'bg-white/10' : 'hover:bg-white/5'
-              }`}
-            >
-              <span className="col-span-2 text-xs text-[#8A8D95] font-medium tracking-wider">
-                {stars} STARS
+          {/* Main Headline */}
+          <div className="mb-8 w-full">
+            <h2 className="text-5xl sm:text-6xl lg:text-[46px] xl:text-[58px] font-anton uppercase text-white tracking-normal leading-[1.1] flex flex-col items-start w-full">
+              <span>WHAT OTHER SPIRIT</span>
+              <span className="flex items-baseline gap-2 sm:gap-3 mt-1 flex-wrap lg:flex-nowrap justify-between w-full lg:w-auto">
+                <span>BEINGS</span>
+                <span className="text-[#0B3DFF] font-yellowtail capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
+                  Are Saying
+                </span>
               </span>
-              <div className="col-span-8 h-2 rounded-full bg-[#131419] overflow-hidden">
-                <div
-                  className="h-full bg-[#0B3DFF] rounded-full transition-all duration-700"
-                  style={{ width: `${percent}%` }}
-                />
+            </h2>
+            <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#5B5E66] mt-4 font-mono">
+              About {product.title}
+            </p>
+          </div>
+
+          {/* Rating Summary Section */}
+          <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#0D0E11] border border-white/8">
+            {/* Score Card */}
+            <div className="flex flex-col justify-center">
+              <div className="flex items-baseline gap-3">
+                <span className="font-anton text-7xl sm:text-[90px] text-white tracking-normal leading-none">
+                  {avgScore}
+                </span>
+                <span className="text-xs sm:text-sm text-[#5B5E66] font-mono tracking-widest">Out of 5</span>
               </div>
-              <span className="col-span-2 text-xs text-[#5B5E66] text-right font-mono">
-                {count}
-              </span>
-            </button>
-          ))}
+
+              <div className="flex items-center gap-1.5 mt-3">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    className={`w-5 h-5 ${
+                      s <= Math.round(Number(avgScore))
+                        ? 'fill-[#0B3DFF] text-[#0B3DFF]'
+                        : 'fill-white/10 text-white/10'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <p className="text-xs text-[#8A8D95] mt-4 leading-relaxed">
+                <b className="text-white font-semibold">{totalCount}</b> spirits rated this drop<br />
+                <span className="text-[#5B5E66]">{reviews.filter((r) => r.body).length} left a written review</span>
+              </p>
+
+              <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B3DFF]/40 bg-[#0B3DFF]/10 text-[#9FB3FF] text-[10px] uppercase tracking-widest self-start">
+                <span>RECOMMENDED BY {recPercent}%</span>
+              </div>
+            </div>
+
+            <hr className="border-white/10" />
+
+            {/* Rating Breakdown Bars */}
+            <div className="flex flex-col justify-center space-y-2.5">
+              {starCounts.map(({ stars, count, percent }) => (
+                <button
+                  key={stars}
+                  type="button"
+                  onClick={() => setFilterStar(filterStar === stars ? null : stars)}
+                  className={`w-full grid grid-cols-12 items-center gap-3 text-left py-1 px-2 rounded-lg transition-colors cursor-pointer ${
+                    filterStar === stars ? 'bg-white/10' : 'hover:bg-white/5'
+                  }`}
+                >
+                  <span 
+                    className="col-span-5 sm:col-span-4 text-[10px] sm:text-[11px] text-[#8A8D95] font-medium tracking-wider uppercase truncate" 
+                    title={getStarLabel(stars)}
+                  >
+                    {getStarLabel(stars)}
+                  </span>
+                  <div className="col-span-6 sm:col-span-7 h-2 rounded-full bg-[#131419] overflow-hidden">
+                    <div
+                      className="h-full bg-[#0B3DFF] rounded-full transition-all duration-700"
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                  <span className="col-span-1 text-xs text-[#5B5E66] text-right font-mono">
+                    {count}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+
+        {/* RIGHT COLUMN: Scrolling Reviews */}
+        <div className="lg:col-span-8">
 
       {/* Buyer Photo Strip */}
       {allBuyerPhotos.length > 0 && (
@@ -368,7 +395,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             <button
               type="button"
               onClick={() => setShowAllPhotosModal(true)}
-              className="px-4 py-1.5 rounded-full border border-white/20 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
+              className="px-4 py-1.5 rounded-2xl border border-white/20 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
             >
               SEE ALL
             </button>
@@ -404,7 +431,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                 setFilterStar(null);
                 setWithPhotosOnly(false);
               }}
-              className="text-[10px] uppercase tracking-wider px-3 py-1 rounded-full border border-red-500/40 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+              className="hidden"
             >
               CLEAR FILTERS ✕
             </button>
@@ -414,7 +441,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={() => setWithPhotosOnly(!withPhotosOnly)}
-            className={`text-xs uppercase tracking-wider px-4 py-2 rounded-full border transition-all cursor-pointer ${
+            className={`text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border transition-all cursor-pointer ${
               withPhotosOnly
                 ? 'border-[#0B3DFF] bg-[#0B3DFF]/20 text-[#B9C6FF]'
                 : 'border-white/15 text-[#8A8D95] hover:border-white/30 hover:text-white'
@@ -426,7 +453,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="text-xs uppercase tracking-wider px-4 py-2 rounded-full border border-white/15 bg-[#0D0E11] text-[#8A8D95] hover:border-white/30 focus:outline-none cursor-pointer"
+            className="text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border border-white/15 bg-[#0D0E11] text-[#8A8D95] hover:border-white/30 focus:outline-none cursor-pointer"
           >
             <option value="recent">SORT BY: MOST RECENT</option>
             <option value="highest">SORT BY: HIGHEST RATING</option>
@@ -435,32 +462,12 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
 
           <button
             onClick={() => setIsWriterOpen(!isWriterOpen)}
-            className="text-xs uppercase tracking-widest px-6 py-2.5 rounded-full bg-[#0B3DFF] text-white font-bold hover:bg-[#0B3DFF]/90 transition-all shadow-md cursor-pointer"
+            className="text-xs uppercase tracking-widest px-6 py-2.5 rounded-2xl bg-[#0B3DFF] text-white font-bold hover:bg-[#0B3DFF]/90 transition-all shadow-md cursor-pointer"
           >
             {isWriterOpen ? 'CLOSE FORM' : 'WRITE A REVIEW'}
           </button>
         </div>
       </div>
-
-      {/* WRITE YOUR REVIEW COLLAPSED CARD SECTION */}
-      {!isWriterOpen && (
-        <div
-          onClick={() => setIsWriterOpen(true)}
-          className="mt-6 p-6 sm:p-8 rounded-2xl bg-[#0D0E11] border border-white/10 hover:border-[#0B3DFF]/50 hover:bg-[#0F1116] transition-all duration-300 cursor-pointer group shadow-lg flex items-center justify-between gap-4 select-none"
-        >
-          <div className="space-y-1">
-            <h3 className="text-sm sm:text-base font-mono uppercase tracking-[0.25em] font-bold text-white group-hover:text-[#8FA6FF] transition-colors flex items-center gap-2">
-              <span>WRITE YOUR REVIEW</span>
-            </h3>
-            <p className="text-xs text-[#5B5E66] font-mono tracking-wider">
-              One review per person. Take your time with it.
-            </p>
-          </div>
-          <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 group-hover:bg-[#0B3DFF]/20 group-hover:border-[#0B3DFF]/40 text-[#8A8D95] group-hover:text-white flex items-center justify-center transition-all shrink-0">
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-          </div>
-        </div>
-      )}
 
       {/* Write a Review Expanded Form */}
       {isWriterOpen && (
@@ -729,12 +736,14 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <button
             type="button"
             onClick={() => setVisibleCount((prev) => prev + 4)}
-            className="px-8 py-3 rounded-full border border-white/20 text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer shadow-lg select-none"
+            className="px-8 py-3 rounded-2xl border border-white/20 text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer shadow-lg select-none"
           >
             LOAD MORE REVIEWS
           </button>
         </div>
       )}
+        </div> {/* Close RIGHT COLUMN */}
+      </div> {/* Close 2-Column Grid */}
 
       {/* Photo Lightbox Modal with Prev (<) and Next (>) Arrow Buttons */}
       {lightboxIndex !== null && allBuyerPhotos[lightboxIndex] && (

@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
     <footer className="w-full bg-[#fbf9f9] text-black relative z-10 overflow-hidden pt-10">
       {/* Blue Marquee Ticker */}
       <div className="w-full overflow-hidden bg-transparent text-[#2040FF] pb-8 whitespace-nowrap">
-        <div className="animate-ticker text-sm sm:text-base font-space-mono font-bold tracking-[0.2em] uppercase leading-none">
+        <div className="animate-ticker text-sm sm:text-base font-mono font-bold tracking-[0.2em] uppercase leading-none">
           <div className="inline-flex items-center gap-12 px-6">
             <span>24/7 ONLINE STORE • SHIPPING ACROSS INDIA</span>
             <span></span>
@@ -93,7 +93,7 @@ export const Footer: React.FC = () => {
 
       {/* Giant Wordmark */}
       <div className="w-full text-center relative flex items-center justify-center py-4 md:py-6 pb-6 md:pb-8 overflow-hidden select-none">
-        <h2 className="text-[17vw] leading-[0.75] font-headline font-black tracking-tighter text-black uppercase">
+        <h2 className="text-[17vw] leading-[0.75] font-sans font-black tracking-tighter text-black uppercase">
           SPIRITBEING
         </h2>
       </div>

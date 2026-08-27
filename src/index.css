@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Yellowtail&display=swap');
 
 /* Lenis Smooth Scroll Base Styles */
 html.lenis, html.lenis body {
@@ -23,27 +23,32 @@ html, body {
 }
 
 @layer base {
+  :root {
+    --font-display: 'Anton', sans-serif;
+    --font-body: 'Archivo', sans-serif;
+  }
+
   body {
-    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    font-family: 'Archivo', sans-serif;
     background-color: #fbf9f9;
     color: #1b1c1c;
     overflow-x: hidden;
   }
 
   .font-headline {
-    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    font-family: 'Anton', sans-serif;
   }
 
   .font-sans {
-    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    font-family: 'Archivo', sans-serif;
   }
 
   .font-body-garamond {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Archivo', sans-serif;
   }
 
   .font-playfair {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Archivo', sans-serif;
   }
 
   .font-anton {
@@ -55,11 +60,11 @@ html, body {
   }
 
   .font-space {
-    font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    font-family: 'Archivo', sans-serif;
   }
 
   .font-space-mono {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Archivo', sans-serif;
   }
 }
 
@@ -167,5 +172,19 @@ html, body {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Liquid Wave Fill Animation */
+@keyframes wave-fill {
+  0% {
+    transform: translate(-50%, 10%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -60%) rotate(540deg);
+  }
+}
+
+.animate-wave-fill {
+  animation: wave-fill 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 

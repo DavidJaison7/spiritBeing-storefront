@@ -490,10 +490,10 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         <div className="content">
           {SLIDES.map((slide, idx) => (
             <div key={idx} className={`txt ${idx === 0 ? 'active' : ''}`}>
-              <div className="num-badge inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/5 backdrop-blur-md text-xs font-mono self-start mb-1 select-none">
-                <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_10px_#0B3DFF] animate-pulse shrink-0" />
-                <span className="text-white font-bold tracking-[0.22em]">SPIRITBEING</span>
-                <span className="text-[#0B3DFF] font-script text-base sm:text-lg capitalize font-normal tracking-normal -ml-1">
+              <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
+                <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
+                <span className="bg-[#0B3DFF] text-white font-yellowtail text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
                   Special Edition
                 </span>
               </div>
@@ -526,7 +526,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                     </svg>
                   </span>
                   <span className="label">
-                    {wishlistActive[idx] ? 'Liked ❤️' : 'Like Drop'}
+                    {wishlistActive[idx] ? 'Liked' : 'Like Drop'}
                   </span>
                 </button>
               </div>
@@ -539,6 +539,17 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
           <div className="count">
             <b id="railNum">01</b>&nbsp;/&nbsp;06
           </div>
+          
+          <button 
+            className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mb-3 mx-auto shadow-sm group backdrop-blur-sm"
+            onClick={() => handleDotClick(Math.max(0, curRef.current - 1))}
+            aria-label="Previous slide"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
+
           {SLIDES.map((_, idx) => (
             <React.Fragment key={idx}>
               <button
@@ -549,6 +560,16 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               {idx < SLIDES.length - 1 && <div className="line"></div>}
             </React.Fragment>
           ))}
+
+          <button 
+            className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mt-3 mx-auto shadow-sm group backdrop-blur-sm"
+            onClick={() => handleDotClick(Math.min(SLIDES.length - 1, curRef.current + 1))}
+            aria-label="Next slide"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 group-hover:translate-y-0.5 transition-transform">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
         </div>
 
         {/* Downward hint visual drip indicator inside Sticky Stage */}

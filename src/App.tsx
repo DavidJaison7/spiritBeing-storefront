@@ -247,6 +247,11 @@ export default function App() {
           setSelectedProduct(null);
           setIsOurStoryView(false);
           setIsBlogView(false);
+          if ((window as any).lenis) {
+            (window as any).lenis.scrollTo(0, { duration: 1.2 });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
         }}
         onOpenLogin={() => setIsLoginView(true)}
         onNavigateOurStory={() => {
@@ -422,7 +427,7 @@ export default function App() {
             </span>
             Faith. Identity. Purpose.
           </span>
-          <span>Only at spiritbeing.in</span>
+          <span>Only at spiritbeinggen.com</span>
         </footer>
       )}
     </div>

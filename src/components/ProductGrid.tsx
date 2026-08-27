@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Product } from '../types';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 
 const getColorHex = (colorName: string) => {
   const normalized = colorName.toLowerCase();
@@ -167,6 +167,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ))}
         </div>
 
+        {/* Left Arrow */}
+        {productImages.length > 1 && (
+          <button
+            type="button"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveIndex((prev) => Math.max(prev - 1, 0));
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label="Previous image"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" />
+          </button>
+        )}
+
+        {/* Right Arrow */}
+        {productImages.length > 1 && (
+          <button
+            type="button"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label="Next image"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+
         {/* Carousel Indicator Dots in Bottom Center */}
         {productImages.length > 1 && (
           <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
@@ -191,7 +223,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Row of Selectors: Sizes on Left, Colors on Right */}
       <div className="flex items-center justify-between pt-3 px-1">
         {/* Sizes Selector */}
-        {product.category !== 'Accessories' && product.sizes && product.sizes.length > 0 && (
+        {product.title.toLowerCase().includes('cap') ? (
+          <div />
+        ) : product.category !== 'Accessories' && product.sizes && product.sizes.length > 0 ? (
           <div className="flex items-center gap-1.5">
             {product.sizes.slice(0, 2).map((size) => {
               const isSelected = selectedSize === size;
@@ -222,6 +256,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 +{product.sizes.length - 2}
               </div>
             )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <span className="h-7 px-2.5 flex items-center justify-center text-[10px] font-sans font-semibold text-black bg-[#f3f3f3] rounded-md border border-black/10 uppercase tracking-widest shadow-sm">
+              Free Size
+            </span>
           </div>
         )}
 
@@ -337,7 +377,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   return (
     <section id="products-grid" className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-12 md:py-16 text-black">
       {/* Section Header: BEST SELLERS OF SPIRITBEING */}
-      <div className="border-b border-gray-200 pb-5 mb-8 sm:mb-10">
+      <div className="border-b border-gray-200 pb-8 sm:pb-10 mb-8 sm:mb-12">
         {/* Eyebrow */}
         <div className="flex items-center gap-2.5 mb-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
@@ -347,8 +387,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         </div>
 
         {/* Main Headline */}
-        <div className="flex items-baseline justify-between flex-wrap gap-4">
-          <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
+          <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3 flex-wrap">
             <span>BEST SELLERS OF</span>
             <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
               Spirit Being

@@ -71,7 +71,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".14s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255726.png" alt="Little Beings" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255730.png" alt="Little Beings" loading="lazy" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Little Beings</h3>
@@ -85,7 +85,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".19s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255727.png" alt="Nomad Beings" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255726.png" alt="Nomad Beings" loading="lazy" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Nomad Beings</h3>
@@ -99,7 +99,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".24s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255730.png" alt="Armoured Beings" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255727.png" alt="Armoured Beings" loading="lazy" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Armoured Beings</h3>
@@ -115,9 +115,10 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               <div className="sb-photo">
                 <img src="/assets/Collections/Blue.png" alt="The Book Series" loading="lazy" />
               </div>
-              <span className="sb-pill is-drops">DROPS</span>
+              <span className="sb-pill is-coming">COMING SOON</span>
               <h3>The Book Series</h3>
-              <div className="sb-chips">
+              <p>A design style featured across all five collections.</p>
+              <div className="sb-chips" style={{ marginTop: '14px' }}>
                 <span>Psalms</span>
                 <span>Proverbs</span>
                 <span>Isaiah</span>

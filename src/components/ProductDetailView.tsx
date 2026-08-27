@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ArrowLeft, Check, Plus, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import { ProductReviewsSection } from './ProductReviewsSection';
 
 interface ProductDetailViewProps {
@@ -22,6 +22,104 @@ const getColorHex = (colorName: string) => {
   if (normalized.includes('red')) return '#8b0000';
   if (normalized.includes('olive')) return '#556b2f';
   return '#cccccc';
+};
+
+export const soundOptions = {
+  tadaa: () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const playTone = (freq: number, startTime: number, duration: number, type: OscillatorType = 'sine', volume = 0.15) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(volume, startTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      osc.stop(startTime + duration);
+    };
+    const now = ctx.currentTime;
+    playTone(523.25, now, 0.15, 'triangle'); // C5
+    playTone(659.25, now + 0.15, 0.15, 'triangle'); // E5
+    playTone(523.25, now + 0.3, 1.5, 'square', 0.1); // C5
+    playTone(659.25, now + 0.3, 1.5, 'square', 0.1); // E5
+    playTone(783.99, now + 0.3, 1.5, 'square', 0.1); // G5
+    playTone(1046.50, now + 0.3, 1.5, 'square', 0.1); // C6
+  },
+  choir: () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const freqs = [523.25, 659.25, 783.99, 987.77, 1046.50]; 
+    freqs.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0);
+        osc.stop(ctx.currentTime + 2.0);
+      }, i * 120);
+    });
+  },
+  retro: () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const freqs = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+    freqs.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime + 0.01);
+        gain.gain.setValueAtTime(0, ctx.currentTime + 0.08);
+        osc.stop(ctx.currentTime + 0.08);
+      }, i * 60);
+    });
+  },
+  chime: () => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 1046.50; // C6
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+    osc.stop(ctx.currentTime + 1.5);
+    
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.value = 1052.50; 
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start();
+    gain2.gain.setValueAtTime(0, ctx.currentTime);
+    gain2.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+    osc2.stop(ctx.currentTime + 1.5);
+  }
 };
 
 interface RelatedProductCardProps {
@@ -167,6 +265,38 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
           ))}
         </div>
 
+        {/* Left Arrow */}
+        {productImages.length > 1 && (
+          <button
+            type="button"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveIndex((prev) => Math.max(prev - 1, 0));
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label="Previous image"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" />
+          </button>
+        )}
+
+        {/* Right Arrow */}
+        {productImages.length > 1 && (
+          <button
+            type="button"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label="Next image"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+
         {/* Carousel Indicator Dots in Bottom Center */}
         {productImages.length > 1 && (
           <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
@@ -190,7 +320,9 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
 
       {/* Row of Selectors: Sizes on Left, Colors on Right */}
       <div className="flex items-center justify-between pt-3 px-1">
-        {product.sizes && product.sizes.length > 0 && (
+        {product.title.toLowerCase().includes('cap') ? (
+          <div />
+        ) : product.sizes && product.sizes.length > 0 && (
           <div className="flex items-center gap-1.5">
             {product.sizes.slice(0, 2).map((size) => {
               const isSelected = selectedSize === size;
@@ -330,6 +462,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const mobileScrollRef = React.useRef<HTMLDivElement>(null);
 
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
+  const [isBlessing, setIsBlessing] = useState<boolean>(false);
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; scale: number; delay: number; color: string }[]>([]);
   const [isTallViewport, setIsTallViewport] = useState<boolean>(false);
 
@@ -597,16 +730,36 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               ? 'lg:top-28 lg:pt-16 lg:max-h-none'
               : 'lg:top-14 xl:top-16 lg:pt-0 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto'
           }`}>
-            <div className="space-y-1 2xl:space-y-2 mb-3 lg:mb-4 2xl:mb-7">
-              <p className="text-[#2040FF] font-headline text-xs 2xl:text-sm font-bold tracking-wider uppercase mb-0.5">
-                {product.tagline || "YOU'RE GETTING WARMER"}
-              </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-playfair font-normal text-black leading-tight">
+            <div className="mb-6 lg:mb-8 2xl:mb-10 text-left w-full">
+              {product.tagline && (
+                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-[10px] font-sans font-bold uppercase tracking-widest rounded-full mb-3">
+                  {product.tagline}
+                </div>
+              )}
+              <h1 className="text-3xl sm:text-4xl 2xl:text-5xl font-sans font-bold text-black tracking-tight leading-[1.1] mb-3">
                 {product.title}
               </h1>
-              <p className="text-xl sm:text-2xl 2xl:text-3xl font-body-garamond font-bold mt-1 2xl:mt-2 text-[#1b1c1c]">
-                Rs. {product.price}
-              </p>
+              
+              {/* Review Stars */}
+              <div className="flex items-center gap-1.5 mb-4">
+                <div className="flex items-center gap-0.5 text-black">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className={`w-4 h-4 2xl:w-4.5 2xl:h-4.5 ${i < 4 ? 'fill-black text-black' : 'fill-transparent text-black'}`} 
+                      strokeWidth={2.5} 
+                    />
+                  ))}
+                </div>
+                <span className="text-sm 2xl:text-[15px] font-sans text-gray-600 ml-1.5 font-medium">4.8 <span className="text-gray-400">(128 reviews)</span></span>
+              </div>
+
+              {/* Price Row */}
+              <div className="flex items-center gap-3">
+                <p className="text-2xl sm:text-3xl 2xl:text-4xl font-sans font-bold text-[#1a1a1a] tracking-wide">
+                  Rs. {product.price}
+                </p>
+              </div>
             </div>
 
             <p className="text-gray-800 font-sans text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base leading-relaxed mb-4 lg:mb-5 2xl:mb-8 text-justify">
@@ -614,42 +767,44 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </p>
 
             {/* Sizes & Size Guide */}
-            <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-4 lg:mb-5 2xl:mb-8 text-left">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
-                  SELECT SIZE
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setShowSizeGuideModal(true)}
-                  className="text-[11px] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
-                >
-                  SIZE GUIDE
-                </button>
+            {!product.title.toLowerCase().includes('cap') && (
+              <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-4 lg:mb-5 2xl:mb-8 text-left">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
+                    SELECT SIZE
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowSizeGuideModal(true)}
+                    className="text-[11px] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
+                  >
+                    SIZE GUIDE
+                  </button>
+                </div>
+                <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
+                  {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
+                    const isAvailable = (product.sizes && product.sizes.length > 0) ? product.sizes.includes(size) : true;
+                    const isSelected = selectedSize === size;
+                    return (
+                      <button
+                        key={size}
+                        disabled={!isAvailable}
+                        onClick={() => isAvailable && setSelectedSize(size)}
+                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                          !isAvailable
+                            ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
+                            : isSelected
+                            ? 'bg-black text-white shadow-md scale-[1.03]'
+                            : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
-                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
-                  const isAvailable = (product.sizes && product.sizes.length > 0) ? product.sizes.includes(size) : true;
-                  const isSelected = selectedSize === size;
-                  return (
-                    <button
-                      key={size}
-                      disabled={!isAvailable}
-                      onClick={() => isAvailable && setSelectedSize(size)}
-                      className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
-                        !isAvailable
-                          ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
-                          : isSelected
-                          ? 'bg-black text-white shadow-md scale-[1.03]'
-                          : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
@@ -742,23 +897,34 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               {onToggleWishlist && (
                 <button
                   type="button"
-                  onClick={() => onToggleWishlist(product.id)}
-                  className={`px-4 sm:px-5 2xl:px-6 py-3.5 2xl:py-4 rounded-full border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer shadow-sm shrink-0 ${
+                  onClick={() => {
+                    onToggleWishlist(product.id);
+                    if (!isProductLiked) {
+                      soundOptions.choir();
+                    }
+                  }}
+                  className={`relative px-4 sm:px-5 2xl:px-6 py-3.5 2xl:py-4 rounded-full border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer shrink-0 group overflow-hidden ${
                     isProductLiked
-                      ? 'border-rose-500 bg-rose-50 text-rose-600 shadow-md'
-                      : 'border-black/20 bg-white text-black hover:border-rose-500 hover:text-rose-600'
+                      ? 'border-rose-500 text-white shadow-md scale-[1.02]'
+                      : 'border-black/15 bg-white text-black hover:border-rose-500 hover:text-rose-600 hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] hover:-translate-y-0.5 active:scale-95'
                   }`}
-                  title={isProductLiked ? 'Liked by you! Click to unlike' : 'Like this drop'}
+                  title={isProductLiked ? 'Blessed by you!' : 'Bless this drop'}
                 >
-                  <Heart className={`w-4 h-4 transition-transform duration-300 ${isProductLiked ? 'fill-rose-500 text-rose-500 scale-110' : 'text-black'}`} />
-                  <span>{isProductLiked ? 'LIKED' : 'LIKE DROP'}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-black/5 text-[11px] font-mono font-bold">
+                  {/* Wavy Liquid fill background */}
+                  <span 
+                    className={`absolute left-1/2 top-full w-[300px] h-[300px] bg-rose-500 rounded-[43%] z-0 pointer-events-none transition-transform duration-300 ${
+                      isProductLiked ? 'animate-wave-fill' : '-translate-x-1/2 translate-y-[10%]'
+                    }`} 
+                  />
+                  
+                  <Heart className={`relative z-10 w-4 h-4 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-125' : 'text-black group-hover:scale-110 group-hover:text-rose-500 group-active:scale-90'}`} />
+                  <span className="relative z-10">{isProductLiked ? 'BLESSED' : 'BLESS THIS DROP'}</span>
+                  <span className={`relative z-10 px-2 py-0.5 rounded-full font-mono font-bold text-[11px] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
                     {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
                   </span>
                 </button>
               )}
             </div>
-
             {/* Spec Meta */}
             <div className="w-full pt-5 2xl:pt-8 border-t border-gray-300">
               <div className="text-[11px] md:text-[12px] text-gray-700 font-sans uppercase tracking-[0.08em] space-y-1.5 2xl:space-y-2 font-bold text-left">

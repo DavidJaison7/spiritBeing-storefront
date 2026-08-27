@@ -19,12 +19,12 @@
 .sb-mega{
   position:absolute;left:0;right:0;top:100%;z-index:70;
   padding:0;
-  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-10px);
-  transition:opacity .42s var(--ease),transform .52s var(--ease),visibility 0s .52s;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .42s var(--ease),visibility 0s .52s;
 }
 .sb-mega.is-open{
-  opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);
-  transition:opacity .38s var(--ease),transform .52s var(--ease),visibility 0s 0s;
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .38s var(--ease),visibility 0s 0s;
 }
 .sb-mega-inner{
   background:var(--void);border:1px solid var(--line);
@@ -37,12 +37,12 @@
 }
 .sb-mega-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;padding:4px 6px 14px}
 .sb-eyebrow{
-  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-family: 'Archivo', sans-serif;
   font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--electric);
   display:flex;align-items:center;gap:9px;
 }
 .sb-eyebrow b{width:6px;height:6px;border-radius:50%;background:var(--electric)}
-.sb-mega-top p{margin:0 0 0 auto;font-family:"JetBrains Mono",ui-monospace,monospace;
+.sb-mega-top p{margin:0 0 0 auto;font-family: 'Archivo', sans-serif;
   font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel)}
 
 /* ---------------- the bento ---------------- */
@@ -85,13 +85,13 @@
   transition:transform 1.1s var(--ease);
 }
 .sb-tile:hover .sb-photo img{transform:scale(1.05)}
-.sb-photo::after{                       /* flat gradient scrim, not glass */
+.sb-photo::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,#000 4%,rgba(0,0,0,.74) 36%,rgba(0,0,0,.12) 74%);
+  background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0) 55%);
 }
-/* short image tiles need the ink brought further up to stay legible */
-.t-little .sb-photo::after{
-  background:linear-gradient(to top,#000 6%,rgba(0,0,0,.80) 52%,rgba(0,0,0,.28) 100%);
+/* short image tiles need the ink slightly higher to stay legible, but still pushed down */
+.t-little .sb-photo::after, .t-nomad .sb-photo::after, .t-armoured .sb-photo::after {
+  background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 65%);
 }
 .sb-tile.has-photo{background:var(--ink)}
 .sb-tile.has-photo > *:not(.sb-photo){position:relative;z-index:1}
@@ -106,7 +106,7 @@
 
 .sb-pill{
   align-self:flex-start;
-  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-family: 'Archivo', sans-serif;
   font-size:9px;letter-spacing:.2em;text-transform:uppercase;
   padding:5px 9px;border-radius:6px;background:#1C1E25;color:var(--ash);
 }
@@ -120,13 +120,13 @@
 }
 .sb-tile.has-photo h3{margin-top:10px; color: #FFFFFF;}
 .sb-tile p{
-  margin:8px 0 0;font-family:"JetBrains Mono",ui-monospace,monospace;
+  margin:8px 0 0;font-family: 'Archivo', sans-serif;
   font-size:10.5px;line-height:1.8;color:var(--ash);
 }
 .sb-tile.has-photo p{color:#C6C9D2}
 .sb-foot{
   margin-top:12px;display:flex;align-items:center;gap:10px;
-  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-family: 'Archivo', sans-serif;
   font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);
 }
 .sb-tile.is-solid .sb-foot{margin-top:auto}
@@ -136,7 +136,7 @@
 
 .sb-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .sb-chips span{
-  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-family: 'Archivo', sans-serif;
   font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   background:#0B1230;border:1px solid #223066;border-radius:999px;
   padding:5px 10px;color:#C9D2FF;
@@ -147,7 +147,7 @@
 .sb-mega-foot{
   margin-top:10px;border-top:1px solid var(--line);padding:14px 6px 2px;
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-family: 'Archivo', sans-serif;
   font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);
 }
 .sb-mega-foot a{margin-left:auto;color:var(--chrome);text-decoration:none;

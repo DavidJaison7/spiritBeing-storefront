@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500&family=Yellowtail&display=swap');
-
 .sb-statement {
   position: relative;
   width: 100%;
@@ -20,7 +18,7 @@
   --dim: #26282D;
   --electric: #0B3DFF;
   --blurple: #5865F2;
-  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-family: 'Archivo', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -95,12 +93,12 @@
 
 /* ---- description ---- */
 .sb-context {
-  margin: clamp(26px, 4.4vh, 44px) 0 0;
-  max-width: 46rem;
-  font-size: clamp(11px, 1.02vw, 13.5px);
-  letter-spacing: .16em;
-  line-height: 2.05;
-  text-transform: capitalize;
+  margin: clamp(60px, 8vh, 100px) 0 0;
+  max-width: 54rem;
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0px;
+  line-height: 1.5;
+  text-transform: none;
   color: #EDEEF2;
   opacity: 0;
   transform: translateY(20px);
@@ -113,9 +111,9 @@
 }
 
 .sb-refs {
-  margin: clamp(18px, 2.8vh, 30px) 0 0;
-  font-size: 10px;
-  letter-spacing: .36em;
+  margin: 16px 0 0;
+  font-size: 11px;
+  letter-spacing: .15em;
   text-transform: uppercase;
   color: var(--ash);
   opacity: 0;
@@ -140,7 +138,7 @@
 
 /* ---- community + CTA ---- */
 .sb-community {
-  margin-top: clamp(30px, 5.4vh, 58px);
+  margin-top: clamp(60px, 10vh, 120px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,7 +158,7 @@
   font-size: 11px;
   letter-spacing: .26em;
   text-transform: uppercase;
-  color: #E6E7EB;
+  color: var(--ash);
 }
 
 .discord-cta {
@@ -172,7 +170,7 @@
   gap: 12px;
   padding: 18px 38px;
   border: 1px solid var(--blurple);
-  border-radius: 999px;
+  border-radius: 16px;
   font-size: 11.5px;
   letter-spacing: .24em;
   text-transform: uppercase;

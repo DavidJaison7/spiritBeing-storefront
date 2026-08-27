@@ -3,7 +3,7 @@
   height: 600vh; /* 6 slides * 100vh */
   background: #080808;
   color: #F2F0EA;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Archivo', sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -295,9 +295,18 @@
   color: var(--warm);
 }
 
+@keyframes cute-heart-pop {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.4) rotate(-15deg); }
+  50% { transform: scale(0.9) rotate(10deg); }
+  75% { transform: scale(1.15) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
 .collections-carousel-wrapper .wish.active .heart svg {
-  fill: var(--warm);
-  stroke: var(--warm);
+  fill: #f43f5e;
+  stroke: #f43f5e;
+  animation: cute-heart-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Rail */

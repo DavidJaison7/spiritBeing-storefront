@@ -167,6 +167,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
         </div>
       </div> 
       */}
+
+      {/* Animated 'Shop now' Scroll CTA */}
+      <div className="absolute bottom-[72px] sm:bottom-[88px] left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
+        <button
+          onClick={() => {
+            const nextSection = document.getElementById('collections-carousel-section');
+            if (nextSection) {
+              nextSection.scrollIntoView({ behavior: 'smooth' });
+              if ((window as any).lenis) {
+                (window as any).lenis.scrollTo(nextSection);
+              }
+            }
+          }}
+          className="group flex flex-col items-center cursor-pointer outline-none select-none"
+        >
+          <span className="text-white text-sm font-sans font-medium relative pb-[4px]">
+            Shop now
+            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100" />
+          </span>
+        </button>
+      </div>
     </section>
   );
 };
