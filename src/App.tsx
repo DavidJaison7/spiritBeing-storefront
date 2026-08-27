@@ -6,6 +6,7 @@ import { HeroSection } from './components/HeroSection';
 import { CollectionsCarousel } from './components/CollectionsCarousel';
 import { StatementParticlesSection } from './components/StatementParticlesSection';
 import { OurStorySection } from './components/OurStorySection';
+import { BlogView } from './components/BlogView';
 import { ProductGrid } from './components/ProductGrid';
 import { ProductDetailView } from './components/ProductDetailView';
 import { LoginView } from './components/LoginView';
@@ -62,13 +63,14 @@ export default function App() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isLoginView, setIsLoginView] = useState(false);
   const [isOurStoryView, setIsOurStoryView] = useState(false);
+  const [isBlogView, setIsBlogView] = useState(false);
 
   // Bottom strip visibility (Only in Hero and Collections Carousel till end of 6th slide)
   const [showBottomStrip, setShowBottomStrip] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (selectedProduct || isOurStoryView) {
+      if (selectedProduct || isOurStoryView || isBlogView) {
         setShowBottomStrip(false);
         return;
       }
@@ -87,7 +89,7 @@ export default function App() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [selectedProduct, isOurStoryView]);
+  }, [selectedProduct, isOurStoryView, isBlogView]);
 
   // Shopify configuration
   const [shopifyConfig, setShopifyConfig] = useState<ShopifyConfig>(() => {
@@ -238,22 +240,31 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#fbf9f9] text-[#1b1c1c] selection:bg-black selection:text-white">
       {/* Top Header */}
       <Header
-        cartCount={totalCartCount}
+        cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
           setSelectedProduct(null);
           setIsOurStoryView(false);
-          window.scrollTo(0, 0);
+          setIsBlogView(false);
         }}
         onOpenLogin={() => setIsLoginView(true)}
         onNavigateOurStory={() => {
-          setIsOurStoryView(true);
           setSelectedProduct(null);
+          setIsOurStoryView(true);
+          setIsBlogView(false);
+          window.scrollTo(0, 0);
+        }}
+        onOpenBlog={() => {
+          setSelectedProduct(null);
+          setIsOurStoryView(false);
+          setIsBlogView(true);
           window.scrollTo(0, 0);
         }}
         shopifyConfig={shopifyConfig}
-        currentView={selectedProduct ? 'product_detail' : isOurStoryView ? 'our_story' : 'home'}
+        currentView={
+          isBlogView ? 'blog' : isOurStoryView ? 'our_story' : selectedProduct ? 'product_detail' : 'home'
+        }
       />
 
       {/* Main View switching */}
@@ -279,6 +290,8 @@ export default function App() {
             }}
             onAddToCart={handleAddToCart}
           />
+        ) : isBlogView ? (
+          <BlogView onClose={() => setIsBlogView(false)} />
         ) : isOurStoryView ? (
           <OurStorySection />
         ) : (
@@ -342,6 +355,7 @@ export default function App() {
         onShopNow={() => {
           setSelectedProduct(null);
           setIsOurStoryView(false);
+          setIsBlogView(false);
           setIsCartOpen(false);
           setTimeout(() => {
             const el = document.getElementById('products-grid') || document.getElementById('product-grid');
@@ -397,7 +411,7 @@ export default function App() {
       <Footer />
 
       {/* Global Transparent Fixed Bottom Strip (Only in Hero & Collections Carousel) */}
-      {!selectedProduct && !isOurStoryView && showBottomStrip && (
+      {!selectedProduct && !isOurStoryView && !isBlogView && showBottomStrip && (
         <footer className="fixed-bottom-strip">
           <span className="left">
             <span className="ticks">

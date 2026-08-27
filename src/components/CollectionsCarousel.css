@@ -99,20 +99,25 @@
   backface-visibility: hidden;
 }
 
-.collections-carousel-wrapper .model.model-large {
+.collections-carousel-wrapper .model.model-slide-2 {
   height: 98%;
   max-width: 100%;
 }
 
+.collections-carousel-wrapper .model.model-large {
+  height: 115%;
+  max-width: 108%;
+}
+
 .collections-carousel-wrapper .model.model-slide-3 {
-  height: 92%;
-  max-width: 95%;
+  height: 108%;
+  max-width: 108%;
   transform: translate3d(-18px, 0, 0);
 }
 
 .collections-carousel-wrapper .model.model-extra-large {
-  height: 112%;
-  max-width: 110%;
+  height: 135%;
+  max-width: 125%;
 }
 
 .collections-carousel-wrapper .frame .tag {

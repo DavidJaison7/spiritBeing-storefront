@@ -100,6 +100,16 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     });
   };
 
+  // Preload all slide images immediately on mount so transitions are instant (no lazy-load latency)
+  useEffect(() => {
+    SLIDES.forEach((slide) => {
+      [slide.bgImg, slide.modelImg].forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    });
+  }, []);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -116,6 +126,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
     curRef.current = 0;
     let tl: gsap.core.Timeline | null = null;
+    // Track when each slide was entered — prevents auto-snap on the same wheel event that arrived at slide 6
+    let slideArrivedAt = Date.now();
 
     function setRail(i: number) {
       if (railNum) railNum.textContent = String(i + 1).padStart(2, '0');
@@ -129,12 +141,13 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     let bobAnimation: gsap.core.Tween[] = [];
 
     if (!reduced) {
-      const DUR = 0.48;
+      const DUR = 0.62; // slightly faster slide transition for swipe feel
       const EASE = 'power2.out';
 
       const transition = (next: number, dir: number) => {
         if (next === curRef.current) return;
         if (tl) tl.progress(1); // Finish running transition instantly
+        slideArrivedAt = Date.now(); // record when this slide was reached
 
         const inP = panels[next];
         const outP = panels[curRef.current];
@@ -267,78 +280,134 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       }
     }
 
-    // Scroll Deck Wheel & Swipe Interceptor to enforce "one scroll/swipe = one slide" transition
-    let isTransitioning = false;
 
-    const performSmoothScroll = (targetIndex: number) => {
-      isTransitioning = true;
-      const targetStep = steps[targetIndex];
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(targetStep, {
-          duration: 0.6,
-          easing: (t: number) => 1 - Math.pow(1 - t, 2.5),
+    // ──────────────────────────────────────────────────────────────
+    // SNAP NAVIGATION — Lenis-based, behaves like scroll-snap-mandatory
+    // Transitions:
+    //   A) Hero  →  Carousel Slide 1  (any scroll-down from Hero)
+    //   B) Carousel Slide 1  →  Hero  (any scroll-up from Slide 1)
+    //   C) Carousel Slide 6  →  StatementParticles  (any scroll-down from Slide 6)
+    // ──────────────────────────────────────────────────────────────
+    let snapCooldown = false;
+    let touchStartY = 0;
+
+    const heroHeight = (): number => {
+      const hero = document.getElementById('hero-section') ?? document.querySelector('section.relative.h-screen') as HTMLElement | null;
+      return hero ? hero.offsetHeight : window.innerHeight;
+    };
+
+    const snapTo = (target: HTMLElement | number) => {
+      if (snapCooldown) return;
+      snapCooldown = true;
+
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(target, {
+          duration: 0.82,
+          easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t, // ease-in-out quad
           lock: true,
-          onComplete: () => {
-            isTransitioning = false;
-          }
+          onComplete: () => { snapCooldown = false; },
         });
       } else {
-        targetStep.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => {
-          isTransitioning = false;
-        }, 600);
+        if (typeof target === 'number') {
+          window.scrollTo({ top: target, behavior: 'smooth' });
+        } else {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+        setTimeout(() => { snapCooldown = false; }, 900);
       }
     };
 
-      // Single-scroll transition from 6th slide (Slide 06 - 06) to StatementParticlesSection
-      let lastTransitionTime = 0;
+    const getScrollY = (): number => {
+      const lenis = (window as any).lenis;
+      return lenis ? lenis.scroll : window.scrollY;
+    };
 
-      const handleSlide6Wheel = (e: WheelEvent) => {
-        if (e.deltaY <= 5) return;
+    const handleSnapWheel = (e: WheelEvent) => {
+      if (snapCooldown) { e.preventDefault(); return; }
 
-        const now = Date.now();
-        if (now - lastTransitionTime < 1200) return;
+      const scrollY = getScrollY();
+      const heroH = heroHeight();
 
-        // Check if we are currently on the 6th slide (index 5)
-        if (curRef.current === 5) {
-          const stmtSection = document.getElementById('sbStatement');
-          if (stmtSection) {
-            const rect = stmtSection.getBoundingClientRect();
-            // If StatementParticlesSection is not yet centered in viewport
-            if (rect.top > 40) {
-              e.preventDefault();
-              lastTransitionTime = now;
-
-              if ((window as any).lenis) {
-                (window as any).lenis.scrollTo(stmtSection, {
-                  duration: 0.95,
-                  easing: (t: number) => 1 - Math.pow(1 - t, 3),
-                });
-              } else {
-                stmtSection.scrollIntoView({ behavior: 'smooth' });
-              }
-            }
-          }
-        }
-      };
-
-      if (el) {
-        el.addEventListener('wheel', handleSlide6Wheel, { passive: false });
+      // A) Hero → Carousel Slide 1: scrolling down while in Hero zone
+      if (e.deltaY > 4 && scrollY < heroH * 0.9) {
+        e.preventDefault();
+        const firstStep = steps[0];
+        if (firstStep) snapTo(firstStep);
+        return;
       }
 
-      // Cleanup listeners and animations on unmount
-      return () => {
-        if (el) {
-          el.removeEventListener('wheel', handleSlide6Wheel);
+      // B) Carousel Slide 1 → Hero: scrolling up while on Slide 1
+      if (e.deltaY < -4 && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 50) {
+        e.preventDefault();
+        snapTo(0);
+        return;
+      }
+
+      // C) Carousel Slide 6 → StatementParticles: scrolling down from last slide
+      // Guard: only fire if the user has been on slide 6 for at least 600ms
+      // (prevents auto-snap on the same wheel event that transitioned into slide 6)
+      if (e.deltaY > 4 && curRef.current === 5 && Date.now() - slideArrivedAt >= 600) {
+        const stmtSection = document.getElementById('sbStatement');
+        if (stmtSection) {
+          const stmtRect = stmtSection.getBoundingClientRect();
+          if (stmtRect.top > 50) {
+            e.preventDefault();
+            snapTo(stmtSection);
+          }
         }
-        io?.disconnect();
-        if (mmListener) {
-          window.removeEventListener('mousemove', mmListener);
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (snapCooldown) return;
+      const deltaY = touchStartY - (e.changedTouches[0]?.clientY ?? touchStartY);
+      if (Math.abs(deltaY) < 25) return; // ignore micro-swipes
+
+      const scrollY = getScrollY();
+      const heroH = heroHeight();
+
+      // A) Hero → Carousel Slide 1
+      if (deltaY > 0 && scrollY < heroH * 0.9) {
+        const firstStep = steps[0];
+        if (firstStep) snapTo(firstStep);
+        return;
+      }
+
+      // B) Carousel Slide 1 → Hero
+      if (deltaY < 0 && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 50) {
+        snapTo(0);
+        return;
+      }
+
+      // C) Carousel Slide 6 → StatementParticles (touch — guard with 600ms dwell)
+      if (deltaY > 0 && curRef.current === 5 && Date.now() - slideArrivedAt >= 600) {
+        const stmtSection = document.getElementById('sbStatement');
+        if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
+          snapTo(stmtSection);
         }
-        transitionRef.current = null;
-        bobAnimation.forEach(tween => tween.kill());
-        if (tl) tl.kill();
-      };
+      }
+    };
+
+    window.addEventListener('wheel', handleSnapWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('wheel', handleSnapWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+      io?.disconnect();
+      if (mmListener) window.removeEventListener('mousemove', mmListener);
+      transitionRef.current = null;
+      bobAnimation.forEach(tween => tween.kill());
+      if (tl) tl.kill();
+    };
   }, []);
 
   const handleDotClick = (idx: number) => {
@@ -399,11 +468,18 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               title={`View ${slide.title.replace('\n', ' ')}`}
             >
               <div className="ph">
-                <img src={slide.bgImg} alt={`Collection piece background ${idx + 1}`} loading="lazy" />
+                <img src={slide.bgImg} alt={`Collection piece background ${idx + 1}`} loading={idx === 0 ? 'eager' : 'eager'} decoding="async" fetchPriority={idx < 2 ? 'high' : 'auto'} />
               </div>
               <div className="fl">
                 <div className="bob">
-                  <img className={`model ${idx === 2 ? 'model-slide-3' : idx === 3 ? 'model-extra-large' : idx >= 1 ? 'model-large' : ''}`} src={slide.modelImg} alt={`Collection model overlay ${idx + 1}`} />
+                  <img
+                    className={`model ${idx === 1 ? 'model-slide-2' : idx === 2 ? 'model-slide-3' : idx === 3 ? 'model-extra-large' : idx >= 4 ? 'model-large' : ''}`}
+                    src={slide.modelImg}
+                    alt={`Collection model overlay ${idx + 1}`}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority={idx < 2 ? 'high' : 'auto'}
+                  />
                 </div>
               </div>
             </div>

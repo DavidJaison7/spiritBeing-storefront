@@ -794,10 +794,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               {/* Main Headline with Electric Blue Cursive Script "Like" */}
               <div className="flex items-baseline justify-between flex-wrap gap-4">
-                <h2 className="text-3xl sm:text-5xl font-headline uppercase font-bold text-black tracking-tight flex items-baseline gap-3">
-                  <span>YOU MAY ALSO</span>
-                  <span className="text-[#0B3DFF] font-script text-4xl sm:text-6xl capitalize font-normal">
-                    Like
+                <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
+                  <span>CHOSEN FOR</span>
+                  <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
+                    Spirit Beings
                   </span>
                 </h2>
                 <span className="text-xs font-sans text-gray-500 uppercase tracking-widest hidden sm:inline-block font-semibold">

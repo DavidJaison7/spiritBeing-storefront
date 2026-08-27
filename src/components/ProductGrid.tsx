@@ -191,7 +191,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Row of Selectors: Sizes on Left, Colors on Right */}
       <div className="flex items-center justify-between pt-3 px-1">
         {/* Sizes Selector */}
-        {product.sizes && product.sizes.length > 0 && (
+        {product.category !== 'Accessories' && product.sizes && product.sizes.length > 0 && (
           <div className="flex items-center gap-1.5">
             {product.sizes.slice(0, 2).map((size) => {
               const isSelected = selectedSize === size;
@@ -348,10 +348,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
         {/* Main Headline */}
         <div className="flex items-baseline justify-between flex-wrap gap-4">
-          <h2 className="text-3xl sm:text-5xl font-headline uppercase font-bold text-black tracking-tight flex items-baseline gap-3">
+          <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
             <span>BEST SELLERS OF</span>
-            <span className="text-[#0B3DFF] font-script text-4xl sm:text-6xl capitalize font-normal">
-              SpiritBeing
+            <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
+              Spirit Being
             </span>
           </h2>
         </div>

@@ -90,7 +90,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ products, onSelectProd
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center cursor-default">
+    <section id="hero-section" className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center cursor-default">
       {/* Parallax Container */}
       <div
         ref={stageRef}

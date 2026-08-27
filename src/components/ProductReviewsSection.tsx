@@ -119,7 +119,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
   },
 ];
 
-const RATING_WORDS = ['', 'NOT IT', 'BELOW PAR', 'DECENT', 'REALLY GREAT', 'ABSOLUTELY HOLY GRAIL'];
+const RATING_WORDS = ['', 'FELL SHORT', 'NOT MY VIBE', 'DECENT', 'REALLY GREAT', 'ABSOLUTELY HOLY GRAIL'];
 
 export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ product }) => {
   const localStorageKey = `sb_reviews_${product.id}`;
@@ -285,9 +285,9 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
 
       {/* Main Headline */}
       <div className="mb-3">
-        <h2 className="text-3xl sm:text-5xl font-headline uppercase font-bold text-white tracking-tight">
+        <h2 className="text-4xl sm:text-6xl font-anton uppercase text-white tracking-normal">
           WHAT OTHER SPIRIT BEINGS
-          <span className="block text-[#0B3DFF] font-script text-4xl sm:text-6xl capitalize font-normal mt-1 mb-2.5 sm:mb-3.5">
+          <span className="block text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal mt-1 mb-2.5 sm:mb-3.5">
             Are Saying
           </span>
         </h2>

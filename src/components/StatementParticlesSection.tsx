@@ -158,7 +158,7 @@ export const StatementParticlesSection: React.FC = () => {
       measureZone();
 
       engine = Engine.create({ enableSleeping: true });
-      engine.gravity.y = 0.62;
+      engine.gravity.y = 1.1;
       engine.positionIterations = 6;
       engine.velocityIterations = 6;
 
@@ -196,7 +196,7 @@ export const StatementParticlesSection: React.FC = () => {
           angle: (Math.random() - 0.5) * 1.1,
           restitution: 0.3,
           friction: 0.32,
-          frictionAir: 0.026,
+          frictionAir: 0.013,
           density: 0.0012,
           sleepThreshold: 30
         });

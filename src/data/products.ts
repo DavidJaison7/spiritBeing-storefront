@@ -9,7 +9,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Heavyweight Oversized Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/the-spirit-gives-life/blue/main-fixedslide.png',
+    image: '/products/bestsellers/ Spirit Gives Life Tee.png',
     additionalImages: [
       '/products/the-spirit-gives-life/blue/1.png',
       '/products/the-spirit-gives-life/blue/2.png',
@@ -51,9 +51,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Drop Shoulder Bubble Print Tee',
     price: 899,
     category: 'Apparel',
-    image: '/carousel-model-2.png',
+    image: '/products/bestsellers/SpiritBeing Graffiti Tee.png',
     additionalImages: [
-      '/carousel-model-2.png'
+      '/products/bestsellers/SpiritBeing Graffiti Tee.png'
     ],
     description: 'Relaxed drop-shoulder silhouette featuring a heavy puff bubble text graphic: "Spirit Being". Premium organic cotton streetwear fit representing our true identity as new creations.',
     tagline: 'SPIRIT BEING',
@@ -74,7 +74,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Acid Wash Heavyweight Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/new-creation-main.png',
+    image: '/products/bestsellers/New Creation.png',
     additionalImages: [
       '/products/new-creation-2.png',
       '/products/new-creation-3.jpeg'
@@ -98,9 +98,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Oversized Streetwear Tee',
     price: 899,
     category: 'Apparel',
-    image: '/carousel-model-4.png',
+    image: '/products/bestsellers/Fear Not Gold Lion Tee.png',
     additionalImages: [
-      '/carousel-model-4.png'
+      '/products/bestsellers/Fear Not Gold Lion Tee.png'
     ],
     description: 'Deep black heavyweight tee featuring a high-density gold print of a lion and lamb: "Fear Not, for I am with you; be not dismayed, for I am your God; I will strengthen you." (Isaiah 41:10). Premium boxy drop-shoulder cut.',
     tagline: 'FEAR NOT',
@@ -121,9 +121,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Signature Drop Shoulder Tee',
     price: 899,
     category: 'Apparel',
-    image: '/carousel-model-5.png',
+    image: '/products/bestsellers/HolySpirit dOVE Tee.png',
     additionalImages: [
-      '/carousel-model-5.png'
+      '/products/bestsellers/HolySpirit dOVE Tee.png'
     ],
     description: 'Electric blue drop-shoulder tee with a majestic dove print: "Holy Spirit. The same Spirit who raised Christ from the dead lives in you." (Romans 8:11). Soft premium ringspun cotton.',
     tagline: 'HOLY SPIRIT',
@@ -144,9 +144,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Boxy Fit Heavyweight Tee',
     price: 899,
     category: 'Apparel',
-    image: '/carousel-model-6.png',
+    image: '/products/bestsellers/Christ Generations 01.png',
     additionalImages: [
-      '/carousel-model-6.png'
+      '/products/bestsellers/Christ Generations 02.png'
     ],
     description: 'Signature matte black drop-shoulder streetwear tee featuring blue back wing graphics: "Spirit Being + Christ Generations. For as many as are led by the Spirit of God, these are sons of God." (Romans 8:14). designed for presence and purpose.',
     tagline: 'CHRIST GENERATIONS',
@@ -158,5 +158,51 @@ export const INITIAL_PRODUCTS: Product[] = [
     inStock: true,
     isFeatured: true,
     likesCount: 524
+  },
+  {
+    id: 'prod_7',
+    shopifyId: 'gid://shopify/Product/8291048129',
+    handle: 'spirit-being-cap',
+    title: 'Spirit Being Cap',
+    subtitle: 'Premium Headwear',
+    price: 499,
+    category: 'Accessories',
+    image: '/products/bestsellers/SpiritBeing cap.png',
+    additionalImages: [
+      '/products/bestsellers/SpiritBeing cap.png'
+    ],
+    description: 'High-quality cotton twill cap featuring Spirit Being branding. Designed for everyday comfort and style.',
+    tagline: 'SPIRIT BEING',
+    sizes: ['ONE SIZE'],
+    colors: ['Black'],
+    color: 'BLACK',
+    material: '100% COTTON',
+    origin: 'MADE IN INDIA',
+    inStock: true,
+    isFeatured: true,
+    likesCount: 156
+  },
+  {
+    id: 'prod_8',
+    shopifyId: 'gid://shopify/Product/8291048130',
+    handle: 'spirit-led-cap',
+    title: 'Spirit Led Cap',
+    subtitle: 'Premium Headwear',
+    price: 499,
+    category: 'Accessories',
+    image: '/products/bestsellers/SpiritLED cap.png',
+    additionalImages: [
+      '/products/bestsellers/SpiritLED cap.png'
+    ],
+    description: 'Classic dad hat silhouette with embroidered "Spirit Led" design. Perfect for completing any streetwear look.',
+    tagline: 'SPIRIT LED',
+    sizes: ['ONE SIZE'],
+    colors: ['Black'],
+    color: 'BLACK',
+    material: '100% COTTON',
+    origin: 'MADE IN INDIA',
+    inStock: true,
+    isFeatured: true,
+    likesCount: 201
   }
 ];

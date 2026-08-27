@@ -74,7 +74,7 @@ export const InstagramFeedSection: React.FC = () => {
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-base md:text-lg text-white uppercase tracking-wider flex items-center gap-2 justify-center md:justify-start">
+              <h3 className="font-anton text-xl md:text-2xl text-white uppercase tracking-normal flex items-center gap-2 justify-center md:justify-start">
                 <span>@SPIRITBEING.STUDIO</span>
               </h3>
               <p className="text-xs text-gray-400 font-sans tracking-wide">

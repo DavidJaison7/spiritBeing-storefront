@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&display=swap');
 
 /* Lenis Smooth Scroll Base Styles */
 html.lenis, html.lenis body {
@@ -47,6 +48,10 @@ html, body {
 
   .font-anton {
     font-family: 'Anton', sans-serif;
+  }
+
+  .font-yellowtail {
+    font-family: 'Yellowtail', cursive;
   }
 
   .font-space {
