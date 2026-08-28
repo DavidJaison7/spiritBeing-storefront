@@ -962,7 +962,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <div className="flex items-baseline justify-between flex-wrap gap-4">
                 <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
                   <span>CHOSEN FOR</span>
-                  <span className="text-[#0B3DFF] font-rouge text-5xl sm:text-7xl capitalize font-normal">
+                  <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">
                     Spirit Beings
                   </span>
                 </h2>

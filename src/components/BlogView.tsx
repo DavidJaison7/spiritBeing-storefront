@@ -127,7 +127,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
         </nav>
         
         <h1 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal mt-6">
-          The <span className="text-[#0B3DFF] font-rouge text-5xl sm:text-7xl capitalize font-normal">Journal</span>
+          The <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">Journal</span>
         </h1>
         
         <p className="mt-4 max-w-[52ch] text-xs sm:text-sm leading-relaxed text-gray-500">

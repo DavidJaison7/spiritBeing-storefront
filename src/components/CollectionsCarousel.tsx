@@ -493,7 +493,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                 <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
                 <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
-                <span className="bg-[#0B3DFF] text-white font-rouge text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
+                <span className="bg-[#0B3DFF] text-white font-script text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
                   Special Edition
                 </span>
               </div>

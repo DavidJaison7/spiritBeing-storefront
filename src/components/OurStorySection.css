@@ -33,7 +33,8 @@
 
 .sb-our-story .title .script {
   display: block;
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
   text-transform: none;
   color: var(--blue);
   font-size: .42em;
@@ -131,7 +132,8 @@
 }
 
 .sb-our-story .copy .lede em {
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
   font-style: normal;
   text-transform: none;
   color: var(--blue);

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap');
 
 /* Lenis Smooth Scroll Base Styles */
 html.lenis, html.lenis body {
@@ -43,19 +44,20 @@ html, body {
   }
 
   .font-body-garamond {
-    font-family: 'Archivo', sans-serif;
+    font-family: 'EB Garamond', serif;
   }
 
   .font-playfair {
-    font-family: 'Archivo', sans-serif;
+    font-family: 'Playfair Display', serif;
   }
 
   .font-anton {
     font-family: 'Anton', sans-serif;
   }
 
-  .font-rouge {
-    font-family: 'Rouge Script', cursive;
+  .font-script {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
   }
 
   .font-space {
