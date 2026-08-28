@@ -33,7 +33,7 @@
 
 .sb-our-story .title .script {
   display: block;
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Apple Chancery', cursive;
   text-transform: none;
   color: var(--blue);
   font-size: .42em;
@@ -131,7 +131,7 @@
 }
 
 .sb-our-story .copy .lede em {
-  font-family: 'Rouge Script', cursive;
+  font-family: 'Apple Chancery', cursive;
   font-style: normal;
   text-transform: none;
   color: var(--blue);

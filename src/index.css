@@ -1,5 +1,12 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Rouge+Script&family=Yellowtail&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Yellowtail&display=swap');
+
+@font-face {
+  font-family: 'Apple Chancery';
+  src: url('/fonts/AppleChancery.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 /* Lenis Smooth Scroll Base Styles */
 html.lenis,
@@ -57,16 +64,12 @@ body {
     font-family: 'Archivo', sans-serif;
   }
 
-  .font-script {
-    font-family: 'Rouge Script', cursive;
-  }
-
   .font-anton {
     font-family: 'Anton', sans-serif;
   }
 
   .font-yellowtail {
-    font-family: 'Yellowtail', cursive;
+    font-family: 'Apple Chancery', cursive;
   }
 
   .font-space {
