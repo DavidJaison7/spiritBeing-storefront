@@ -390,7 +390,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
           <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3 flex-wrap">
             <span>BEST SELLERS OF</span>
-            <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
+            <span className="text-[#0B3DFF] font-rouge text-5xl sm:text-7xl capitalize font-normal">
               Spirit Being
             </span>
           </h2>

@@ -304,7 +304,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               <span>WHAT OTHER SPIRIT</span>
               <span className="flex items-baseline gap-2 sm:gap-3 mt-1 flex-wrap lg:flex-nowrap justify-between w-full lg:w-auto">
                 <span>BEINGS</span>
-                <span className="text-[#0B3DFF] font-yellowtail capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
+                <span className="text-[#0B3DFF] font-rouge capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
                   Are Saying
                 </span>
               </span>
