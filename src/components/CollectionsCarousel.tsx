@@ -189,7 +189,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         if (inFl) tl.to(inFl, { yPercent: 0, scale: 1, duration: DUR, ease: EASE }, 0);
         if (outPh) tl.to(outPh, { yPercent: dir > 0 ? 8 : -8, scale: 1.06, duration: DUR, ease: EASE }, 0);
         if (outFl) tl.to(outFl, { yPercent: dir > 0 ? 16 : -16, duration: DUR, ease: EASE }, 0);
-        
+
         tl.to(outT.children, {
           y: dir > 0 ? -26 : 26,
           opacity: 0,
@@ -493,7 +493,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                 <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
                 <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
-                <span className="bg-[#0B3DFF] text-white font-script text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
+                <span className="bg-[#0B3DFF] text-white font-yellowtail text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
                   Special Edition
                 </span>
               </div>
@@ -539,8 +539,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
           <div className="count">
             <b id="railNum">01</b>&nbsp;/&nbsp;06
           </div>
-          
-          <button 
+
+          <button
             className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mb-3 mx-auto shadow-sm group backdrop-blur-sm"
             onClick={() => handleDotClick(Math.max(0, curRef.current - 1))}
             aria-label="Previous slide"
@@ -561,7 +561,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
             </React.Fragment>
           ))}
 
-          <button 
+          <button
             className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mt-3 mx-auto shadow-sm group backdrop-blur-sm"
             onClick={() => handleDotClick(Math.min(SLIDES.length - 1, curRef.current + 1))}
             aria-label="Next slide"

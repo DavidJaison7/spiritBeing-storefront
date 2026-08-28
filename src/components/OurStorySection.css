@@ -87,7 +87,7 @@
   color: var(--warm);
   padding: .28em 0;
   position: relative;
-  transition: color .35s ease, transform .5s cubic-bezier(.22,1,.36,1);
+  transition: color .35s ease, transform .5s cubic-bezier(.22, 1, .36, 1);
 }
 
 .sb-our-story .follow a .arr {
@@ -96,7 +96,7 @@
   color: var(--blue);
   opacity: 0;
   transform: translateX(-10px);
-  transition: opacity .35s ease, transform .5s cubic-bezier(.22,1,.36,1);
+  transition: opacity .35s ease, transform .5s cubic-bezier(.22, 1, .36, 1);
 }
 
 .sb-our-story .follow a:hover {
@@ -162,7 +162,7 @@
 .sb-our-story .rv-up {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.16, 1, .3, 1);
 }
 
 .sb-our-story .rv-up.in {
@@ -176,7 +176,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 45; /* Below modals and cart drawer, above main elements */
+  z-index: 45;
+  /* Below modals and cart drawer, above main elements */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -187,8 +188,10 @@
   text-transform: uppercase;
   color: #8A8A8A;
   background: transparent;
-  pointer-events: none; /* Let clicks pass through to standard elements behind it */
-  mix-blend-mode: difference; /* Beautiful color inversion over light backgrounds */
+  pointer-events: none;
+  /* Let clicks pass through to standard elements behind it */
+  mix-blend-mode: difference;
+  /* Beautiful color inversion over light backgrounds */
 }
 
 .fixed-bottom-strip * {
@@ -206,13 +209,25 @@
   display: block;
   height: 3px;
   border-radius: 2px;
-  background: currentColor; /* Inherits text color */
+  background: currentColor;
+  /* Inherits text color */
 }
 
-.fixed-bottom-strip .ticks i:nth-child(1) { width: 14px; }
-.fixed-bottom-strip .ticks i:nth-child(2) { width: 4px; }
-.fixed-bottom-strip .ticks i:nth-child(3) { width: 9px; }
-.fixed-bottom-strip .ticks i:nth-child(4) { width: 4px; }
+.fixed-bottom-strip .ticks i:nth-child(1) {
+  width: 14px;
+}
+
+.fixed-bottom-strip .ticks i:nth-child(2) {
+  width: 4px;
+}
+
+.fixed-bottom-strip .ticks i:nth-child(3) {
+  width: 9px;
+}
+
+.fixed-bottom-strip .ticks i:nth-child(4) {
+  width: 4px;
+}
 
 .fixed-bottom-strip .left {
   display: flex;
@@ -224,20 +239,24 @@
   .sb-our-story .title-wrap {
     padding: 14vh 6vw 4vh;
   }
+
   .sb-our-story .story-grid {
     grid-template-columns: 1fr;
     gap: 8vh;
     padding: 4vh 6vw 4vh;
   }
+
   .sb-our-story .follow {
     position: relative;
     top: auto;
   }
+
   .sb-our-story .copy {
     grid-column: 1;
     font-size: 13px;
     line-height: 1.95;
   }
+
   .fixed-bottom-strip {
     padding: 16px 20px;
     font-size: 9px;
@@ -253,6 +272,7 @@
     transform: none;
     transition: none;
   }
+
   .sb-our-story .follow a,
   .sb-our-story .follow a .arr {
     transition: none;

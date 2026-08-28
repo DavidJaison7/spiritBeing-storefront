@@ -1,24 +1,30 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Rouge+Script&family=Yellowtail&display=swap');
 
 /* Lenis Smooth Scroll Base Styles */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
 
-html, body {
+html,
+body {
   overscroll-behavior-x: none !important;
 }
 
@@ -44,19 +50,23 @@ html, body {
   }
 
   .font-body-garamond {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Archivo', sans-serif;
   }
 
   .font-playfair {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Archivo', sans-serif;
+  }
+
+  .font-script {
+    font-family: 'Rouge Script', cursive;
   }
 
   .font-anton {
     font-family: 'Anton', sans-serif;
   }
 
-  .font-script {
-    font-family: 'Rouge Script', cursive;
+  .font-yellowtail {
+    font-family: 'Yellowtail', cursive;
   }
 
   .font-space {
@@ -86,13 +96,23 @@ html, body {
 
 /* Continuous Marquee & Ticker Animations */
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-marquee {
@@ -111,50 +131,120 @@ html, body {
 
 /* Floating wiggle — inspired by companystore.webflow.io theme-02 */
 @keyframes float-wiggle-1 {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(4deg) translateY(-35px); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(4deg) translateY(-35px);
+  }
 }
 
 @keyframes float-wiggle-2 {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(-5deg) translateY(-45px); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-5deg) translateY(-45px);
+  }
 }
 
 @keyframes float-wiggle-3 {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(6deg) translateY(-25px); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(6deg) translateY(-25px);
+  }
 }
 
 @keyframes float-wiggle-4 {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(-7deg) translateY(-50px); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-7deg) translateY(-50px);
+  }
 }
 
 @keyframes float-wiggle-5 {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(8deg) translateY(-40px); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(8deg) translateY(-40px);
+  }
 }
 
-.marquee-float-1 { animation: float-wiggle-1 3s ease-in-out infinite; }
-.marquee-float-2 { animation: float-wiggle-2 3.5s ease-in-out infinite; }
-.marquee-float-3 { animation: float-wiggle-3 4.5s ease-in-out infinite; }
-.marquee-float-4 { animation: float-wiggle-4 3s ease-in-out infinite; }
-.marquee-float-5 { animation: float-wiggle-5 4.5s ease-in-out infinite; }
+.marquee-float-1 {
+  animation: float-wiggle-1 3s ease-in-out infinite;
+}
 
-.marquee-item-offset-1 { margin-top: 0; }
-.marquee-item-offset-2 { margin-top: -3rem; }
-.marquee-item-offset-3 { margin-top: 2rem; }
-.marquee-item-offset-4 { margin-top: -1.5rem; }
+.marquee-float-2 {
+  animation: float-wiggle-2 3.5s ease-in-out infinite;
+}
+
+.marquee-float-3 {
+  animation: float-wiggle-3 4.5s ease-in-out infinite;
+}
+
+.marquee-float-4 {
+  animation: float-wiggle-4 3s ease-in-out infinite;
+}
+
+.marquee-float-5 {
+  animation: float-wiggle-5 4.5s ease-in-out infinite;
+}
+
+.marquee-item-offset-1 {
+  margin-top: 0;
+}
+
+.marquee-item-offset-2 {
+  margin-top: -3rem;
+}
+
+.marquee-item-offset-3 {
+  margin-top: 2rem;
+}
+
+.marquee-item-offset-4 {
+  margin-top: -1.5rem;
+}
 
 @keyframes bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(4px);
+  }
 }
 
 .animate-bob {
   animation: bob 2.2s ease-in-out infinite;
 }
-.marquee-item-offset-5 { margin-top: 2.5rem; }
+
+.marquee-item-offset-5 {
+  margin-top: 2.5rem;
+}
 
 /* Product Card Hover Effects */
 .product-hover {
@@ -169,6 +259,7 @@ html, body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -179,6 +270,7 @@ html, body {
   0% {
     transform: translate(-50%, 10%) rotate(0deg);
   }
+
   100% {
     transform: translate(-50%, -60%) rotate(540deg);
   }
@@ -187,4 +279,3 @@ html, body {
 .animate-wave-fill {
   animation: wave-fill 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-

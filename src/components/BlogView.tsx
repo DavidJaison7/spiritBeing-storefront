@@ -113,7 +113,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedPost, setSelectedPost] = useState<typeof BLOG_POSTS[0] | null>(null);
 
-  const filteredPosts = BLOG_POSTS.filter(post => 
+  const filteredPosts = BLOG_POSTS.filter(post =>
     activeFilter === 'all' || post.tag === activeFilter
   );
 
@@ -125,24 +125,23 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
           <span>/</span>
           <span className="text-gray-800">Blogs</span>
         </nav>
-        
+
         <h1 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal mt-6">
-          The <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">Journal</span>
+          The <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">Journal</span>
         </h1>
-        
+
         <p className="mt-4 max-w-[52ch] text-xs sm:text-sm leading-relaxed text-gray-500">
           Stories, scripture and process notes from the Spirit Being studio. Faith. Identity. Purpose.
         </p>
-        
+
         <div className="flex flex-wrap gap-2 mt-8">
           {FILTERS.map(filter => (
-            <button 
+            <button
               key={filter.id}
-              className={`border rounded-full px-4 py-2 text-[10.5px] tracking-[0.2em] uppercase cursor-pointer transition-all ${
-                activeFilter === filter.id 
-                  ? 'bg-black text-white border-black shadow-sm' 
+              className={`border rounded-full px-4 py-2 text-[10.5px] tracking-[0.2em] uppercase cursor-pointer transition-all ${activeFilter === filter.id
+                  ? 'bg-black text-white border-black shadow-sm'
                   : 'bg-white text-gray-500 border-black/10 hover:border-black/30 hover:text-black'
-              }`}
+                }`}
               onClick={() => setActiveFilter(filter.id)}
               type="button"
             >
@@ -160,10 +159,10 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
                 <span className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.22em] uppercase text-black rounded-full shadow-sm">
                   {post.tag}
                 </span>
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  loading="lazy" 
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -183,7 +182,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
             </button>
           ))}
         </div>
-        
+
         {filteredPosts.length > 0 && (
           <div className="flex justify-center mt-16">
             <button className="border border-black text-black bg-transparent rounded-full px-10 py-4 text-[11px] tracking-[0.24em] uppercase hover:bg-black hover:text-white transition-all cursor-pointer">
@@ -195,7 +194,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
 
       {/* Blog Post Full View */}
       {selectedPost && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] bg-[#fbf9f9] overflow-y-auto w-full h-full"
           data-lenis-prevent="true"
         >
@@ -209,9 +208,9 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
 
             {/* Hero Image */}
             <div className="w-full aspect-[21/9] md:aspect-[2.5/1] bg-gray-100 rounded-[2rem] overflow-hidden mb-12 shadow-sm">
-              <img 
-                src={selectedPost.image} 
-                alt={selectedPost.title} 
+              <img
+                src={selectedPost.image}
+                alt={selectedPost.title}
                 className="w-full h-full object-cover"
               />
             </div>

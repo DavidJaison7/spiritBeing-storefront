@@ -46,7 +46,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: none;   /* CTA re-enables below */
+  pointer-events: none;
+  /* CTA re-enables below */
 }
 
 /* ---- headline ---- */
@@ -298,6 +299,7 @@
     white-space: normal;
     font-size: clamp(27px, 6.6vw, 46px);
   }
+
   .sb-copy h2 .row.script {
     font-size: 1.3em;
   }
@@ -309,23 +311,28 @@
     min-height: 100svh;
     padding-bottom: clamp(170px, 26vh, 240px);
   }
+
   .sb-copy {
     padding-top: clamp(48px, 8vh, 80px);
   }
+
   .sb-context {
     max-width: 23rem;
     font-size: 11px;
     letter-spacing: .08em;
     line-height: 1.95;
   }
+
   .sb-context .mb {
     display: inline;
   }
+
   .sb-refs {
     font-size: 8.5px;
     letter-spacing: .2em;
     line-height: 2;
   }
+
   .discord-cta {
     padding: 16px 30px;
     font-size: 10.5px;
@@ -338,17 +345,26 @@
     transform: none;
     color: #fff;
   }
+
   .sb-statement .word.dim-final {
     color: var(--electric);
   }
-  .sb-context, .sb-refs, .sb-community {
+
+  .sb-context,
+  .sb-refs,
+  .sb-community {
     transition: none;
     opacity: 1;
     transform: none;
   }
-  .discord-cta, .discord-cta::before, .discord-cta svg, .discord-cta .arr {
+
+  .discord-cta,
+  .discord-cta::before,
+  .discord-cta svg,
+  .discord-cta .arr {
     transition: none;
   }
+
   .sb-statement .hint {
     transition: none;
   }

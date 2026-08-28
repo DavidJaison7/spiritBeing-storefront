@@ -54,7 +54,7 @@ export const soundOptions = {
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
-    const freqs = [523.25, 659.25, 783.99, 987.77, 1046.50]; 
+    const freqs = [523.25, 659.25, 783.99, 987.77, 1046.50];
     freqs.forEach((freq, i) => {
       setTimeout(() => {
         const osc = ctx.createOscillator();
@@ -107,11 +107,11 @@ export const soundOptions = {
     gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
     osc.stop(ctx.currentTime + 1.5);
-    
+
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = 'sine';
-    osc2.frequency.value = 1052.50; 
+    osc2.frequency.value = 1052.50;
     osc2.connect(gain2);
     gain2.connect(ctx.destination);
     osc2.start();
@@ -240,7 +240,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
       className="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1 select-none"
     >
       {/* Curved Flashcard Image Frame */}
-      <div 
+      <div
         ref={frameRef}
         className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white border border-black/5 shadow-sm touch-pan-y"
         style={{ overscrollBehaviorX: 'none' }}
@@ -308,9 +308,8 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                   e.stopPropagation();
                   setActiveIndex(idx);
                 }}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  idx === activeIndex ? 'w-3.5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/60 hover:bg-white'
-                } shadow-sm`}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${idx === activeIndex ? 'w-3.5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/60 hover:bg-white'
+                  } shadow-sm`}
                 aria-label={`Go to image ${idx + 1}`}
               />
             ))}
@@ -334,11 +333,10 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                     e.stopPropagation();
                     setSelectedSize(size);
                   }}
-                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${
-                    isSelected
+                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${isSelected
                       ? 'border-black text-black bg-white font-semibold shadow-sm'
                       : 'border-black/15 text-[#666666] bg-transparent hover:border-black/30'
-                  }`}
+                    }`}
                   aria-label={`Select size ${size}`}
                 >
                   {size}
@@ -373,9 +371,8 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                       setSelectedColor(color);
                       setActiveIndex(0);
                     }}
-                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${
-                      isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
-                    }`}
+                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
+                      }`}
                     style={{ backgroundColor: bgHex }}
                     title={color}
                     aria-label={`Select ${color} color`}
@@ -403,9 +400,8 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                 e.stopPropagation();
                 onAddToCart(e, selectedSize, selectedColor);
               }}
-              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
-                isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
-              }`}
+              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
+                }`}
             >
               {isAdded ? 'Added ✓' : 'Add to Bag'}
             </button>
@@ -419,18 +415,16 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
               e.stopPropagation();
               onToggleWishlist(product.id);
             }}
-            className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${
-              isWishlisted
+            className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${isWishlisted
                 ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm scale-105'
                 : 'bg-white/80 border-black/10 text-gray-700 hover:bg-rose-50/70 hover:text-rose-600 hover:border-rose-200'
-            }`}
+              }`}
             title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
             aria-label={isWishlisted ? 'Unlike product' : 'Like product'}
           >
             <Heart
-              className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
-              }`}
+              className={`w-3.5 h-3.5 transition-transform duration-300 ${isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
+                }`}
             />
             <span>{(product.likesCount || 280) + (isWishlisted ? 1 : 0)}</span>
           </button>
@@ -489,17 +483,17 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     ...(product.additionalImages && product.additionalImages.length > 0
       ? product.additionalImages
       : [
-          '/products/product-sec1.jpg',
-          '/products/product-sec2.png',
-          '/products/product-sec3.png'
-        ])
+        '/products/product-sec1.jpg',
+        '/products/product-sec2.png',
+        '/products/product-sec3.png'
+      ])
   ];
 
   const handleRelatedPlusClick = (e: React.MouseEvent, relProduct: Product, size?: string, color?: string) => {
     e.stopPropagation();
     const targetSize = size || (relProduct.sizes && relProduct.sizes.length > 0 ? relProduct.sizes[0] : 'M');
     onAddToCart(relProduct, targetSize, color);
-    
+
     setJustAddedId(relProduct.id);
     setTimeout(() => {
       setJustAddedId((current) => (current === relProduct.id ? null : current));
@@ -648,9 +642,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   }
                 }}
                 disabled={mobileActiveIndex === 0}
-                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
-                  mobileActiveIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-                }`}
+                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${mobileActiveIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
+                  }`}
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
@@ -668,9 +661,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         });
                       }
                     }}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
-                      idx === mobileActiveIndex ? 'w-6 bg-black' : 'w-2 bg-black/25'
-                    }`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${idx === mobileActiveIndex ? 'w-6 bg-black' : 'w-2 bg-black/25'
+                      }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
@@ -688,9 +680,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   }
                 }}
                 disabled={mobileActiveIndex === mobileGalleryImages.length - 1}
-                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${
-                  mobileActiveIndex === mobileGalleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-                }`}
+                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${mobileActiveIndex === mobileGalleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
+                  }`}
                 aria-label="Next image"
               >
                 <ChevronRight className="w-5 h-5 stroke-[2.5]" />
@@ -725,11 +716,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
 
           {/* Right Column: 40% Width (lg:col-span-4) - Product Details & Actions (with Mobile Side Padding) */}
-          <div className={`lg:col-span-4 flex flex-col items-center text-center max-w-lg mx-auto w-full lg:sticky self-start px-4 sm:px-6 md:px-0 scrollbar-none transition-all duration-300 ${
-            isTallViewport
+          <div className={`lg:col-span-4 flex flex-col items-center text-center max-w-lg mx-auto w-full lg:sticky self-start px-4 sm:px-6 md:px-0 scrollbar-none transition-all duration-300 ${isTallViewport
               ? 'lg:top-28 lg:pt-16 lg:max-h-none'
               : 'lg:top-14 xl:top-16 lg:pt-0 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto'
-          }`}>
+            }`}>
             <div className="mb-6 lg:mb-8 2xl:mb-10 text-left w-full">
               {product.tagline && (
                 <div className="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-[10px] font-sans font-bold uppercase tracking-widest rounded-full mb-3">
@@ -739,15 +729,15 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <h1 className="text-3xl sm:text-4xl 2xl:text-5xl font-sans font-bold text-black tracking-tight leading-[1.1] mb-3">
                 {product.title}
               </h1>
-              
+
               {/* Review Stars */}
               <div className="flex items-center gap-1.5 mb-4">
                 <div className="flex items-center gap-0.5 text-black">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-4 h-4 2xl:w-4.5 2xl:h-4.5 ${i < 4 ? 'fill-black text-black' : 'fill-transparent text-black'}`} 
-                      strokeWidth={2.5} 
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 2xl:w-4.5 2xl:h-4.5 ${i < 4 ? 'fill-black text-black' : 'fill-transparent text-black'}`}
+                      strokeWidth={2.5}
                     />
                   ))}
                 </div>
@@ -790,13 +780,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         key={size}
                         disabled={!isAvailable}
                         onClick={() => isAvailable && setSelectedSize(size)}
-                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
-                          !isAvailable
+                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${!isAvailable
                             ? 'bg-[#f5f4f0] text-black/45 line-through border border-dashed border-black/25 cursor-not-allowed'
                             : isSelected
-                            ? 'bg-black text-white shadow-md scale-[1.03]'
-                            : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
-                        }`}
+                              ? 'bg-black text-white shadow-md scale-[1.03]'
+                              : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                          }`}
                       >
                         {size}
                       </button>
@@ -826,18 +815,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                             mobileScrollRef.current.scrollTo({ left: 0 });
                           }
                         }}
-                        className={`flex items-center gap-2 2xl:gap-2.5 px-3.5 py-2 2xl:px-4 2xl:py-2.5 rounded-[14px] 2xl:rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${
-                          isSelected
+                        className={`flex items-center gap-2 2xl:gap-2.5 px-3.5 py-2 2xl:px-4 2xl:py-2.5 rounded-[14px] 2xl:rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${isSelected
                             ? 'border-black bg-black text-white shadow-md scale-[1.03]'
                             : 'border-black/10 bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
-                        }`}
+                          }`}
                         title={color}
                         aria-label={`Select ${color}`}
                       >
                         <span
-                          className={`w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full border ${
-                            isSelected ? 'border-white/40' : 'border-black/10'
-                          }`}
+                          className={`w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full border ${isSelected ? 'border-white/40' : 'border-black/10'
+                            }`}
                           style={{ backgroundColor: colorHex }}
                         />
                         <span>{color.toUpperCase()}</span>
@@ -853,9 +840,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <button
                 onClick={handleAddToCart}
                 style={{ overflow: 'visible' }}
-                className={`flex-1 border-2 border-black rounded-full py-3.5 2xl:py-4 text-sm sm:text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md relative ${
-                  added ? 'bg-black text-white' : 'bg-transparent'
-                } ${isBouncing ? 'animate-bounce-click' : ''}`}
+                className={`flex-1 border-2 border-black rounded-full py-3.5 2xl:py-4 text-sm sm:text-base font-sans font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md relative ${added ? 'bg-black text-white' : 'bg-transparent'
+                  } ${isBouncing ? 'animate-bounce-click' : ''}`}
               >
                 {/* Confetti Particles */}
                 {particles.map((p) => (
@@ -876,16 +862,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 {/* Text Slide transition container */}
                 <div className="relative h-6 overflow-hidden w-full flex justify-center items-center pointer-events-none">
                   <span
-                    className={`flex items-center justify-center gap-2 transition-all duration-300 absolute ${
-                      added ? 'opacity-0 -translate-y-6' : 'opacity-100 translate-y-0'
-                    }`}
+                    className={`flex items-center justify-center gap-2 transition-all duration-300 absolute ${added ? 'opacity-0 -translate-y-6' : 'opacity-100 translate-y-0'
+                      }`}
                   >
                     ADD TO BAG
                   </span>
                   <span
-                    className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${
-                      added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                    }`}
+                    className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                      }`}
                   >
                     <Check className="w-5 h-5 stroke-[2.5]" />
                     <span className="text-white">ADDED TO BAG</span>
@@ -903,20 +887,18 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       soundOptions.choir();
                     }
                   }}
-                  className={`relative px-4 sm:px-5 2xl:px-6 py-3.5 2xl:py-4 rounded-full border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer shrink-0 group overflow-hidden ${
-                    isProductLiked
+                  className={`relative px-4 sm:px-5 2xl:px-6 py-3.5 2xl:py-4 rounded-full border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer shrink-0 group overflow-hidden ${isProductLiked
                       ? 'border-rose-500 text-white shadow-md scale-[1.02]'
                       : 'border-black/15 bg-white text-black hover:border-rose-500 hover:text-rose-600 hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] hover:-translate-y-0.5 active:scale-95'
-                  }`}
+                    }`}
                   title={isProductLiked ? 'Blessed by you!' : 'Bless this drop'}
                 >
                   {/* Wavy Liquid fill background */}
-                  <span 
-                    className={`absolute left-1/2 top-full w-[300px] h-[300px] bg-rose-500 rounded-[43%] z-0 pointer-events-none transition-transform duration-300 ${
-                      isProductLiked ? 'animate-wave-fill' : '-translate-x-1/2 translate-y-[10%]'
-                    }`} 
+                  <span
+                    className={`absolute left-1/2 top-full w-[300px] h-[300px] bg-rose-500 rounded-[43%] z-0 pointer-events-none transition-transform duration-300 ${isProductLiked ? 'animate-wave-fill' : '-translate-x-1/2 translate-y-[10%]'
+                      }`}
                   />
-                  
+
                   <Heart className={`relative z-10 w-4 h-4 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-125' : 'text-black group-hover:scale-110 group-hover:text-rose-500 group-active:scale-90'}`} />
                   <span className="relative z-10">{isProductLiked ? 'BLESSED' : 'BLESS THIS DROP'}</span>
                   <span className={`relative z-10 px-2 py-0.5 rounded-full font-mono font-bold text-[11px] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
@@ -962,7 +944,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <div className="flex items-baseline justify-between flex-wrap gap-4">
                 <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
                   <span>CHOSEN FOR</span>
-                  <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">
+                  <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
                     Spirit Beings
                   </span>
                 </h2>

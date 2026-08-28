@@ -46,13 +46,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Get all unique images for this product, scoped to selected color if applicable
   const getProductImages = () => {
     const images: string[] = [];
-    
+
     if (selectedColor && product.colorImageMap && product.colorImageMap[selectedColor] && product.colorImageMap[selectedColor].length > 0) {
       return product.colorImageMap[selectedColor];
     }
 
     if (product.image) images.push(product.image);
-    
+
     if (product.additionalImages) {
       product.additionalImages.forEach(img => {
         if (!images.includes(img)) images.push(img);
@@ -95,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         }
       }
     }
-    
+
     // Reset drag status on tick end
     setTimeout(() => {
       isDraggingRef.current = false;
@@ -108,7 +108,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     const handleNativeWheel = (e: WheelEvent) => {
       if (productImages.length <= 1) return;
-      
+
       // If user is swiping horizontally on trackpad/mouse
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 12) {
         // Prevent Chrome, Edge, Safari, Brave browser history BACK / FORWARD page gesture
@@ -142,7 +142,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       className="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1 select-none"
     >
       {/* Curved Flashcard Image Frame */}
-      <div 
+      <div
         ref={frameRef}
         className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white border border-black/5 shadow-sm touch-pan-y"
         style={{ overscrollBehaviorX: 'none' }}
@@ -210,9 +210,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   e.stopPropagation();
                   setActiveIndex(idx);
                 }}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  idx === activeIndex ? 'w-3.5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/60 hover:bg-white'
-                } shadow-sm`}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${idx === activeIndex ? 'w-3.5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/60 hover:bg-white'
+                  } shadow-sm`}
                 aria-label={`Go to image ${idx + 1}`}
               />
             ))}
@@ -237,11 +236,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     e.stopPropagation();
                     setSelectedSize(size);
                   }}
-                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${
-                    isSelected
+                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${isSelected
                       ? 'border-black text-black bg-white font-semibold shadow-sm'
                       : 'border-black/15 text-[#666666] bg-transparent hover:border-black/30'
-                  }`}
+                    }`}
                   aria-label={`Select size ${size}`}
                 >
                   {size}
@@ -282,9 +280,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       setSelectedColor(color);
                       setActiveIndex(0);
                     }}
-                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${
-                      isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
-                    }`}
+                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
+                      }`}
                     style={{ backgroundColor: bgHex }}
                     title={color}
                     aria-label={`Select ${color} color`}
@@ -312,9 +309,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 e.stopPropagation();
                 onAddToCart(e, selectedSize, selectedColor);
               }}
-              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
-                isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
-              }`}
+              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
+                }`}
             >
               {isAdded ? 'Added ✓' : 'Add to Bag'}
             </button>
@@ -327,18 +323,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
             e.stopPropagation();
             onToggleWishlist(product.id);
           }}
-          className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${
-            isWishlisted
+          className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${isWishlisted
               ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm scale-105'
               : 'bg-white/80 border-black/10 text-gray-700 hover:bg-rose-50/70 hover:text-rose-600 hover:border-rose-200'
-          }`}
+            }`}
           title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
           aria-label={isWishlisted ? 'Unlike product' : 'Like product'}
         >
           <Heart
-            className={`w-3.5 h-3.5 transition-transform duration-300 ${
-              isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
-            }`}
+            className={`w-3.5 h-3.5 transition-transform duration-300 ${isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
+              }`}
           />
           <span>{(product.likesCount || 280) + (isWishlisted ? 1 : 0)}</span>
         </button>
@@ -367,7 +361,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   const handlePlusClick = (e: React.MouseEvent, product: Product, size: string, color?: string) => {
     e.stopPropagation();
     onAddToCart(product, size, color);
-    
+
     setJustAddedId(product.id);
     setTimeout(() => {
       setJustAddedId((current) => (current === product.id ? null : current));
@@ -390,7 +384,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
           <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3 flex-wrap">
             <span>BEST SELLERS OF</span>
-            <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">
+            <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
               Spirit Being
             </span>
           </h2>

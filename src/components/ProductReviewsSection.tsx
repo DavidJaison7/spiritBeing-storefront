@@ -158,7 +158,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
   const [withPhotosOnly, setWithPhotosOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('highest');
   const [visibleCount, setVisibleCount] = useState<number>(4);
-  
+
   // Review Writer Drawer state
   const [isWriterOpen, setIsWriterOpen] = useState<boolean>(false);
   const [rating, setRating] = useState<number>(5);
@@ -182,7 +182,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
   const avgScore = totalCount > 0
     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / totalCount).toFixed(1)
     : '0.0';
-  
+
   const recPercent = totalCount > 0
     ? Math.round((reviews.filter((r) => r.rating >= 4).length / totalCount) * 100)
     : 100;
@@ -289,7 +289,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
   return (
     <section className="w-full bg-transparent text-[#EDEEF2] font-mono relative pb-[40px]">
       <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start relative">
-        
+
         {/* LEFT COLUMN: Sticky Summary */}
         <div className="lg:col-span-4 lg:sticky lg:top-28 mb-10 lg:mb-0">
           {/* Header Eyebrow */}
@@ -304,7 +304,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               <span>WHAT OTHER SPIRIT</span>
               <span className="flex items-baseline gap-2 sm:gap-3 mt-1 flex-wrap lg:flex-nowrap justify-between w-full lg:w-auto">
                 <span>BEINGS</span>
-                <span className="text-[#0B3DFF] font-script capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
+                <span className="text-[#0B3DFF] font-yellowtail capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
                   Are Saying
                 </span>
               </span>
@@ -329,11 +329,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Star
                     key={s}
-                    className={`w-5 h-5 ${
-                      s <= Math.round(Number(avgScore))
+                    className={`w-5 h-5 ${s <= Math.round(Number(avgScore))
                         ? 'fill-[#0B3DFF] text-[#0B3DFF]'
                         : 'fill-white/10 text-white/10'
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -356,12 +355,11 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                   key={stars}
                   type="button"
                   onClick={() => setFilterStar(filterStar === stars ? null : stars)}
-                  className={`w-full grid grid-cols-12 items-center gap-3 text-left py-1 px-2 rounded-lg transition-colors cursor-pointer ${
-                    filterStar === stars ? 'bg-white/10' : 'hover:bg-white/5'
-                  }`}
+                  className={`w-full grid grid-cols-12 items-center gap-3 text-left py-1 px-2 rounded-lg transition-colors cursor-pointer ${filterStar === stars ? 'bg-white/10' : 'hover:bg-white/5'
+                    }`}
                 >
-                  <span 
-                    className="col-span-5 sm:col-span-4 text-[10px] sm:text-[11px] text-[#8A8D95] font-medium tracking-wider uppercase truncate" 
+                  <span
+                    className="col-span-5 sm:col-span-4 text-[10px] sm:text-[11px] text-[#8A8D95] font-medium tracking-wider uppercase truncate"
                     title={getStarLabel(stars)}
                   >
                     {getStarLabel(stars)}
@@ -384,369 +382,365 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         {/* RIGHT COLUMN: Scrolling Reviews */}
         <div className="lg:col-span-8">
 
-      {/* Buyer Photo Strip */}
-      {allBuyerPhotos.length > 0 && (
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#8A8D95]">
-              PHOTOS FROM BUYERS
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowAllPhotosModal(true)}
-              className="px-4 py-1.5 rounded-2xl border border-white/20 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
-            >
-              SEE ALL
-            </button>
-          </div>
-          <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
-            {allBuyerPhotos.map((photo, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setLightboxIndex(idx)}
-                className="w-24 h-24 shrink-0 rounded-xl overflow-hidden border border-white/10 relative group cursor-pointer"
-              >
-                <img
-                  src={photo.url}
-                  alt={photo.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Filter & Action Toolbar */}
-      <div className="mt-10 py-4 border-y border-white/10 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#8A8D95]">
-            SHOWING {Math.min(visibleCount, filteredReviews.length)} OF {filteredReviews.length} REVIEWS
-          </span>
-          {(filterStar || withPhotosOnly) && (
-            <button
-              onClick={() => {
-                setFilterStar(null);
-                setWithPhotosOnly(false);
-              }}
-              className="hidden"
-            >
-              CLEAR FILTERS ✕
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => setWithPhotosOnly(!withPhotosOnly)}
-            className={`text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border transition-all cursor-pointer ${
-              withPhotosOnly
-                ? 'border-[#0B3DFF] bg-[#0B3DFF]/20 text-[#B9C6FF]'
-                : 'border-white/15 text-[#8A8D95] hover:border-white/30 hover:text-white'
-            }`}
-          >
-            WITH PHOTOS ONLY
-          </button>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border border-white/15 bg-[#0D0E11] text-[#8A8D95] hover:border-white/30 focus:outline-none cursor-pointer"
-          >
-            <option value="recent">SORT BY: MOST RECENT</option>
-            <option value="highest">SORT BY: HIGHEST RATING</option>
-            <option value="lowest">SORT BY: LOWEST RATING</option>
-          </select>
-
-          <button
-            onClick={() => setIsWriterOpen(!isWriterOpen)}
-            className="text-xs uppercase tracking-widest px-6 py-2.5 rounded-2xl bg-[#0B3DFF] text-white font-bold hover:bg-[#0B3DFF]/90 transition-all shadow-md cursor-pointer"
-          >
-            {isWriterOpen ? 'CLOSE FORM' : 'WRITE A REVIEW'}
-          </button>
-        </div>
-      </div>
-
-      {/* Write a Review Expanded Form */}
-      {isWriterOpen && (
-        <form
-          onSubmit={handleSubmitReview}
-          className="mt-6 p-6 sm:p-8 rounded-2xl bg-[#0D0E11] border border-[#0B3DFF]/40 space-y-6 animate-fade-in shadow-2xl"
-        >
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
-            <div>
-              <h3 className="text-base font-mono uppercase tracking-[0.25em] font-bold text-white">WRITE YOUR REVIEW</h3>
-              <p className="text-xs text-[#5B5E66] font-mono mt-0.5">One review per person. Take your time with it.</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsWriterOpen(false)}
-              className="text-[#8A8D95] hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-              title="Close review form"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Star Picker */}
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-widest text-[#8A8D95] mb-2">YOUR RATING</label>
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                {[1, 2, 3, 4, 5].map((s) => (
+          {/* Buyer Photo Strip */}
+          {allBuyerPhotos.length > 0 && (
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#8A8D95]">
+                  PHOTOS FROM BUYERS
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowAllPhotosModal(true)}
+                  className="px-4 py-1.5 rounded-2xl border border-white/20 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
+                >
+                  SEE ALL
+                </button>
+              </div>
+              <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
+                {allBuyerPhotos.map((photo, idx) => (
                   <button
-                    key={s}
+                    key={idx}
                     type="button"
-                    onMouseEnter={() => setHoverRating(s)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    onClick={() => setRating(s)}
-                    className="p-1 cursor-pointer transition-transform hover:scale-110"
+                    onClick={() => setLightboxIndex(idx)}
+                    className="w-24 h-24 shrink-0 rounded-xl overflow-hidden border border-white/10 relative group cursor-pointer"
                   >
-                    <Star
-                      className={`w-7 h-7 ${
-                        s <= (hoverRating || rating)
-                          ? 'fill-[#0B3DFF] text-[#0B3DFF]'
-                          : 'fill-white/10 text-white/20'
-                      }`}
+                    <img
+                      src={photo.url}
+                      alt={photo.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </button>
                 ))}
               </div>
-              <span className="px-3.5 py-1 rounded-full bg-[#0B3DFF]/15 border border-[#0B3DFF]/30 text-xs font-mono font-bold uppercase tracking-widest text-[#8FA6FF]">
-                {RATING_WORDS[hoverRating || rating]}
-              </span>
-            </div>
-          </div>
-
-          {/* Name & Email */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-1.5">YOUR NAME</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Kaelen V."
-                className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-1.5">
-                EMAIL <span className="text-[#5B5E66] capitalize">(never shown)</span>
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="For order verification"
-                className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
-              />
-            </div>
-          </div>
-
-          {/* Headline */}
-          <div>
-            <div className="flex justify-between items-center mb-1.5">
-              <label className="text-xs uppercase tracking-widest text-[#8A8D95]">HEADLINE</label>
-              <span className="text-[10px] text-[#5B5E66]">{title.length} / 60</span>
-            </div>
-            <input
-              type="text"
-              maxLength={60}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Sum it up in a few words"
-              className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
-            />
-          </div>
-
-          {/* Review Text */}
-          <div>
-            <div className="flex justify-between items-center mb-1.5">
-              <label className="text-xs uppercase tracking-widest text-[#8A8D95]">YOUR REVIEW</label>
-              <span className="text-[10px] text-[#5B5E66]">{body.length} / 900</span>
-            </div>
-            <textarea
-              maxLength={900}
-              rows={4}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Fit, fabric, print quality, how it wears after a wash. Whatever helped you decide."
-              className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
-            />
-          </div>
-
-          {/* Photo Attachments Upload */}
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-2">
-              PHOTOS <span className="text-[#5B5E66] capitalize">(up to 6 photos)</span>
-            </label>
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-white/15 rounded-xl p-6 text-center bg-[#08090B] hover:border-[#0B3DFF]/60 cursor-pointer transition-colors"
-            >
-              <Camera className="w-6 h-6 text-[#8A8D95] mx-auto mb-2" />
-              <p className="text-xs text-[#8A8D95]">
-                Drag photos here or <span className="text-white underline">browse your files</span>
-              </p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </div>
-
-            {photos.length > 0 && (
-              <div className="flex gap-3 flex-wrap mt-3">
-                {photos.map((p, idx) => (
-                  <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden border border-white/20 relative group">
-                    <img src={p} alt="Preview" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setPhotos(photos.filter((_, i) => i !== idx))}
-                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/80 text-white flex items-center justify-center text-xs hover:bg-red-600"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {errorMsg && <p className="text-xs text-red-400 font-semibold">{errorMsg}</p>}
-
-          {isSubmitted && (
-            <div className="p-3 bg-emerald-500/20 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-2">
-              <Check className="w-4 h-4" />
-              <span>Your review has been published successfully!</span>
             </div>
           )}
 
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              className="px-8 py-3 rounded-full bg-[#0B3DFF] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#0B3DFF]/90 transition-all cursor-pointer"
-            >
-              SUBMIT REVIEW
-            </button>
-          </div>
-        </form>
-      )}
+          {/* Filter & Action Toolbar */}
+          <div className="mt-10 py-4 border-y border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#8A8D95]">
+                SHOWING {Math.min(visibleCount, filteredReviews.length)} OF {filteredReviews.length} REVIEWS
+              </span>
+              {(filterStar || withPhotosOnly) && (
+                <button
+                  onClick={() => {
+                    setFilterStar(null);
+                    setWithPhotosOnly(false);
+                  }}
+                  className="hidden"
+                >
+                  CLEAR FILTERS ✕
+                </button>
+              )}
+            </div>
 
-      {/* Reviews Cards List */}
-      <div className="mt-8 space-y-4">
-        {filteredReviews.length === 0 ? (
-          <div className="p-12 text-center border border-dashed border-white/10 rounded-2xl text-xs text-[#5B5E66]">
-            No reviews matching selected filter criteria.
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                onClick={() => setWithPhotosOnly(!withPhotosOnly)}
+                className={`text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border transition-all cursor-pointer ${withPhotosOnly
+                    ? 'border-[#0B3DFF] bg-[#0B3DFF]/20 text-[#B9C6FF]'
+                    : 'border-white/15 text-[#8A8D95] hover:border-white/30 hover:text-white'
+                  }`}
+              >
+                WITH PHOTOS ONLY
+              </button>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="text-xs uppercase tracking-wider px-4 py-2 rounded-2xl border border-white/15 bg-[#0D0E11] text-[#8A8D95] hover:border-white/30 focus:outline-none cursor-pointer"
+              >
+                <option value="recent">SORT BY: MOST RECENT</option>
+                <option value="highest">SORT BY: HIGHEST RATING</option>
+                <option value="lowest">SORT BY: LOWEST RATING</option>
+              </select>
+
+              <button
+                onClick={() => setIsWriterOpen(!isWriterOpen)}
+                className="text-xs uppercase tracking-widest px-6 py-2.5 rounded-2xl bg-[#0B3DFF] text-white font-bold hover:bg-[#0B3DFF]/90 transition-all shadow-md cursor-pointer"
+              >
+                {isWriterOpen ? 'CLOSE FORM' : 'WRITE A REVIEW'}
+              </button>
+            </div>
           </div>
-        ) : (
-          visibleReviews.map((rev) => (
-            <div
-              key={rev.id}
-              className="p-6 rounded-2xl bg-[#0D0E11] border border-white/8 hover:border-white/15 transition-all space-y-3"
+
+          {/* Write a Review Expanded Form */}
+          {isWriterOpen && (
+            <form
+              onSubmit={handleSubmitReview}
+              className="mt-6 p-6 sm:p-8 rounded-2xl bg-[#0D0E11] border border-[#0B3DFF]/40 space-y-6 animate-fade-in shadow-2xl"
             >
-              {/* Reviewer Header */}
-              <div className="flex items-start justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#101217] border border-white/15 flex items-center justify-center text-xs font-bold text-white">
-                    {rev.avatar}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white leading-tight flex items-center gap-2">
-                      <span>{rev.name}</span>
-                      {rev.verified && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0B3DFF]/20 text-[#8FA6FF] border border-[#0B3DFF]/30 uppercase">
-                          ✓ VERIFIED BUYER
-                        </span>
-                      )}
-                    </h4>
-                    <p className="text-[10px] text-[#5B5E66] uppercase tracking-wider mt-0.5">
-                      {rev.date}
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                  <h3 className="text-base font-mono uppercase tracking-[0.25em] font-bold text-white">WRITE YOUR REVIEW</h3>
+                  <p className="text-xs text-[#5B5E66] font-mono mt-0.5">One review per person. Take your time with it.</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsWriterOpen(false)}
+                  className="text-[#8A8D95] hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Close review form"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star
-                      key={s}
-                      className={`w-4 h-4 ${
-                        s <= rev.rating ? 'fill-[#0B3DFF] text-[#0B3DFF]' : 'fill-white/10 text-white/10'
-                      }`}
-                    />
-                  ))}
+              {/* Star Picker */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-widest text-[#8A8D95] mb-2">YOUR RATING</label>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onMouseEnter={() => setHoverRating(s)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        onClick={() => setRating(s)}
+                        className="p-1 cursor-pointer transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`w-7 h-7 ${s <= (hoverRating || rating)
+                              ? 'fill-[#0B3DFF] text-[#0B3DFF]'
+                              : 'fill-white/10 text-white/20'
+                            }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="px-3.5 py-1 rounded-full bg-[#0B3DFF]/15 border border-[#0B3DFF]/30 text-xs font-mono font-bold uppercase tracking-widest text-[#8FA6FF]">
+                    {RATING_WORDS[hoverRating || rating]}
+                  </span>
                 </div>
               </div>
 
-              {/* Title & Body */}
-              <h5 className="text-sm font-bold text-white pt-1">{rev.title}</h5>
-              <p className="text-xs leading-relaxed text-[#8A8D95] font-sans">{rev.body}</p>
+              {/* Name & Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-1.5">YOUR NAME</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Kaelen V."
+                    className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-1.5">
+                    EMAIL <span className="text-[#5B5E66] capitalize">(never shown)</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="For order verification"
+                    className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
+                  />
+                </div>
+              </div>
 
-              {/* Photos Grid if any */}
-              {rev.photos.length > 0 && (
-                <div className="flex gap-2.5 pt-2">
-                  {rev.photos.map((pUrl, pIdx) => (
-                    <button
-                      key={pIdx}
-                      type="button"
-                      onClick={() => {
-                        const targetIdx = allBuyerPhotos.findIndex(bp => bp.url === pUrl);
-                        if (targetIdx !== -1) setLightboxIndex(targetIdx);
-                      }}
-                      className="w-16 h-16 rounded-lg overflow-hidden border border-white/10 relative group cursor-pointer"
-                    >
-                      <img
-                        src={pUrl}
-                        alt="Customer photo"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                      />
-                    </button>
-                  ))}
+              {/* Headline */}
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="text-xs uppercase tracking-widest text-[#8A8D95]">HEADLINE</label>
+                  <span className="text-[10px] text-[#5B5E66]">{title.length} / 60</span>
+                </div>
+                <input
+                  type="text"
+                  maxLength={60}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Sum it up in a few words"
+                  className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
+                />
+              </div>
+
+              {/* Review Text */}
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="text-xs uppercase tracking-widest text-[#8A8D95]">YOUR REVIEW</label>
+                  <span className="text-[10px] text-[#5B5E66]">{body.length} / 900</span>
+                </div>
+                <textarea
+                  maxLength={900}
+                  rows={4}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="Fit, fabric, print quality, how it wears after a wash. Whatever helped you decide."
+                  className="w-full bg-[#08090B] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0B3DFF]"
+                />
+              </div>
+
+              {/* Photo Attachments Upload */}
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-[#8A8D95] mb-2">
+                  PHOTOS <span className="text-[#5B5E66] capitalize">(up to 6 photos)</span>
+                </label>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-white/15 rounded-xl p-6 text-center bg-[#08090B] hover:border-[#0B3DFF]/60 cursor-pointer transition-colors"
+                >
+                  <Camera className="w-6 h-6 text-[#8A8D95] mx-auto mb-2" />
+                  <p className="text-xs text-[#8A8D95]">
+                    Drag photos here or <span className="text-white underline">browse your files</span>
+                  </p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </div>
+
+                {photos.length > 0 && (
+                  <div className="flex gap-3 flex-wrap mt-3">
+                    {photos.map((p, idx) => (
+                      <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden border border-white/20 relative group">
+                        <img src={p} alt="Preview" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setPhotos(photos.filter((_, i) => i !== idx))}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/80 text-white flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {errorMsg && <p className="text-xs text-red-400 font-semibold">{errorMsg}</p>}
+
+              {isSubmitted && (
+                <div className="p-3 bg-emerald-500/20 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                  <Check className="w-4 h-4" />
+                  <span>Your review has been published successfully!</span>
                 </div>
               )}
 
-              {/* Footer Helpful Vote */}
-              <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-[#5B5E66]">
+              <div className="flex justify-end pt-2">
                 <button
-                  type="button"
-                  onClick={() => handleToggleHelpful(rev.id)}
-                  className={`flex items-center gap-1.5 hover:text-[#8FA6FF] transition-colors cursor-pointer ${
-                    rev.userHelpful ? 'text-[#8FA6FF] font-bold' : ''
-                  }`}
+                  type="submit"
+                  className="px-8 py-3 rounded-full bg-[#0B3DFF] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#0B3DFF]/90 transition-all cursor-pointer"
                 >
-                  <ThumbsUp className="w-3.5 h-3.5" />
-                  <span>HELPFUL ({rev.helpful})</span>
+                  SUBMIT REVIEW
                 </button>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            </form>
+          )}
 
-      {/* Load More Reviews Button */}
-      {filteredReviews.length > visibleCount && (
-        <div className="mt-10 flex justify-center">
-          <button
-            type="button"
-            onClick={() => setVisibleCount((prev) => prev + 4)}
-            className="px-8 py-3 rounded-2xl border border-white/20 text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer shadow-lg select-none"
-          >
-            LOAD MORE REVIEWS
-          </button>
-        </div>
-      )}
+          {/* Reviews Cards List */}
+          <div className="mt-8 space-y-4">
+            {filteredReviews.length === 0 ? (
+              <div className="p-12 text-center border border-dashed border-white/10 rounded-2xl text-xs text-[#5B5E66]">
+                No reviews matching selected filter criteria.
+              </div>
+            ) : (
+              visibleReviews.map((rev) => (
+                <div
+                  key={rev.id}
+                  className="p-6 rounded-2xl bg-[#0D0E11] border border-white/8 hover:border-white/15 transition-all space-y-3"
+                >
+                  {/* Reviewer Header */}
+                  <div className="flex items-start justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#101217] border border-white/15 flex items-center justify-center text-xs font-bold text-white">
+                        {rev.avatar}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white leading-tight flex items-center gap-2">
+                          <span>{rev.name}</span>
+                          {rev.verified && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0B3DFF]/20 text-[#8FA6FF] border border-[#0B3DFF]/30 uppercase">
+                              ✓ VERIFIED BUYER
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-[10px] text-[#5B5E66] uppercase tracking-wider mt-0.5">
+                          {rev.date}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Rating Stars */}
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          className={`w-4 h-4 ${s <= rev.rating ? 'fill-[#0B3DFF] text-[#0B3DFF]' : 'fill-white/10 text-white/10'
+                            }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Title & Body */}
+                  <h5 className="text-sm font-bold text-white pt-1">{rev.title}</h5>
+                  <p className="text-xs leading-relaxed text-[#8A8D95] font-sans">{rev.body}</p>
+
+                  {/* Photos Grid if any */}
+                  {rev.photos.length > 0 && (
+                    <div className="flex gap-2.5 pt-2">
+                      {rev.photos.map((pUrl, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => {
+                            const targetIdx = allBuyerPhotos.findIndex(bp => bp.url === pUrl);
+                            if (targetIdx !== -1) setLightboxIndex(targetIdx);
+                          }}
+                          className="w-16 h-16 rounded-lg overflow-hidden border border-white/10 relative group cursor-pointer"
+                        >
+                          <img
+                            src={pUrl}
+                            alt="Customer photo"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Footer Helpful Vote */}
+                  <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-[#5B5E66]">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleHelpful(rev.id)}
+                      className={`flex items-center gap-1.5 hover:text-[#8FA6FF] transition-colors cursor-pointer ${rev.userHelpful ? 'text-[#8FA6FF] font-bold' : ''
+                        }`}
+                    >
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                      <span>HELPFUL ({rev.helpful})</span>
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Load More Reviews Button */}
+          {filteredReviews.length > visibleCount && (
+            <div className="mt-10 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 4)}
+                className="px-8 py-3 rounded-2xl border border-white/20 text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer shadow-lg select-none"
+              >
+                LOAD MORE REVIEWS
+              </button>
+            </div>
+          )}
         </div> {/* Close RIGHT COLUMN */}
       </div> {/* Close 2-Column Grid */}
 
       {/* Photo Lightbox Modal with Prev (<) and Next (>) Arrow Buttons */}
       {lightboxIndex !== null && allBuyerPhotos[lightboxIndex] && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 select-none animate-fade-in outline-none"
           tabIndex={0}
           onKeyDown={(e) => {
