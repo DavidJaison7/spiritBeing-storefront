@@ -318,12 +318,14 @@ export const StatementParticlesSection: React.FC = () => {
 
       if (!reduced) {
         if (!coarse && pointer.life > 0.01) {
-          const r = clamp(W * 0.11, 110, 200);
-          glow(pointer.x, pointer.y, r, 0.15 * pointer.life);
+          const speed = Math.hypot(pointer.vx, pointer.vy);
+          const expansion = Math.min(speed * 2.5, 170); // Expand up to 170px based on cursor speed
+          const r = clamp(W * 0.10, 100, 180) + expansion;
+          glow(pointer.x, pointer.y, r, 0.25 * pointer.life);
         }
         for (const t of taps) {
-          const r = clamp(W * 0.34, 160, 290) * (1.2 - t.life * 0.55);
-          glow(t.x, t.y, r, 0.22 * t.life);
+          const r = clamp(W * 0.30, 140, 250) * (1.2 - t.life * 0.55);
+          glow(t.x, t.y, r, 0.32 * t.life);
           ctx.beginPath();
           ctx.arc(t.x, t.y, r * 0.92, 0, Math.PI * 2);
           ctx.strokeStyle = 'rgba(11,61,255,' + (0.36 * t.life).toFixed(3) + ')';
@@ -349,11 +351,15 @@ export const StatementParticlesSection: React.FC = () => {
 
     function glow(x: number, y: number, r: number, a: number) {
       if (!ctx) return;
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
       const g = ctx.createRadialGradient(x, y, 0, x, y, r);
       g.addColorStop(0, 'rgba(11,61,255,' + a.toFixed(3) + ')');
+      g.addColorStop(0.35, 'rgba(11,61,255,' + (a * 0.65).toFixed(3) + ')');
       g.addColorStop(1, 'rgba(11,61,255,0)');
       ctx.fillStyle = g;
       ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      ctx.restore();
     }
 
     function local(clientX: number, clientY: number) {

@@ -42,6 +42,12 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleMegaMenuEnter = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    
+    // Clear and close Shop Menu instantly to prevent overlap buffering
+    if (shopOpenTimer.current) clearTimeout(shopOpenTimer.current);
+    if (shopCloseTimer.current) clearTimeout(shopCloseTimer.current);
+    setIsShopMenuOpen(false);
+
     if (isMegaMenuOpen) return;
     openTimer.current = setTimeout(() => setIsMegaMenuOpen(true), 70);
   };
@@ -54,6 +60,12 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleShopMenuEnter = () => {
     if (shopCloseTimer.current) clearTimeout(shopCloseTimer.current);
+
+    // Clear and close Collections Menu instantly to prevent overlap buffering
+    if (openTimer.current) clearTimeout(openTimer.current);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setIsMegaMenuOpen(false);
+
     if (isShopMenuOpen) return;
     shopOpenTimer.current = setTimeout(() => setIsShopMenuOpen(true), 70);
   };
@@ -80,12 +92,32 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        isDropdownOpen && 
+        dropdownRef.current && 
+        !dropdownRef.current.contains(e.target as Node) &&
+        !(e.target as Element).closest('.sb-burger')
+      ) {
         setIsDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isDropdownOpen]);
+
+  useEffect(() => {
+    const lenis = (window as any).lenis;
+    if (isDropdownOpen) {
+      document.body.classList.add('menu-open');
+      if (lenis) lenis.stop();
+    } else {
+      document.body.classList.remove('menu-open');
+      if (lenis) lenis.start();
+    }
+    return () => {
+      document.body.classList.remove('menu-open');
+      if (lenis) lenis.start();
+    };
   }, [isDropdownOpen]);
 
   const isOurStoryView = currentView === 'our_story';
@@ -95,8 +127,9 @@ export const Header: React.FC<HeaderProps> = ({
   const showHeaderStyle = isMegaMenuOpen || isShopMenuOpen || ((currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
   const showLogo = showHeaderStyle || isOurStoryView || isBlogView;
   
-  // Dynamic classes for header visibility
-  const headerBg = (isMegaMenuOpen || isShopMenuOpen)
+  const headerBg = isDropdownOpen
+    ? 'bg-transparent border-transparent shadow-none'
+    : (isMegaMenuOpen || isShopMenuOpen)
     ? 'bg-[#fbf9f9]' // Remove drop shadow so it blends perfectly with the mega menu
     : (isOurStoryView || isBlogView)
     ? 'bg-[#080808]/90 backdrop-blur-md border-b border-white/10 shadow-md'
@@ -108,7 +141,9 @@ export const Header: React.FC<HeaderProps> = ({
     ? 'text-black'
     : (isOurStoryView || isBlogView) ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
 
-  const cornerColor = (isMegaMenuOpen || isShopMenuOpen)
+  const cornerColor = isDropdownOpen
+    ? 'text-transparent'
+    : (isMegaMenuOpen || isShopMenuOpen)
     ? 'text-transparent' // Hide inverted corners when mega menu drops down to prevent them cutting into the panel
     : (isOurStoryView || isBlogView)
     ? 'text-[#080808]/90'
@@ -118,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-    <header className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-2 md:py-2.5 transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${headerBg} ${textColor}`}>
+    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-6 md:px-12 py-1.5 md:py-2 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${headerBg} ${textColor}`}>
       {/* Left nav - SHOP or BACK TO STORE */}
       <div className="flex items-center gap-6 w-1/3">
         {currentView === 'product_detail' || currentView === 'our_story' || currentView === 'blog' ? (
@@ -129,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
         ) : (
-          <>
+          <div className={`flex items-center gap-6 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
             <button
               className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
               onMouseEnter={handleShopMenuEnter}
@@ -154,7 +189,7 @@ export const Header: React.FC<HeaderProps> = ({
               Collections
               <span className={`text-[9px] transition-transform duration-300 ${isMegaMenuOpen ? 'rotate-180' : ''}`}>▼</span>
             </button>
-          </>
+          </div>
         )}
       </div>
 
@@ -180,104 +215,33 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="w-1/3 flex justify-end items-center gap-4 md:gap-6 relative">
         <button
           onClick={onNavigateOurStory}
-          className="hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
+          className={`hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
         >
           OUR STORY
         </button>
         <button
-          onClick={onOpenBlog}
-          className="hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
-        >
-          BLOG
-        </button>
-        <button
           onClick={onOpenCart}
-          className="text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer"
+          className={`text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
         >
           CART ({cartCount})
         </button>
         
-        {/* Toggle Dropdown Menu (Two horizontal lines `=`) */}
-        <button
+        {/* Toggle Dropdown Menu (Animated Burger) */}
+        <button 
+          className="sb-burger" 
+          type="button"
+          aria-label="Open menu" 
+          aria-expanded={isDropdownOpen}
+          aria-controls="sbDrawer"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex flex-col justify-center items-center gap-[4px] w-6 h-6 hover:opacity-70 transition-opacity cursor-pointer"
-          aria-label="Toggle Menu"
         >
-          <span className="w-[18px] h-[1.8px] bg-current rounded-full transition-all"></span>
-          <span className="w-[18px] h-[1.8px] bg-current rounded-full transition-all"></span>
+          <span className="bars"><i></i><i></i><i></i></span>
         </button>
-
-        {/* Dropdown Menu popover */}
-        {isDropdownOpen && (
-          <div 
-            ref={dropdownRef}
-            className="absolute top-full right-0 mt-3.5 w-[290px] bg-[#fbf9f9] border border-black/10 rounded-2xl shadow-xl z-50 text-black p-5 flex flex-col gap-4 text-left select-none"
-            style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.08))' }}
-          >
-            <div>
-              <h3 className="font-sans text-lg font-bold text-black uppercase tracking-wide">Welcome</h3>
-              <p className="font-sans text-[11px] text-gray-500 mt-1 leading-normal">
-                To access account and manage orders
-              </p>
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  onOpenLogin();
-                }}
-                className="w-full mt-3.5 bg-black text-white text-[11px] font-bold py-3 rounded-xl tracking-wider hover:bg-black/80 transition-all cursor-pointer text-center uppercase"
-              >
-                Login / Signup
-              </button>
-            </div>
-            
-            <div className="h-[1px] bg-black/10 my-0.5"></div>
-            
-            <div className="flex flex-col gap-3.5 pb-1">
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  alert('Order tracking integration is coming soon!');
-                }}
-                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
-              >
-                Track your order
-              </button>
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  alert('Returns & exchanges portal coming soon!');
-                }}
-                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
-              >
-                Returns & Exchanges
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  alert('Our support team is available 24/7. Reach out to support@spiritbeing.in');
-                }}
-                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
-              >
-                Support
-              </button>
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  alert('FAQ section is coming soon!');
-                }}
-                className="w-full text-left font-sans text-[13px] font-medium text-black/85 hover:text-black hover:translate-x-1 transition-all cursor-pointer"
-              >
-                FAQ
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Inverted Corner - Left */}
       <svg 
-        className={`absolute top-full left-0 w-6 h-6 transition-colors duration-500 ${cornerColor}`} 
+        className={`absolute top-full left-0 w-6 h-6 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >
@@ -286,7 +250,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Inverted Corner - Right */}
       <svg 
-        className={`absolute top-full right-0 w-6 h-6 transition-colors duration-500 ${cornerColor}`} 
+        className={`absolute top-full right-0 w-6 h-6 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >
@@ -313,7 +277,75 @@ export const Header: React.FC<HeaderProps> = ({
           }
         }}
       />
+      
     </header>
+
+    {/* Scrim Overlay */}
+    <div 
+      className={`sb-menu-scrim ${isDropdownOpen ? 'is-open' : ''}`} 
+      onClick={() => setIsDropdownOpen(false)}
+    />
+    
+    {/* Menu Drawer */}
+    <aside 
+      ref={dropdownRef}
+      className={`sb-menu-drawer ${isDropdownOpen ? 'is-open' : ''}`} 
+      role="dialog" 
+      aria-modal="true" 
+      aria-label="Menu"
+    >
+      <div className="sb-menu-drawer-top"></div>
+
+      <div className="sb-account">
+        <p>To access account and manage orders</p>
+        <button 
+          className="sb-cta" 
+          onClick={() => {
+            setIsDropdownOpen(false);
+            onOpenLogin();
+          }}
+        >
+          Login / Signup
+        </button>
+      </div>
+
+      <hr className="sb-rule" />
+
+      <ul className="sb-links">
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
+            <span className="txt">Track your order</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
+            <span className="txt">Returns &amp; Exchanges</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
+            <span className="txt">Support</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); onOpenBlog(); }}>
+            <span className="txt">Blog</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
+            <span className="txt">FAQ</span>
+          </a>
+        </li>
+      </ul>
+
+      <div className="sb-foot">
+        <div className="sb-touch">
+          <span>Get in touch</span>
+          <a href="mailto:hello@spiritbeing.in">hello@spiritbeing.in</a>
+        </div>
+      </div>
+    </aside>
     </>
   );
 };

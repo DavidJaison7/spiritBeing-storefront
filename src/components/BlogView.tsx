@@ -134,26 +134,11 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
           Stories, scripture and process notes from the Spirit Being studio. Faith. Identity. Purpose.
         </p>
 
-        <div className="flex flex-wrap gap-2 mt-8">
-          {FILTERS.map(filter => (
-            <button
-              key={filter.id}
-              className={`border rounded-full px-4 py-2 text-[10.5px] tracking-[0.2em] uppercase cursor-pointer transition-all ${activeFilter === filter.id
-                  ? 'bg-black text-white border-black shadow-sm'
-                  : 'bg-white text-gray-500 border-black/10 hover:border-black/30 hover:text-black'
-                }`}
-              onClick={() => setActiveFilter(filter.id)}
-              type="button"
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
       </header>
 
       <div className="max-w-[1680px] mx-auto px-6 md:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
-          {filteredPosts.map(post => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 max-w-4xl gap-x-8 gap-y-12">
+          {filteredPosts.slice(0, 2).map(post => (
             <button key={post.id} className="text-left group flex flex-col cursor-pointer" type="button" onClick={() => setSelectedPost(post)}>
               <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-gray-100 mb-4 w-full shadow-sm group-hover:shadow-md transition-shadow">
                 <span className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.22em] uppercase text-black rounded-full shadow-sm">
@@ -182,14 +167,6 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
             </button>
           ))}
         </div>
-
-        {filteredPosts.length > 0 && (
-          <div className="flex justify-center mt-16">
-            <button className="border border-black text-black bg-transparent rounded-full px-10 py-4 text-[11px] tracking-[0.24em] uppercase hover:bg-black hover:text-white transition-all cursor-pointer">
-              Load more
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Blog Post Full View */}

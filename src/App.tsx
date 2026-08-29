@@ -142,6 +142,72 @@ export default function App() {
     };
   }, []);
 
+  // Automatically resize Lenis and refresh GSAP ScrollTrigger when transitioning views
+  // to ensure smooth-scroll works perfectly across all pages (Our Story, Blog, Product Details, etc.)
+  useEffect(() => {
+    const lenis = (window as any).lenis;
+    if (lenis) {
+      const timer = setTimeout(() => {
+        lenis.resize();
+        ScrollTrigger.refresh();
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedProduct, isBlogView, isOurStoryView, products]);
+
+  // Sync view states to URL hash for shareable links
+  useEffect(() => {
+    if (selectedProduct) {
+      window.location.hash = `product/${selectedProduct.handle}`;
+    } else if (isOurStoryView) {
+      window.location.hash = 'our-story';
+    } else if (isBlogView) {
+      window.location.hash = 'blog';
+    } else {
+      if (window.location.hash) {
+        window.history.pushState('', document.title, window.location.pathname + window.location.search);
+      }
+    }
+  }, [selectedProduct, isOurStoryView, isBlogView]);
+
+  // Read URL hash on load/change to render correct view
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#product/')) {
+        const handle = hash.replace('#product/', '');
+        const found = products.find((p) => p.handle === handle);
+        if (found) {
+          setSelectedProduct(found);
+          setIsOurStoryView(false);
+          setIsBlogView(false);
+          window.scrollTo(0, 0);
+          if ((window as any).lenis) {
+            (window as any).lenis.scrollTo(0, { immediate: true });
+          }
+        }
+      } else if (hash === '#our-story') {
+        setIsOurStoryView(true);
+        setSelectedProduct(null);
+        setIsBlogView(false);
+        window.scrollTo(0, 0);
+      } else if (hash === '#blog') {
+        setIsBlogView(true);
+        setSelectedProduct(null);
+        setIsOurStoryView(false);
+        window.scrollTo(0, 0);
+      } else if (!hash) {
+        setSelectedProduct(null);
+        setIsOurStoryView(false);
+        setIsBlogView(false);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [products]);
+
   useEffect(() => {
     try {
       localStorage.setItem('spiritbeing_cart', JSON.stringify(cart));
@@ -236,6 +302,31 @@ export default function App() {
     );
   }
 
+  const handleScrollToTopHome = () => {
+    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView;
+    if (isOnSubPage) {
+      window.location.hash = '';
+      setSelectedProduct(null);
+      setSelectedProductColor(undefined);
+      setIsOurStoryView(false);
+      setIsBlogView(false);
+      
+      setTimeout(() => {
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(0, { duration: 1.2 });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 50);
+    } else {
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(0, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fbf9f9] text-[#1b1c1c] selection:bg-black selection:text-white">
       {/* Top Header */}
@@ -244,13 +335,23 @@ export default function App() {
         onOpenCart={() => setIsCartOpen(true)}
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
-          setSelectedProduct(null);
-          setIsOurStoryView(false);
-          setIsBlogView(false);
-          if ((window as any).lenis) {
-            (window as any).lenis.scrollTo(0, { duration: 1.2 });
+          const isOnSubPage = selectedProduct || isOurStoryView || isBlogView;
+          if (isOnSubPage) {
+            // Coming from a sub-page: jump to top instantly BEFORE state change
+            window.scrollTo(0, 0);
+            if ((window as any).lenis) {
+              (window as any).lenis.scrollTo(0, { immediate: true });
+            }
+            setSelectedProduct(null);
+            setIsOurStoryView(false);
+            setIsBlogView(false);
           } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Already on home: smooth scroll to top
+            if ((window as any).lenis) {
+              (window as any).lenis.scrollTo(0, { duration: 1.2 });
+            } else {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
           }
         }}
         onOpenLogin={() => setIsLoginView(true)}
@@ -314,6 +415,7 @@ export default function App() {
             {/* Sticky Collections Scroll Carousel */}
             <div id="collections-carousel-section">
               <CollectionsCarousel
+                products={products}
                 onSelectProductByHandle={(handle) => {
                   const found = products.find(p => p.handle === handle);
                   if (found) {
@@ -413,7 +515,7 @@ export default function App() {
 
       {/* Editorial Footer */}
       <InstagramFeedSection />
-      <Footer />
+      <Footer onScrollToTop={handleScrollToTopHome} />
 
       {/* Global Transparent Fixed Bottom Strip (Only in Hero & Collections Carousel) */}
       {!selectedProduct && !isOurStoryView && !isBlogView && showBottomStrip && (

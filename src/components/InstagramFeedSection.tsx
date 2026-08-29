@@ -93,55 +93,55 @@ export const InstagramFeedSection: React.FC = () => {
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
+      </div>
 
-        {/* Instagram Posts Horizontal Feed Strip */}
-        <div className="w-full overflow-x-auto scrollbar-none pb-4">
-          <div className="flex gap-4 min-w-full">
-            {INSTAGRAM_POSTS.map((post) => {
-              const isPng = post.image.endsWith('.png');
-              return (
-                <a
-                  key={post.id}
-                  href={post.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-56 sm:w-64 md:w-72 shrink-0 aspect-square rounded-[20px] bg-[#e8e5de] relative group overflow-hidden border border-black/10 shadow-xs cursor-pointer block"
-                >
-                  <img
-                    src={post.image}
-                    alt={post.caption}
-                    className={`w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out ${
-                      isPng ? 'object-contain p-4' : 'object-cover object-center'
-                    }`}
-                  />
+      {/* Instagram Posts Horizontal Feed Strip — full width, no clipping */}
+      <div className="w-full overflow-x-auto scrollbar-none pb-4">
+        <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+          {INSTAGRAM_POSTS.map((post) => {
+            const isPng = post.image.endsWith('.png');
+            return (
+              <a
+                key={post.id}
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-56 sm:w-64 md:w-72 shrink-0 aspect-square rounded-[20px] bg-[#e8e5de] relative group overflow-hidden border border-black/10 shadow-xs cursor-pointer block"
+              >
+                <img
+                  src={post.image}
+                  alt={post.caption}
+                  className={`w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out ${
+                    isPng ? 'object-contain p-4' : 'object-cover object-center'
+                  }`}
+                />
 
-                  {/* Hover Instagram Overlay */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-5 text-white">
-                    <div className="flex justify-end">
-                      <Instagram className="w-5 h-5 text-white/80" />
-                    </div>
+                {/* Hover Instagram Overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-5 text-white">
+                  <div className="flex justify-end">
+                    <Instagram className="w-5 h-5 text-white/80" />
+                  </div>
 
-                    <div className="space-y-2">
-                      <p className="text-xs font-sans line-clamp-2 text-white/90 leading-snug">
-                        {post.caption}
-                      </p>
+                  <div className="space-y-2">
+                    <p className="text-xs font-sans line-clamp-2 text-white/90 leading-snug">
+                      {post.caption}
+                    </p>
 
-                      <div className="flex items-center gap-4 text-xs font-bold pt-1 border-t border-white/20">
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-4 h-4 fill-white" />
-                          <span>{post.likes}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MessageCircle className="w-4 h-4 fill-white" />
-                          <span>{post.comments}</span>
-                        </div>
+                    <div className="flex items-center gap-4 text-xs font-bold pt-1 border-t border-white/20">
+                      <div className="flex items-center gap-1">
+                        <Heart className="w-4 h-4 fill-white" />
+                        <span>{post.likes}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MessageCircle className="w-4 h-4 fill-white" />
+                        <span>{post.comments}</span>
                       </div>
                     </div>
                   </div>
-                </a>
-              );
-            })}
-          </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>

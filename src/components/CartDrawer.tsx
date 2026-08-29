@@ -30,23 +30,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       if ((window as any).lenis) {
         (window as any).lenis.stop();
       }
-      document.body.style.overflow = 'hidden';
     } else {
       if ((window as any).lenis) {
         (window as any).lenis.start();
       }
-      document.body.style.overflow = '';
     }
 
     return () => {
       if ((window as any).lenis) {
         (window as any).lenis.start();
       }
-      document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  if (!isOpen) return null;
 
   const totalItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -59,17 +54,17 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-md transition-opacity duration-300 animate-fade-in"
+      className={`sb-cart-overlay ${isOpen ? 'is-open' : ''}`}
       data-lenis-prevent
       onWheel={(e) => e.stopPropagation()}
       onTouchMove={(e) => e.stopPropagation()}
     >
       {/* Background click to dismiss */}
-      <div className="flex-1 cursor-pointer" onClick={onClose} />
+      <div className="sb-cart-scrim" onClick={onClose} />
 
       {/* Cart Panel */}
       <div
-        className="w-full max-w-md bg-[#FBF9F9] text-[#1A1A1A] h-full flex flex-col border-l border-black/10 shadow-2xl relative z-10 font-sans sm:rounded-l-[28px] overflow-hidden"
+        className="sb-cart-panel w-full max-w-md bg-[#FBF9F9] text-[#1A1A1A] h-full flex flex-col border-l border-black/10 shadow-2xl relative z-10 font-sans sm:rounded-l-[28px] overflow-hidden"
         data-lenis-prevent
       >
         {/* Header */}
@@ -82,10 +77,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors cursor-pointer"
+            className="sb-cart-close"
             aria-label="Close cart"
           >
-            <X className="w-4 h-4 text-[#1A1A1A]" />
+            <span className="bars">
+              <i></i>
+              <i></i>
+            </span>
           </button>
         </div>
 
@@ -155,7 +153,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           {prod.title}
                         </p>
                         <p className="font-sans text-[10px] text-gray-500 font-normal">
-                          Rs. {prod.price.toLocaleString()}
+                          ₹{prod.price.toFixed(2)}
                         </p>
                       </div>
                     ))}
@@ -260,7 +258,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       </div>
 
                       <div className="font-sans font-bold text-sm text-[#1A1A1A]">
-                        Rs. {(item.product.price * item.quantity).toLocaleString()}
+                        ₹{(item.product.price * item.quantity).toFixed(2)}
                       </div>
                     </div>
                   </div>
@@ -278,7 +276,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <div className="space-y-2 font-sans text-xs">
               <div className="flex justify-between items-center text-xs text-gray-600 font-medium uppercase tracking-wide">
                 <span>SUBTOTAL</span>
-                <span className="text-black font-bold">Rs. {subtotal.toLocaleString()}</span>
+                <span className="text-black font-bold">₹{subtotal.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center text-xs text-gray-600 font-medium uppercase tracking-wide">
@@ -288,7 +286,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
               <div className="flex justify-between items-center text-base font-sans font-bold text-black uppercase tracking-wider pt-2 border-t border-black/10">
                 <span>TOTAL</span>
-                <span className="text-lg">Rs. {total.toLocaleString()}</span>
+                <span className="text-lg">₹{total.toFixed(2)}</span>
               </div>
             </div>
 

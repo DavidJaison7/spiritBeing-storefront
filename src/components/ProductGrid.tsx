@@ -151,6 +151,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
+        {/* Sold Out Badge */}
+        {!product.inStock && (
+          <div className="absolute top-3.5 left-3.5 z-30 bg-[#080808]/90 text-white text-[10px] font-sans font-bold uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm border border-white/5 select-none">
+            Sold Out
+          </div>
+        )}
+
         {/* Horizontal CSS Transform Slider (Safari & Chrome Crash-Proof) */}
         <div
           className="w-full h-full flex transition-transform duration-500 ease-out pointer-events-none"
@@ -162,7 +169,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
               src={imgUrl}
               alt={`${product.title} view ${idx + 1}`}
               draggable={false}
-              className="w-full h-full object-cover shrink-0 group-hover:scale-102 transition-transform duration-700 ease-out select-none"
+              className={`w-full h-full object-cover shrink-0 group-hover:scale-102 transition-transform duration-700 ease-out select-none ${
+                !product.inStock ? 'opacity-75 grayscale-[20%]' : ''
+              }`}
             />
           ))}
         </div>
@@ -301,18 +310,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </h3>
           <div className="relative h-5 mt-1 overflow-hidden w-full">
             <p className="absolute inset-x-0 top-0 font-sans text-[13px] sm:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
-              Rs. {product.price.toLocaleString()}
+              ₹{product.price.toFixed(2)}
             </p>
             <button
               type="button"
+              disabled={!product.inStock}
               onClick={(e) => {
                 e.stopPropagation();
+                if (!product.inStock) return;
                 onAddToCart(e, selectedSize, selectedColor);
               }}
-              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${isAdded ? 'text-green-600' : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
-                }`}
+              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
+                !product.inStock
+                  ? 'text-gray-400 cursor-default'
+                  : isAdded
+                  ? 'text-green-600'
+                  : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
+              }`}
             >
-              {isAdded ? 'Added ✓' : 'Add to Bag'}
+              {!product.inStock ? 'Sold Out' : isAdded ? 'Added ✓' : 'Add to Bag'}
             </button>
           </div>
         </div>

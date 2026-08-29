@@ -43,10 +43,10 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255723.png" alt="Essentials" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255729.png" alt="Spiritbeing Essentials" loading="lazy" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
-              <h3>Essentials</h3>
+              <h3>Spiritbeing Essentials</h3>
               <p>Core pieces for every day.<br/>Logo-centric, high comfort.</p>
             </a>
 
@@ -57,7 +57,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".09s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255729.png" alt="Bible Basics" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255723.png" alt="Bible Basics" loading="lazy" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Bible Basics</h3>

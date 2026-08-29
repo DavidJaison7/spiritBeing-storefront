@@ -112,7 +112,7 @@
 /* right: story copy */
 .sb-our-story .copy {
   grid-column: 2;
-  font-family: 'Archivo', sans-serif;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 15px;
   line-height: 2;
   color: #c9c7c1;

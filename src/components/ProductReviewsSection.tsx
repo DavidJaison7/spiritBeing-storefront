@@ -741,7 +741,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       {/* Photo Lightbox Modal with Prev (<) and Next (>) Arrow Buttons */}
       {lightboxIndex !== null && allBuyerPhotos[lightboxIndex] && (
         <div
-          className="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 select-none animate-fade-in outline-none"
+          className="fixed inset-0 z-[100] bg-black/92 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 select-none animate-fade-in outline-none"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
@@ -820,7 +820,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
 
       {/* ALL BUYER PHOTOS GALLERY MODAL */}
       {showAllPhotosModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
           <div className="bg-[#0D0E11] border border-white/10 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#131419]">

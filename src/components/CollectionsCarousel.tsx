@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { Product } from '../types';
 import './CollectionsCarousel.css';
 
 interface SlideData {
@@ -18,7 +19,7 @@ const SLIDES: SlideData[] = [
     title: "The Spirit\nGives Life",
     desc: "The letter kills. The Spirit raises what was dead.",
     verse: "2 Corinthians 3:6",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-bg-1.jpeg",
     modelImg: "/carousel-pngs/image 1886.png",
   },
@@ -27,7 +28,7 @@ const SLIDES: SlideData[] = [
     title: "Spirit\nBeing",
     desc: "Faith, identity, and kingdom purpose defined.",
     verse: "Romans 8:16",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-bg-2.jpeg",
     modelImg: "/carousel-pngs/image 1998.png",
   },
@@ -36,7 +37,7 @@ const SLIDES: SlideData[] = [
     title: "New\nCreation",
     desc: "The old has passed away; behold, the new has come.",
     verse: "2 Corinthians 5:17",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-pngs/new-creation-bg-acidwash.png",
     modelImg: "/carousel-pngs/new-creation-model-acidwash.png",
   },
@@ -45,7 +46,7 @@ const SLIDES: SlideData[] = [
     title: "Fear\nNot",
     desc: "The Lion stands with the lamb. You are never alone.",
     verse: "Isaiah 41:10",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-bg-4.jpeg",
     modelImg: "/carousel-pngs/image 2003-1.png",
   },
@@ -54,7 +55,7 @@ const SLIDES: SlideData[] = [
     title: "Holy\nSpirit",
     desc: "The same Spirit who raised Christ lives in you.",
     verse: "Romans 8:11",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-bg-5.jpeg",
     modelImg: "/carousel-pngs/image 2003.png",
   },
@@ -63,7 +64,7 @@ const SLIDES: SlideData[] = [
     title: "Christ\nGenerations",
     desc: "Led by the Spirit. Becoming more like Christ.",
     verse: "Romans 8:14",
-    price: "₹899",
+    price: "₹899.00",
     bgImg: "/carousel-bg-2.jpeg",
     modelImg: "/carousel-pngs/image 2126.png",
   },
@@ -71,6 +72,7 @@ const SLIDES: SlideData[] = [
 
 interface CollectionsCarouselProps {
   onSelectProductByHandle?: (handle: string) => void;
+  products?: Product[];
 }
 
 const PRODUCT_HANDLES = [
@@ -83,7 +85,8 @@ const PRODUCT_HANDLES = [
 ];
 
 export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
-  onSelectProductByHandle
+  onSelectProductByHandle,
+  products = []
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [wishlistActive, setWishlistActive] = useState<boolean[]>([false, false, false, false, false, false]);
@@ -328,6 +331,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
       const scrollY = getScrollY();
       const heroH = heroHeight();
+      const vh = window.innerHeight;
 
       // A) Hero → Carousel Slide 1: scrolling down while in Hero zone
       if (e.deltaY > 4 && scrollY < heroH * 0.9) {
@@ -345,9 +349,9 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       }
 
       // C) Carousel Slide 6 → StatementParticles: scrolling down from last slide
-      // Guard: only fire if the user has been on slide 6 for at least 600ms
+      // Guard: only fire if the user has been on slide 6 for at least 1000ms
       // (prevents auto-snap on the same wheel event that transitioned into slide 6)
-      if (e.deltaY > 4 && curRef.current === 5 && Date.now() - slideArrivedAt >= 600) {
+      if (e.deltaY > 4 && curRef.current === 5 && Date.now() - slideArrivedAt >= 1000) {
         const stmtSection = document.getElementById('sbStatement');
         if (stmtSection) {
           const stmtRect = stmtSection.getBoundingClientRect();
@@ -356,6 +360,17 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
             snapTo(stmtSection);
           }
         }
+        return;
+      }
+
+      // D) StatementParticles → Carousel Slide 6: scrolling up from top of StatementParticles
+      if (e.deltaY < -4 && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
+        const lastStep = steps[5];
+        if (lastStep) {
+          e.preventDefault();
+          snapTo(lastStep);
+        }
+        return;
       }
     };
 
@@ -370,6 +385,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
       const scrollY = getScrollY();
       const heroH = heroHeight();
+      const vh = window.innerHeight;
 
       // A) Hero → Carousel Slide 1
       if (deltaY > 0 && scrollY < heroH * 0.9) {
@@ -384,12 +400,20 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         return;
       }
 
-      // C) Carousel Slide 6 → StatementParticles (touch — guard with 600ms dwell)
-      if (deltaY > 0 && curRef.current === 5 && Date.now() - slideArrivedAt >= 600) {
+      // C) Carousel Slide 6 → StatementParticles (touch — guard with 1000ms dwell)
+      if (deltaY > 0 && curRef.current === 5 && Date.now() - slideArrivedAt >= 1000) {
         const stmtSection = document.getElementById('sbStatement');
         if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
           snapTo(stmtSection);
         }
+        return;
+      }
+
+      // D) StatementParticles → Carousel Slide 6 (touch)
+      if (deltaY < 0 && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
+        const lastStep = steps[5];
+        if (lastStep) snapTo(lastStep);
+        return;
       }
     };
 
@@ -488,25 +512,35 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
         {/* Content Section containing details per slide */}
         <div className="content">
-          {SLIDES.map((slide, idx) => (
-            <div key={idx} className={`txt ${idx === 0 ? 'active' : ''}`}>
-              <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-                <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
-                <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
-                <span className="bg-[#0B3DFF] text-white font-yellowtail text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
-                  Special Edition
-                </span>
-              </div>
-              <h2>
-                {slide.title.split('\n').map((line, lIdx) => (
-                  <span key={lIdx} className="title-part">
-                    {line}
+          {SLIDES.map((slide, idx) => {
+            const product = products.find(p => p.handle === PRODUCT_HANDLES[idx]);
+            const isSoldOut = product ? !product.inStock : false;
+            return (
+              <div key={idx} className={`txt ${idx === 0 ? 'active' : ''}`}>
+                <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                  <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
+                  <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
+                  <span className="bg-[#0B3DFF] text-white font-yellowtail text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
+                    Special Edition
                   </span>
-                ))}
-              </h2>
-              <p className="desc">{slide.desc}</p>
-              <p className="verse">{slide.verse}</p>
-              <div className="price">{slide.price}</div>
+                </div>
+                <h2>
+                  {slide.title.split('\n').map((line, lIdx) => (
+                    <span key={lIdx} className="title-part">
+                      {line}
+                    </span>
+                  ))}
+                </h2>
+                <p className="desc">{slide.desc}</p>
+                <p className="verse">{slide.verse}</p>
+                <div className="price flex items-center gap-3">
+                  {slide.price}
+                  {isSoldOut && (
+                    <span className="text-[10px] font-sans font-extrabold text-[#FF3E3E] tracking-widest uppercase border border-[#FF3E3E]/40 px-2.5 py-0.5 rounded bg-[#FF3E3E]/10 select-none shadow-[0_0_10px_rgba(255,62,62,0.15)]">
+                      Sold Out
+                    </span>
+                  )}
+                </div>
               <div className="actions">
                 <button
                   onClick={() => onSelectProductByHandle?.(PRODUCT_HANDLES[idx])}
@@ -531,7 +565,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                 </button>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
 
         {/* Right-hand Rail Indicators inside Sticky Stage */}
