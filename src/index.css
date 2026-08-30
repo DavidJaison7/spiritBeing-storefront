@@ -353,14 +353,15 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 .sb-menu-drawer{
   font-family: 'Archivo', sans-serif;
   position:fixed;z-index:80;
-  top:14px;right:14px;bottom:14px;
-  width:min(420px, calc(100vw - 28px));
+  top:14px;right:14px;bottom:auto;
+  max-height:calc(100vh - 28px);
+  width:min(380px, calc(100vw - 28px));
   background:#fbf9f9;
   color:#1b1c1c;
-  border-radius:24px;
+  border-radius:20px;
   display:flex;flex-direction:column;
-  padding:20px 22px 24px;
-  box-shadow:0 40px 90px -30px rgba(0,0,0,.15);
+  padding:16px 20px 20px;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.18);
   transform:translateX(calc(100% + 20px));
   visibility:hidden;
   transition:transform .38s cubic-bezier(.55,0,.85,.35),visibility 0s .38s;
@@ -372,7 +373,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   transition:transform .46s cubic-bezier(.22,1.06,.36,1),visibility 0s 0s;
 }
 
-.sb-menu-drawer-top{min-height:46px}
+.sb-menu-drawer-top{min-height:20px}
 .sb-close{
   margin-left:auto;width:42px;height:42px;display:grid;place-items:center;
   background:none;border:1px solid #e5e7eb;border-radius:12px;
