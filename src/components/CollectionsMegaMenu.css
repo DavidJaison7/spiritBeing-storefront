@@ -49,16 +49,16 @@
 .sb-bento{
   display:grid;
   grid-template-columns:repeat(12,minmax(0,1fr));
-  grid-auto-rows:clamp(148px,13.2vw,202px);   /* 2 rows -> the big tiles read portrait */
-  gap:10px;
+  grid-auto-rows:clamp(210px,16.5vw,270px);
+  gap:12px;
 }
-/* two tall portraits on the left, four short tiles filling the right */
-.t-essentials { grid-column:span 3; grid-row:span 2 }
-.t-bible      { grid-column:span 3; grid-row:span 2 }
-.t-little     { grid-column:span 3; grid-row:span 1 }
-.t-nomad      { grid-column:span 3; grid-row:span 1 }
-.t-armoured   { grid-column:span 3; grid-row:span 1 }
-.t-books      { grid-column:span 3; grid-row:span 1 }
+/* equal height cards positioned side-by-side */
+.t-essentials { grid-column:span 4; grid-row:span 1 }
+.t-bible      { grid-column:span 4; grid-row:span 1 }
+.t-little     { grid-column:span 4; grid-row:span 1 }
+.t-nomad      { grid-column:span 4; grid-row:span 1 }
+.t-armoured   { grid-column:span 4; grid-row:span 1 }
+.t-books      { grid-column:span 4; grid-row:span 1 }
 
 .sb-tile{
   position:relative;display:flex;flex-direction:column;justify-content:flex-end;
@@ -164,25 +164,22 @@
 
 /* ---------------- responsive ---------------- */
 @media(max-width:1180px){
-  .sb-bento{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .t-essentials,.t-bible{grid-column:span 3;grid-row:span 2}
-  .t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 3;grid-row:span 1}
+  .sb-bento{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .t-essentials,.t-bible,.t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 4;grid-row:span 1}
 }
 @media(max-width:860px){
   .sb-nav-r .sb-link:not(.keep){display:none}
   .sb-nav-l,.sb-nav-r{gap:16px}
-  .sb-bento{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(130px,17vw,168px)}
-  .t-essentials,.t-bible{grid-column:span 2;grid-row:span 2}
-  .t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 2;grid-row:span 1}
+  .sb-bento{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:clamp(190px,24vw,230px)}
+  .t-essentials,.t-bible,.t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 1;grid-row:span 1}
 }
 @media(max-width:640px){
   :root{--hdr:58px;--r:16px}
   .sb-logo{display:none}
   .sb-link{font-size:12px}
   .sb-mega{max-height:calc(100dvh - var(--hdr));overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .sb-bento{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(118px,26vw,150px)}
-  .t-essentials,.t-bible{grid-column:span 1;grid-row:span 2}
-  .t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 1;grid-row:span 1}
+  .sb-bento{grid-template-columns:repeat(1,minmax(0,1fr));grid-auto-rows:clamp(170px,45vw,210px)}
+  .t-essentials,.t-bible,.t-little,.t-nomad,.t-armoured,.t-books{grid-column:span 1;grid-row:span 1}
   .sb-tile h3{font-size:15px}
   .sb-mega-top p{display:none}
   .sb-mega-foot span:first-child{display:none}
