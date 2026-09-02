@@ -1,0 +1,50 @@
+/* ShopCategoryView.css */
+
+.sb-shop-view-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fbf9f9;
+  color: #1b1c1c;
+}
+
+/* Sticky Category Tabs Bar */
+.sb-tabs-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 40;
+  background: rgba(251, 249, 249, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.sb-tab-btn {
+  font-family: 'Archivo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666666;
+  padding: 14px 20px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.sb-tab-btn:first-child {
+  padding-left: 0;
+}
+
+.sb-tab-btn:hover {
+  color: #1b1c1c;
+}
+
+.sb-tab-btn.active {
+  color: #2040FF;
+  border-bottom-color: #2040FF;
+}
+
+/* Section Anchor Spacing */
+.sb-category-section {
+  scroll-margin-top: 130px;
+}

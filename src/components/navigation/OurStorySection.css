@@ -17,8 +17,8 @@
 
 /* ---------- giant title ---------- */
 .sb-our-story .title-wrap {
-  padding: 16vh 6vw 6vh;
-  overflow: hidden;
+  padding: 16vh 6vw 4vh;
+  overflow: visible;
 }
 
 .sb-our-story .title {
@@ -31,6 +31,12 @@
   margin: 0;
 }
 
+.sb-our-story .title .title-main {
+  display: block;
+  will-change: transform;
+  transition: transform 0.08s ease-out;
+}
+
 .sb-our-story .title .script {
   display: block;
   font-family: 'Apple Chancery', cursive;
@@ -38,7 +44,9 @@
   color: var(--blue);
   font-size: .42em;
   line-height: .9;
-  margin: .04em 0 0 .08em;
+  margin: 0.15em 0 0 0.08em;
+  will-change: transform;
+  transition: transform 0.08s ease-out;
 }
 
 /* ---------- story layout ---------- */

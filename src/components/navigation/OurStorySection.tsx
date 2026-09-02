@@ -3,10 +3,31 @@ import './OurStorySection.css';
 
 export const OurStorySection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const titleMainRef = useRef<HTMLDivElement>(null);
+  const scriptTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+
+    // Smooth Dual Parallax Scroll Listener starting from 0px at scrollY=0
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      
+      // At scrollY = 0, offsets are 0px. As user scrolls down, texts move at different speeds.
+      const y1 = scrollY * -0.08; // OUR STORY moves up at 8% speed
+      const y2 = scrollY * -0.20; // not of this world moves up at 20% speed
+
+      if (titleMainRef.current) {
+        titleMainRef.current.style.transform = `translate3d(0, ${y1.toFixed(2)}px, 0)`;
+      }
+      if (scriptTextRef.current) {
+        scriptTextRef.current.style.transform = `translate3d(0, ${y2.toFixed(2)}px, 0)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const elementsToReveal = Array.from(el.querySelectorAll('.rv-up')) as HTMLElement[];
@@ -28,19 +49,27 @@ export const OurStorySection: React.FC = () => {
 
       return () => {
         observer.disconnect();
+        window.removeEventListener('scroll', handleScroll);
       };
     } else {
       elementsToReveal.forEach((item) => item.classList.add('in'));
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
   }, []);
 
   return (
     <div className="sb-our-story" id="our-story-section" ref={containerRef}>
-      {/* Giant Title */}
+      {/* Giant Title with Smooth Parallax Effect */}
       <div className="title-wrap">
         <h1 className="title rv-up">
-          Our Story
-          <span className="script">not of this world.</span>
+          <div ref={titleMainRef} className="title-main">
+            OUR STORY
+          </div>
+          <span ref={scriptTextRef} className="script">
+            not of this world.
+          </span>
         </h1>
       </div>
 

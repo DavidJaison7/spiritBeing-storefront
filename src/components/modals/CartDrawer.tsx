@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartItem, Product } from '../types';
+import { CartItem, Product } from '../../types';
 import { X, Trash2, Plus, Minus, ArrowRight, ArrowUpRight, ShoppingBag, ShieldCheck, Sparkles } from 'lucide-react';
 
 interface CartDrawerProps {

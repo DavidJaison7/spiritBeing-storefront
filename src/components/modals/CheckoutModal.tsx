@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CartItem, OrderDetails } from '../types';
+import { CartItem, OrderDetails } from '../../types';
 import { X, ShieldCheck, CheckCircle2, Lock, CreditCard, ArrowRight } from 'lucide-react';
 
 interface CheckoutModalProps {

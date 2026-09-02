@@ -166,7 +166,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     title: 'Spirit Being Cap',
     subtitle: 'Premium Headwear',
     price: 499,
-    category: 'Accessories',
+    category: 'Caps',
     image: '/products/bestsellers/SpiritBeing cap.png',
     additionalImages: [
       '/products/bestsellers/SpiritBeing cap.png'
@@ -189,7 +189,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     title: 'Spirit Led Cap',
     subtitle: 'Premium Headwear',
     price: 499,
-    category: 'Accessories',
+    category: 'Caps',
     image: '/products/bestsellers/SpiritLED cap.png',
     additionalImages: [
       '/products/bestsellers/SpiritLED cap.png'
@@ -204,5 +204,97 @@ export const INITIAL_PRODUCTS: Product[] = [
     inStock: false,
     isFeatured: true,
     likesCount: 201
+  },
+  {
+    id: 'prod_9',
+    shopifyId: 'gid://shopify/Product/8291048131',
+    handle: 'grace-and-truth-tote-bag',
+    title: 'Grace & Truth Tote Bag',
+    subtitle: 'Heavyweight Canvas Carry',
+    price: 399,
+    category: 'Tote Bags',
+    image: '/assets/Collections/Rectangle 255730.png',
+    additionalImages: [
+      '/assets/Collections/Rectangle 255730.png'
+    ],
+    description: 'Heavyweight 340 GSM organic canvas tote featuring high-density Christian streetwear typography: "Grace & Truth". Reinforced handles engineered for daily carry.',
+    tagline: 'GRACE & TRUTH',
+    sizes: ['ONE SIZE'],
+    colors: ['Natural Canvas'],
+    color: 'NATURAL CANVAS',
+    material: '100% ORGANIC COTTON CANVAS (340 GSM)',
+    origin: 'MADE IN INDIA',
+    inStock: true,
+    isFeatured: true,
+    likesCount: 188
+  },
+  {
+    id: 'prod_10',
+    shopifyId: 'gid://shopify/Product/8291048132',
+    handle: 'faith-identity-purpose-tote',
+    title: 'Faith & Purpose Tote Bag',
+    subtitle: 'Minimalist Canvas Carry',
+    price: 399,
+    category: 'Tote Bags',
+    image: '/assets/Collections/Rectangle 255730.png',
+    additionalImages: [
+      '/assets/Collections/Rectangle 255730.png'
+    ],
+    description: 'Sleek black organic cotton canvas tote bag with crisp white branding: "Faith. Identity. Purpose." Large main compartment for books and essentials.',
+    tagline: 'FAITH IDENTITY PURPOSE',
+    sizes: ['ONE SIZE'],
+    colors: ['Black'],
+    color: 'INK BLACK',
+    material: '100% COTTON CANVAS (340 GSM)',
+    origin: 'MADE IN INDIA',
+    inStock: true,
+    isFeatured: true,
+    likesCount: 242
+  },
+  {
+    id: 'prod_11',
+    shopifyId: 'gid://shopify/Product/8291048133',
+    handle: 'chosen-ones-tote-bag',
+    title: 'Chosen Ones Tote Bag',
+    subtitle: 'Streetwear Utility Tote',
+    price: 399,
+    category: 'Tote Bags',
+    image: '/assets/Collections/Rectangle 255730.png',
+    additionalImages: [
+      '/assets/Collections/Rectangle 255730.png'
+    ],
+    description: 'Heavy-duty utility tote bag with internal pocket and magnetic closure. High-density screenprint: "Designed for the Chosen Ones".',
+    tagline: 'CHOSEN ONES',
+    sizes: ['ONE SIZE'],
+    colors: ['Blue'],
+    color: 'ELECTRIC BLUE',
+    material: '100% HEAVY COTTON CANVAS',
+    origin: 'MADE IN INDIA',
+    inStock: true,
+    isFeatured: true,
+    likesCount: 175
+  },
+  {
+    id: 'prod_12',
+    shopifyId: 'gid://shopify/Product/8291048134',
+    handle: 'kingdom-citizen-tote-bag',
+    title: 'Kingdom Citizen Tote Bag',
+    subtitle: 'Everyday Streetwear Tote',
+    price: 399,
+    category: 'Tote Bags',
+    image: '/assets/Collections/Rectangle 255730.png',
+    additionalImages: [
+      '/assets/Collections/Rectangle 255730.png'
+    ],
+    description: 'Vintage washed canvas tote bag featuring back script graphics: "Kingdom Citizen. Est. 2026 India". Durable and spacious design.',
+    tagline: 'KINGDOM CITIZEN',
+    sizes: ['ONE SIZE'],
+    colors: ['Natural Canvas'],
+    color: 'WASHED CANVAS',
+    material: '100% COTTON CANVAS',
+    origin: 'MADE IN INDIA',
+    inStock: false,
+    isFeatured: true,
+    likesCount: 140
   }
 ];

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Product } from '../types';
+import { Product } from '../../types';
 import './CollectionsCarousel.css';
 
 interface SlideData {

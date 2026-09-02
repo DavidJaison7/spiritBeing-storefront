@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product, ShopifyConfig } from '../types';
+import { Product, ShopifyConfig } from '../../types';
 import { X, Download, RefreshCw, CheckCircle2, Copy, FileText, Github, Zap } from 'lucide-react';
 
 interface ShopifySyncModalProps {

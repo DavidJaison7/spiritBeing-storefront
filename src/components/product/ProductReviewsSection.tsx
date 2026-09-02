@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Product } from '../types';
+import { Product } from '../../types';
 import { Star, ThumbsUp, X, ChevronLeft, ChevronRight, Upload, Check, Camera, Filter } from 'lucide-react';
 
 export interface ReviewItem {

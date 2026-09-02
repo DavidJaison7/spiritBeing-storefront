@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Product, CartItem, ShopifyConfig } from './types';
 import { INITIAL_PRODUCTS } from './data/products';
-import { Header } from './components/Header';
-import { HeroSection } from './components/HeroSection';
-import { CollectionsCarousel } from './components/CollectionsCarousel';
-import { StatementParticlesSection } from './components/StatementParticlesSection';
-import { OurStorySection } from './components/OurStorySection';
-import { BlogView } from './components/BlogView';
-import { ProductGrid } from './components/ProductGrid';
-import { ProductDetailView } from './components/ProductDetailView';
-import { LoginView } from './components/LoginView';
-import { CartDrawer } from './components/CartDrawer';
-import { ShopifySyncModal } from './components/ShopifySyncModal';
-import { CheckoutModal } from './components/CheckoutModal';
-import { InstagramFeedSection } from './components/InstagramFeedSection';
-import { Footer } from './components/Footer';
+import { 
+  Header, 
+  HeroSection, 
+  CollectionsCarousel, 
+  StatementParticlesSection, 
+  OurStorySection, 
+  BlogView, 
+  ShopCategoryView,
+  ProductGrid, 
+  ProductDetailView, 
+  LoginView, 
+  CartDrawer, 
+  ShopifySyncModal, 
+  CheckoutModal, 
+  InstagramFeedSection, 
+  Footer 
+} from './components';
 import { fetchProductsFromShopify, createShopifyCheckout } from './lib/shopify';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -64,6 +67,17 @@ export default function App() {
   const [isLoginView, setIsLoginView] = useState(false);
   const [isOurStoryView, setIsOurStoryView] = useState(false);
   const [isBlogView, setIsBlogView] = useState(false);
+  const [isShopCategoryView, setIsShopCategoryView] = useState(false);
+  const [targetCategorySection, setTargetCategorySection] = useState('tshirts');
+
+  const handleNavigateShopCategory = (sectionTarget = 'tshirts') => {
+    setSelectedProduct(null);
+    setIsOurStoryView(false);
+    setIsBlogView(false);
+    setTargetCategorySection(sectionTarget);
+    setIsShopCategoryView(true);
+    window.scrollTo(0, 0);
+  };
 
   // Bottom strip visibility (Only in Hero and Collections Carousel till end of 6th slide)
   const [showBottomStrip, setShowBottomStrip] = useState(true);
@@ -302,29 +316,17 @@ export default function App() {
     );
   }
 
-  const handleScrollToTopHome = () => {
-    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView;
-    if (isOnSubPage) {
-      window.location.hash = '';
-      setSelectedProduct(null);
-      setSelectedProductColor(undefined);
-      setIsOurStoryView(false);
-      setIsBlogView(false);
-      
-      setTimeout(() => {
-        if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(0, { duration: 1.2 });
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }, 50);
-    } else {
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(0, { duration: 1.2 });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+  const handleScrollToTopCurrentPage = () => {
+    if ((window as any).lenis) {
+      (window as any).lenis.scrollTo(0, { duration: 1.2 });
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Also scroll any active full-screen overlay scroll elements (e.g. data-lenis-prevent elements)
+    const overlayScrolls = document.querySelectorAll('[data-lenis-prevent="true"]');
+    overlayScrolls.forEach((el) => {
+      el.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   return (
@@ -335,7 +337,7 @@ export default function App() {
         onOpenCart={() => setIsCartOpen(true)}
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
         onNavigateHome={() => {
-          const isOnSubPage = selectedProduct || isOurStoryView || isBlogView;
+          const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isShopCategoryView;
           if (isOnSubPage) {
             // Coming from a sub-page: jump to top instantly BEFORE state change
             window.scrollTo(0, 0);
@@ -345,6 +347,7 @@ export default function App() {
             setSelectedProduct(null);
             setIsOurStoryView(false);
             setIsBlogView(false);
+            setIsShopCategoryView(false);
           } else {
             // Already on home: smooth scroll to top
             if ((window as any).lenis) {
@@ -359,17 +362,20 @@ export default function App() {
           setSelectedProduct(null);
           setIsOurStoryView(true);
           setIsBlogView(false);
+          setIsShopCategoryView(false);
           window.scrollTo(0, 0);
         }}
         onOpenBlog={() => {
           setSelectedProduct(null);
           setIsOurStoryView(false);
           setIsBlogView(true);
+          setIsShopCategoryView(false);
           window.scrollTo(0, 0);
         }}
+        onNavigateShopCategory={handleNavigateShopCategory}
         shopifyConfig={shopifyConfig}
         currentView={
-          isBlogView ? 'blog' : isOurStoryView ? 'our_story' : selectedProduct ? 'product_detail' : 'home'
+          isBlogView ? 'blog' : isOurStoryView ? 'our_story' : isShopCategoryView ? 'shop_category' : selectedProduct ? 'product_detail' : 'home'
         }
       />
 
@@ -400,6 +406,23 @@ export default function App() {
           <BlogView onClose={() => setIsBlogView(false)} />
         ) : isOurStoryView ? (
           <OurStorySection />
+        ) : isShopCategoryView ? (
+          <ShopCategoryView
+            products={products}
+            onSelectProduct={(p, color) => {
+              setSelectedProduct(p);
+              setSelectedProductColor(color);
+              window.scrollTo(0, 0);
+            }}
+            onNavigateHome={() => {
+              setIsShopCategoryView(false);
+              window.scrollTo(0, 0);
+            }}
+            initialSection={targetCategorySection}
+            wishlist={wishlist}
+            onToggleWishlist={handleToggleWishlist}
+            onAddToCart={handleAddToCart}
+          />
         ) : (
           <>
             {/* Cinematic Hero */}
@@ -515,10 +538,10 @@ export default function App() {
 
       {/* Editorial Footer */}
       <InstagramFeedSection />
-      <Footer onScrollToTop={handleScrollToTopHome} />
+      <Footer onScrollToTop={handleScrollToTopCurrentPage} />
 
       {/* Global Transparent Fixed Bottom Strip (Only in Hero & Collections Carousel) */}
-      {!selectedProduct && !isOurStoryView && !isBlogView && showBottomStrip && (
+      {!selectedProduct && !isOurStoryView && !isBlogView && !isShopCategoryView && showBottomStrip && (
         <footer className="fixed-bottom-strip">
           <span className="left">
             <span className="ticks">

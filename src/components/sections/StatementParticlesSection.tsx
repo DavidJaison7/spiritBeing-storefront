@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Matter from 'matter-js';
-import { TEX } from '../data/statementTextures';
+import { TEX } from '../../data/statementTextures';
 import './StatementParticlesSection.css';
 
 let cachedImages: HTMLImageElement[] | null = null;

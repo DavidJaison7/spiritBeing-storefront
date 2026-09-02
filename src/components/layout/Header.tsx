@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, RefreshCw, Github, ArrowLeft, User } from 'lucide-react';
-import { ShopifyConfig } from '../types';
-import { CollectionsMegaMenu } from './CollectionsMegaMenu';
-import { ShopMegaMenu } from './ShopMegaMenu';
+import { ShopifyConfig } from '../../types';
+import { CollectionsMegaMenu } from '../navigation/CollectionsMegaMenu';
+import { ShopMegaMenu } from '../navigation/ShopMegaMenu';
 
 interface HeaderProps {
   cartCount: number;
@@ -12,8 +12,9 @@ interface HeaderProps {
   onOpenLogin: () => void;
   onNavigateOurStory: () => void;
   shopifyConfig: ShopifyConfig;
-  currentView: 'home' | 'product_detail' | 'our_story' | 'blog';
+  currentView: 'home' | 'product_detail' | 'our_story' | 'blog' | 'shop_category';
   onOpenBlog: () => void;
+  onNavigateShopCategory?: (sectionTarget?: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
   shopifyConfig,
   currentView,
   onOpenBlog,
+  onNavigateShopCategory,
 }) => {
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -124,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isBlogView = currentView === 'blog';
   
   // Force white header if either mega menu is open
-  const showHeaderStyle = isMegaMenuOpen || isShopMenuOpen || ((currentView === 'product_detail' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
+  const showHeaderStyle = isMegaMenuOpen || isShopMenuOpen || ((currentView === 'product_detail' || currentView === 'shop_category' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
   const showLogo = showHeaderStyle || isOurStoryView || isBlogView;
   
   const headerBg = isDropdownOpen
@@ -154,43 +156,34 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
     <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-6 md:px-12 py-1.5 md:py-2 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${headerBg} ${textColor}`}>
-      {/* Left nav - SHOP or BACK TO STORE */}
+      {/* Left nav - SHOP and COLLECTIONS */}
       <div className="flex items-center gap-6 w-1/3">
-        {currentView === 'product_detail' || currentView === 'our_story' || currentView === 'blog' ? (
+        <div className={`flex items-center gap-6 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
           <button
-            onClick={onNavigateHome}
-            className="text-sm font-semibold hover:opacity-70 transition-opacity flex items-center gap-1 cursor-pointer"
+            className="text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
+            onMouseEnter={handleShopMenuEnter}
+            onMouseLeave={handleShopMenuLeave}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsShopMenuOpen(!isShopMenuOpen);
+            }}
           >
-            <ArrowLeft className="w-4 h-4" /> Back
+            SHOP
+            <span className={`text-[9px] transition-transform duration-300 ${isShopMenuOpen ? 'rotate-180' : ''}`}>▼</span>
           </button>
-        ) : (
-          <div className={`flex items-center gap-6 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
-            <button
-              className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
-              onMouseEnter={handleShopMenuEnter}
-              onMouseLeave={handleShopMenuLeave}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsShopMenuOpen(!isShopMenuOpen);
-              }}
-            >
-              SHOP
-              <span className={`text-[9px] transition-transform duration-300 ${isShopMenuOpen ? 'rotate-180' : ''}`}>▼</span>
-            </button>
-            <button
-              className="text-sm font-semibold uppercase tracking-wide hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
-              onMouseEnter={handleMegaMenuEnter}
-              onMouseLeave={handleMegaMenuLeave}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsMegaMenuOpen(!isMegaMenuOpen);
-              }}
-            >
-              Collections
-              <span className={`text-[9px] transition-transform duration-300 ${isMegaMenuOpen ? 'rotate-180' : ''}`}>▼</span>
-            </button>
-          </div>
-        )}
+          <button
+            className="text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5 hidden md:flex"
+            onMouseEnter={handleMegaMenuEnter}
+            onMouseLeave={handleMegaMenuLeave}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMegaMenuOpen(!isMegaMenuOpen);
+            }}
+          >
+            Collections
+            <span className={`text-[9px] transition-transform duration-300 ${isMegaMenuOpen ? 'rotate-180' : ''}`}>▼</span>
+          </button>
+        </div>
       </div>
 
       {/* Center Logo */}
@@ -269,11 +262,15 @@ export const Header: React.FC<HeaderProps> = ({
         onClose={() => setIsShopMenuOpen(false)}
         onMouseEnter={handleShopMenuEnter}
         onMouseLeave={handleShopMenuLeave}
-        onNavigateShop={() => {
+        onNavigateShop={(sectionTarget) => {
           setIsShopMenuOpen(false);
-          const el = document.getElementById('products-grid');
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
+          if (onNavigateShopCategory) {
+            onNavigateShopCategory(sectionTarget);
+          } else {
+            const el = document.getElementById('products-grid');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
           }
         }}
       />

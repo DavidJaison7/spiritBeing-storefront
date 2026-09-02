@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product } from '../types';
+import { Product } from '../../types';
 import { ArrowLeft, ArrowRight, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import { ProductReviewsSection } from './ProductReviewsSection';
 
@@ -249,11 +249,39 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        {/* Sold Out Badge */}
+        {/* Out of Stock Overlay */}
         {!product.inStock && (
-          <div className="absolute top-3.5 left-3.5 z-30 bg-[#080808]/90 text-white text-[10px] font-sans font-bold uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm border border-white/5 select-none">
-            Sold Out
+          <div className="absolute inset-0 bg-[#fbf9f9]/70 backdrop-blur-[3px] flex items-center justify-center z-15 pointer-events-none">
+            <div className="relative w-full py-2.5 bg-black text-white text-center font-mono text-xs uppercase tracking-[0.25em] overflow-hidden shadow-md">
+              <div className="absolute inset-0 bg-[#0B3DFF]/60 rotate-45 transform scale-150 pointer-events-none"></div>
+              <span className="relative z-10 font-bold text-white tracking-widest">SOLD OUT</span>
+            </div>
           </div>
+        )}
+
+        {/* Floating Top-Right Wishlist/Likes Badge */}
+        {onToggleWishlist && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(product.id);
+            }}
+            className={`absolute top-3 right-3 z-30 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all cursor-pointer select-none ${
+              isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]/70 hover:text-[#1b1c1c]'
+            }`}
+            title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
+            aria-label={isWishlisted ? 'Unlike product' : 'Like product'}
+          >
+            <Heart
+              className={`w-3.5 h-3.5 transition-colors ${
+                isWishlisted ? 'fill-[#2040FF] text-[#2040FF]' : 'text-[#1b1c1c]'
+              }`}
+            />
+            <span className={`text-[11px] font-mono font-bold ${isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]'}`}>
+              {(product.likesCount || 280) + (isWishlisted ? 1 : 0)}
+            </span>
+          </button>
         )}
 
         {/* Horizontal CSS Transform Slider */}
@@ -327,71 +355,85 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
       </div>
 
       {/* Row of Selectors: Sizes on Left, Colors on Right */}
-      <div className="flex items-center justify-between pt-3 px-1">
-        {product.title.toLowerCase().includes('cap') ? (
-          <div />
-        ) : product.sizes && product.sizes.length > 0 && (
-          <div className="flex items-center gap-1.5">
-            {product.sizes.slice(0, 2).map((size) => {
-              const isSelected = selectedSize === size;
-              return (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedSize(size);
-                  }}
-                  className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${isSelected
-                      ? 'border-black text-black bg-white font-semibold shadow-sm'
-                      : 'border-black/15 text-[#666666] bg-transparent hover:border-black/30'
-                    }`}
-                  aria-label={`Select size ${size}`}
-                >
-                  {size}
-                </button>
-              );
-            })}
-            {product.sizes.length > 2 && (
-              <div
-                className="w-7 h-7 flex items-center justify-center text-[10px] font-sans text-[#666666] rounded-md border border-black/15 bg-transparent"
-                title={`${product.sizes.length - 2} more sizes available`}
-              >
-                +{product.sizes.length - 2}
+      {(() => {
+        const isNoSizeCategory =
+          product.title.toLowerCase().includes('cap') ||
+          product.title.toLowerCase().includes('tote') ||
+          product.category === 'Caps' ||
+          product.category === 'Tote Bags' ||
+          product.category === 'Accessories' ||
+          (product.sizes && product.sizes.includes('ONE SIZE'));
+
+        const hasSizes = !isNoSizeCategory && product.sizes && product.sizes.length > 0 && !product.sizes.includes('ONE SIZE');
+        const displayColors = product.colors && product.colors.length > 0 ? product.colors : product.color ? [product.color] : [];
+        const hasColors = displayColors.length > 1;
+
+        if (!hasSizes && !hasColors) return null;
+
+        return (
+          <div className={`flex items-center ${hasSizes && hasColors ? 'justify-between' : hasSizes ? 'justify-start' : 'justify-end'} pt-2 px-1`}>
+            {hasSizes && (
+              <div className="flex items-center gap-1.5">
+                {product.sizes!.slice(0, 2).map((size) => {
+                  const isSelected = selectedSize === size;
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedSize(size);
+                      }}
+                      className={`w-7 h-7 flex items-center justify-center text-[11px] font-sans font-medium rounded-md border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-black text-black bg-white font-semibold shadow-sm'
+                          : 'border-black/15 text-[#666666] bg-transparent hover:border-black/30'
+                      }`}
+                      aria-label={`Select size ${size}`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+                {product.sizes!.length > 2 && (
+                  <div
+                    className="w-7 h-7 flex items-center justify-center text-[10px] font-sans text-[#666666] rounded-md border border-black/15 bg-transparent"
+                    title={`${product.sizes!.length - 2} more sizes available`}
+                  >
+                    +{product.sizes!.length - 2}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {hasColors && (
+              <div className="flex items-center gap-1.5">
+                {displayColors.map((color) => {
+                  const isSelected = selectedColor === color || (!selectedColor && displayColors.length === 1);
+                  const bgHex = getColorHex(color);
+                  return (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedColor(color);
+                        setActiveIndex(0);
+                      }}
+                      className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${
+                        isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
+                      }`}
+                      style={{ backgroundColor: bgHex }}
+                      title={color}
+                      aria-label={`Select ${color} color`}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>
-        )}
-
-        {/* Colors Selector */}
-        {(() => {
-          const displayColors = product.colors && product.colors.length > 0 ? product.colors : product.color ? [product.color] : ['Black'];
-          return (
-            <div className="flex items-center gap-1.5">
-              {displayColors.map((color) => {
-                const isSelected = selectedColor === color || (!selectedColor && displayColors.length === 1);
-                const bgHex = getColorHex(color);
-                return (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedColor(color);
-                      setActiveIndex(0);
-                    }}
-                    className={`w-5 h-5 rounded-md border transition-all cursor-pointer ${isSelected ? 'border-black scale-105 shadow-sm ring-1 ring-black/20' : 'border-black/15 hover:border-black/40 hover:scale-102'
-                      }`}
-                    style={{ backgroundColor: bgHex }}
-                    title={color}
-                    aria-label={`Select ${color} color`}
-                  />
-                );
-              })}
-            </div>
-          );
-        })()}
-      </div>
+        );
+      })()}
 
       {/* Card Footer: Title & Price + Hover Add to Bag + Wishlist Heart */}
       <div className="flex items-start justify-between px-1 pt-2">
@@ -423,28 +465,6 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
             </button>
           </div>
         </div>
-
-        {onToggleWishlist && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWishlist(product.id);
-            }}
-            className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold transition-all duration-300 cursor-pointer select-none border mt-0.5 ${isWishlisted
-                ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm scale-105'
-                : 'bg-white/80 border-black/10 text-gray-700 hover:bg-rose-50/70 hover:text-rose-600 hover:border-rose-200'
-              }`}
-            title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
-            aria-label={isWishlisted ? 'Unlike product' : 'Like product'}
-          >
-            <Heart
-              className={`w-3.5 h-3.5 transition-transform duration-300 ${isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-gray-600'
-                }`}
-            />
-            <span>{(product.likesCount || 280) + (isWishlisted ? 1 : 0)}</span>
-          </button>
-        )}
       </div>
     </div>
   );

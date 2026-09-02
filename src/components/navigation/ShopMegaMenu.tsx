@@ -6,7 +6,7 @@ interface ShopMegaMenuProps {
   onClose: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
-  onNavigateShop: () => void;
+  onNavigateShop: (categorySection?: string) => void;
 }
 
 export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({ 
@@ -37,25 +37,25 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
             <p>Shop by Category</p>
           </div>
 
-          <div className="sb-bento">
+          <div className="sb-bento sb-bento-shop">
             <a 
-              className="sb-tile has-photo t-essentials" 
+              className="sb-tile has-photo sb-shop-tile" 
               href="#" 
-              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop(); }}
+              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('tshirts'); }}
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255723.png" alt="T-shirts" loading="lazy" />
+                <img src="/assets/Collections/Rectangle 255723.png" alt="Oversized t-shirts" loading="lazy" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
-              <h3>T-shirts</h3>
-              <p>Premium heavy-weight cotton<br/>tees.</p>
+              <h3>Oversized t-shirts</h3>
+              <p>Unisex tshirts.<br/>Premium heavy-weight cotton.</p>
             </a>
 
             <a 
-              className="sb-tile has-photo t-bible" 
+              className="sb-tile has-photo sb-shop-tile" 
               href="#" 
-              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop(); }}
+              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('caps'); }}
               style={{"--d": ".09s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -67,15 +67,15 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
             </a>
 
             <a 
-              className="sb-tile has-photo t-little" 
+              className="sb-tile has-photo sb-shop-tile" 
               href="#" 
-              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop(); }}
+              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('totebags'); }}
               style={{"--d": ".14s"} as React.CSSProperties}
             >
               <div className="sb-photo">
                 <img src="/assets/Collections/Rectangle 255730.png" alt="Tote Bags" loading="lazy" />
               </div>
-              <span className="sb-pill is-coming">COMING SOON</span>
+              <span className="sb-pill is-live">LIVE</span>
               <h3>Tote Bags</h3>
               <p>Everyday carry.</p>
             </a>
@@ -84,7 +84,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
           <div className="sb-mega-foot">
             <button 
               className="hover:underline text-sm font-medium tracking-wide"
-              onClick={() => { onClose(); onNavigateShop(); }}
+              onClick={() => { onClose(); onNavigateShop('tshirts'); }}
             >
               View all products &rarr;
             </button>

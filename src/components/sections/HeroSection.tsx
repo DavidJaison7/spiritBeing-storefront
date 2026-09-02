@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Product } from '../types';
+import { Product } from '../../types';
 
 const HERO_MARQUEE_IMAGES = [
   '/archive/archive-1.png',
