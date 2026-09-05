@@ -42,6 +42,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const lastWheelTimeRef = useRef<number>(0);
 
   const isWishlisted = wishlist.includes(product.id);
+  const isSoldOut = !product.inStock;
 
   // Get all unique images for this product, scoped to selected color if applicable
   const getProductImages = () => {
@@ -139,12 +140,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         if (isDraggingRef.current) return;
         onSelect(selectedColor);
       }}
-      className="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1 select-none"
+      className={`group flex flex-col cursor-pointer transition-transform duration-300 select-none ${
+        isSoldOut ? '' : 'hover:-translate-y-1'
+      }`}
     >
       {/* Curved Flashcard Image Frame */}
       <div
         ref={frameRef}
-        className="relative aspect-[3/4] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white border border-black/5 shadow-sm touch-pan-y"
+        className={`relative aspect-[3/4] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white border shadow-sm touch-pan-y ${
+          isSoldOut ? 'border-black/10' : 'border-black/5'
+        }`}
         style={{ overscrollBehaviorX: 'none' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -152,13 +157,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         onPointerCancel={handlePointerUp}
       >
         {/* Out of Stock Overlay */}
-        {!product.inStock && (
-          <div className="absolute inset-0 bg-[#fbf9f9]/70 backdrop-blur-[3px] flex items-center justify-center z-15 pointer-events-none">
-            <div className="relative w-full py-2.5 bg-black text-white text-center font-mono text-xs uppercase tracking-[0.25em] overflow-hidden shadow-md">
-              <div className="absolute inset-0 bg-[#0B3DFF]/60 rotate-45 transform scale-150 pointer-events-none"></div>
-              <span className="relative z-10 font-bold text-white tracking-widest">SOLD OUT</span>
+        {isSoldOut && (
+          <>
+            <div className="absolute inset-0 z-[15] pointer-events-none bg-gradient-to-b from-black/20 via-black/45 to-black/60" />
+            <div className="absolute inset-0 z-[18] pointer-events-none flex items-center justify-center p-6">
+              <span className="inline-flex items-center justify-center min-w-[108px] px-5 py-2.5 rounded-full border border-white/25 bg-black/40 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_10px_36px_rgba(0,0,0,0.28)]">
+                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-white">
+                  Sold Out
+                </span>
+              </span>
             </div>
-          </div>
+          </>
         )}
 
         {/* Floating Top-Right Wishlist/Likes Badge */}
@@ -169,6 +178,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             onToggleWishlist(product.id);
           }}
           className={`absolute top-3 right-3 z-30 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all cursor-pointer select-none ${
+            isSoldOut ? 'opacity-45 saturate-0' : ''
+          } ${
             isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]/70 hover:text-[#1b1c1c]'
           }`}
           title={isWishlisted ? 'Liked by you! Click to unlike' : 'Like this drop'}
@@ -195,15 +206,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               src={imgUrl}
               alt={`${product.title} view ${idx + 1}`}
               draggable={false}
-              className={`w-full h-full object-cover shrink-0 group-hover:scale-102 transition-transform duration-700 ease-out select-none ${
-                !product.inStock ? 'opacity-75 grayscale-[20%]' : ''
+              className={`w-full h-full object-cover shrink-0 transition-transform duration-700 ease-out select-none ${
+                isSoldOut
+                  ? 'grayscale-[0.4] brightness-[0.62] saturate-[0.55]'
+                  : 'group-hover:scale-102'
               }`}
             />
           ))}
         </div>
 
         {/* Left Arrow */}
-        {productImages.length > 1 && (
+        {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
             className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
@@ -219,7 +232,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Right Arrow */}
-        {productImages.length > 1 && (
+        {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
             className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
@@ -235,7 +248,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Carousel Indicator Dots in Bottom Center */}
-        {productImages.length > 1 && (
+        {productImages.length > 1 && !isSoldOut && (
           <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
             {productImages.map((_, idx) => (
               <button
@@ -338,31 +351,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Card Footer: Title & Price + Plus / Added Button */}
       <div className="flex items-start justify-between px-1 pt-2">
         <div className="pr-2 flex-grow">
-          <h3 className="font-sans font-medium text-[14px] sm:text-[15px] text-[#1a1a1a] tracking-tight leading-snug group-hover:text-black">
+          <h3 className={`font-sans font-medium text-[14px] sm:text-[15px] tracking-tight leading-snug ${
+            isSoldOut ? 'text-[#888888]' : 'text-[#1a1a1a] group-hover:text-black'
+          }`}>
             {product.title}
           </h3>
           <div className="relative h-5 mt-1 overflow-hidden w-full">
-            <p className="absolute inset-x-0 top-0 font-sans text-[13px] sm:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
-              ₹{product.price.toFixed(2)}
-            </p>
-            <button
-              type="button"
-              disabled={!product.inStock}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!product.inStock) return;
-                onAddToCart(e, selectedSize, selectedColor);
-              }}
-              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
-                !product.inStock
-                  ? 'text-gray-400 cursor-default'
-                  : isAdded
-                  ? 'text-green-600'
-                  : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
-              }`}
-            >
-              {!product.inStock ? 'Sold Out' : isAdded ? 'Added ✓' : 'Add to Bag'}
-            </button>
+            {isSoldOut ? (
+              <p className="font-sans text-[12px] text-[#999999] font-medium tracking-wide uppercase">
+                Sold Out
+              </p>
+            ) : (
+              <>
+                <p className="absolute inset-x-0 top-0 font-sans text-[13px] sm:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
+                  ₹{product.price.toFixed(2)}
+                </p>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToCart(e, selectedSize, selectedColor);
+                  }}
+                  className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
+                    isAdded
+                      ? 'text-green-600'
+                      : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
+                  }`}
+                >
+                  {isAdded ? 'Added ✓' : 'Add to Bag'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

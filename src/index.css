@@ -302,37 +302,36 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-burger .bars{
   position:relative;width:22px;height:15px;
-  transition:transform .5s cubic-bezier(.22,1.06,.36,1);
+  transition:transform .52s cubic-bezier(.22,1.06,.36,1);
 }
 .sb-burger i{
   position:absolute;left:0;height:2px;background:currentColor;border-radius:2px;
-  transition:transform .46s cubic-bezier(.22,1.06,.36,1), width .46s cubic-bezier(.22,1.06,.36,1), opacity .22s ease;
+  transition:transform .48s cubic-bezier(.22,1.06,.36,1), width .48s cubic-bezier(.22,1.06,.36,1), opacity .22s ease;
 }
-.sb-burger i:nth-child(1){top:0;width:100%}
-.sb-burger i:nth-child(2){top:7px;width:100%}
-.sb-burger i:nth-child(3){top:14px;width:62%}      /* the short one */
+/* Two-line menu: full bar + half bar */
+.sb-burger i:nth-child(1){top:4px;width:100%}
+.sb-burger i:nth-child(2){top:13px;width:50%}
 
 /* closed + hover */
 .sb-burger:not([aria-expanded="true"]):hover i:nth-child(1),
-.sb-burger:not([aria-expanded="true"]):focus-visible i:nth-child(1){transform:translateY(-3px)}
+.sb-burger:not([aria-expanded="true"]):focus-visible i:nth-child(1){transform:translateY(-2px)}
 
-.sb-burger:not([aria-expanded="true"]):hover i:nth-child(3),
-.sb-burger:not([aria-expanded="true"]):focus-visible i:nth-child(3){
-  transform:translateY(3px);width:100%;
+.sb-burger:not([aria-expanded="true"]):hover i:nth-child(2),
+.sb-burger:not([aria-expanded="true"]):focus-visible i:nth-child(2){
+  transform:translateY(2px);width:100%;
 }
 
-/* open: the stack spins a half turn */
+/* open: morph to X */
 .sb-burger[aria-expanded="true"] { 
   color: #1b1c1c !important; 
   z-index: 95 !important;
   transition: color 0.3s ease;
 }
 .sb-burger[aria-expanded="true"] .bars{transform:rotate(180deg)}
-.sb-burger[aria-expanded="true"] i:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.sb-burger[aria-expanded="true"] i:nth-child(2){opacity:0;transform:scaleX(.15)}
-.sb-burger[aria-expanded="true"] i:nth-child(3){width:100%;transform:translateY(-7px) rotate(-45deg)}
+.sb-burger[aria-expanded="true"] i:nth-child(1){transform:translateY(4.5px) rotate(45deg)}
+.sb-burger[aria-expanded="true"] i:nth-child(2){width:100%;transform:translateY(-4.5px) rotate(-45deg)}
 
-/* open + hover: THIS is the rotation */
+/* open + hover: spin */
 .sb-burger[aria-expanded="true"]:hover .bars,
 .sb-burger[aria-expanded="true"]:focus-visible .bars{transform:rotate(360deg)}
 
@@ -357,7 +356,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   color:#1b1c1c;
   border-radius:18px;
   display:flex;flex-direction:column;
-  padding:16px 20px 20px;
+  padding:46px 20px 20px;
   box-shadow:0 30px 80px -20px rgba(0,0,0,.18);
   transform:translateX(calc(100% + 40px));
   visibility:hidden;
@@ -370,7 +369,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
     right: 30px;
     max-height: calc(100vh - 10px);
     width: min(368px, calc(100vw - 44px));
-    padding: 18px 22px 20px;
+    padding: 46px 22px 20px;
   }
 }
 .sb-menu-drawer.is-open{
@@ -379,7 +378,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   transition:transform .46s cubic-bezier(.22,1.06,.36,1),visibility 0s 0s;
 }
 
-.sb-menu-drawer-top{min-height:20px}
+.sb-menu-drawer-top{min-height:0}
 .sb-close{
   margin-left:auto;width:38px;height:38px;display:grid;place-items:center;
   background:none;border:1px solid #e5e7eb;border-radius:10px;
@@ -390,7 +389,40 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 .sb-close:focus-visible{outline:2px solid #0B3DFF;outline-offset:2px}
 
 /* account block */
-.sb-account{margin-top:8px}
+.sb-account{margin-top:0;padding-right:40px}
+.sb-account--signed-in{
+  padding:11px 12px 12px;
+  border:1px solid rgba(0,0,0,0.07);
+  border-radius:14px;
+  background:rgba(255,255,255,0.82);
+}
+.sb-account-main{
+  display:flex;align-items:center;gap:11px;min-width:0;
+}
+.sb-account-avatar{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;
+  background:#0B3DFF;color:#fff;
+  font-size:12px;font-weight:700;letter-spacing:.04em;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.35), 0 6px 16px rgba(11,61,255,0.28);
+}
+.sb-account-meta{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.sb-account-name{
+  font-size:13px;font-weight:600;line-height:1.2;color:#1b1c1c;
+  letter-spacing:-.01em;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sb-account-email{
+  font-family:'Archivo', monospace;font-size:11px;line-height:1.3;color:#737373;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sb-account-logout{
+  margin-top:10px;padding:0;background:none;border:0;cursor:pointer;
+  font-family:'Archivo', sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;
+  transition:color .25s ease;
+}
+.sb-account-logout:hover{color:#1b1c1c}
+.sb-account-logout:focus-visible{outline:2px solid #0B3DFF;outline-offset:3px;border-radius:4px}
 .sb-account p{
   margin:0 0 8px;font-size:12px;line-height:1.4;color:#6b7280;font-weight:400;
 }
@@ -404,7 +436,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-cta:hover{background:#374151;transform:translateY(-2px)}
 
-.sb-rule{height:1px;background:#e5e7eb;margin:20px 0 6px;border:0}
+.sb-rule{height:1px;background:#e5e7eb;margin:14px 0 6px;border:0}
 
 /* the link list */
 .sb-links{display:flex;flex-direction:column;padding:0;margin:0;list-style:none}
@@ -543,4 +575,57 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-cart-close:focus-visible {
   outline: none;
+}
+
+/* ==========================================================================
+   OFFICIAL TAX INVOICE PRINT ISOLATION
+   Hides entire website during print; prints ONLY the tax invoice.
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide all background website elements by default */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Force visibility only for the tax invoice container and its contents */
+  #printable-tax-invoice,
+  #printable-tax-invoice * {
+    visibility: visible !important;
+  }
+
+  #printable-tax-invoice {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    display: block !important;
+  }
+
+  /* Strictly suppress interactive buttons, navigation, headers, and footers */
+  .no-print,
+  button,
+  header,
+  footer,
+  aside,
+  nav,
+  .fixed-bottom-strip {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
 }

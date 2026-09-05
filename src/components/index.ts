@@ -25,3 +25,5 @@ export { ProductReviewsSection } from './product/ProductReviewsSection';
 export { CartDrawer } from './modals/CartDrawer';
 export { CheckoutModal } from './modals/CheckoutModal';
 export { ShopifySyncModal } from './modals/ShopifySyncModal';
+export { OrderTrackingModal } from './modals/OrderTrackingModal';
+export { CustomerOrdersHubModal } from './modals/CustomerOrdersHubModal';

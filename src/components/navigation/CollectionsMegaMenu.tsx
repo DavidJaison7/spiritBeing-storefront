@@ -1,5 +1,6 @@
 import React from 'react';
 import './CollectionsMegaMenu.css';
+import { MEGA_MENU_IMAGES } from './megaMenuImages';
 
 interface CollectionsMegaMenuProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
       >
         <div className="sb-mega-inner">
           <div className="sb-mega-top">
-            <p>Five collections &middot; one shared Suffix</p>
+            <p>Five distinct worlds · one shared design language</p>
           </div>
 
           <div className="sb-bento">
@@ -43,7 +44,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255729.png" alt="Spiritbeing Essentials" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.essentials} alt="Spiritbeing Essentials" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Spiritbeing Essentials</h3>
@@ -57,7 +58,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".09s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255723.png" alt="Bible Basics" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.bibleBasics} alt="Bible Basics" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Bible Basics</h3>
@@ -71,7 +72,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".14s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255730.png" alt="Little Beings" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.littleBeings} alt="Little Beings" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Little Beings</h3>
@@ -85,7 +86,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".19s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255726.png" alt="Nomad Beings" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.nomadBeings} alt="Nomad Beings" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Nomad Beings</h3>
@@ -99,7 +100,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".24s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255727.png" alt="Armoured Beings" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.armouredBeings} alt="Armoured Beings" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>Armoured Beings</h3>
@@ -113,7 +114,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
               style={{"--d": ".29s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Blue.png" alt="The Book Series" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.bookSeries} alt="The Book Series" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-coming">COMING SOON</span>
               <h3>The Book Series</h3>

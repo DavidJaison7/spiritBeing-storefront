@@ -15,9 +15,12 @@ import {
   CartDrawer, 
   ShopifySyncModal, 
   CheckoutModal, 
+  OrderTrackingModal,
+  CustomerOrdersHubModal,
   InstagramFeedSection, 
   Footer 
 } from './components';
+import { UserProfile } from './components/layout/Header';
 import { fetchProductsFromShopify, createShopifyCheckout } from './lib/shopify';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -39,6 +42,38 @@ export default function App() {
       return [];
     }
   });
+
+  // User Authentication State
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('spiritbeing_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleLoginSuccess = (userData: { name: string; email: string; phone?: string }) => {
+    const user: UserProfile = {
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+      ordersCount: 1,
+    };
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('spiritbeing_user', JSON.stringify(user));
+    } catch {}
+    setIsLoginView(false);
+    window.scrollTo(0, 0);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('spiritbeing_user');
+    } catch {}
+  };
 
   const handleToggleWishlist = (productId: string) => {
     setWishlist((prev) => {
@@ -64,6 +99,9 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isShopifySyncOpen, setIsShopifySyncOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isOrderTrackingOpen, setIsOrderTrackingOpen] = useState(false);
+  const [isOrdersHubOpen, setIsOrdersHubOpen] = useState(false);
+  const [ordersHubTab, setOrdersHubTab] = useState<'active' | 'history'>('active');
   const [isLoginView, setIsLoginView] = useState(false);
   const [isOurStoryView, setIsOurStoryView] = useState(false);
   const [isBlogView, setIsBlogView] = useState(false);
@@ -312,6 +350,7 @@ export default function App() {
           setIsLoginView(false);
           window.scrollTo(0, 0);
         }}
+        onLoginSuccess={handleLoginSuccess}
       />
     );
   }
@@ -377,6 +416,13 @@ export default function App() {
         currentView={
           isBlogView ? 'blog' : isOurStoryView ? 'our_story' : isShopCategoryView ? 'shop_category' : selectedProduct ? 'product_detail' : 'home'
         }
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onOpenOrderTracking={() => setIsOrderTrackingOpen(true)}
+        onOpenOrdersHub={(tab) => {
+          setOrdersHubTab(tab || 'active');
+          setIsOrdersHubOpen(true);
+        }}
       />
 
       {/* Main View switching */}
@@ -534,6 +580,25 @@ export default function App() {
         onClose={() => setIsCheckoutOpen(false)}
         items={cart}
         onClearCart={handleClearCart}
+        currentUser={currentUser}
+        onOpenOrderHub={(tab) => {
+          setOrdersHubTab(tab || 'active');
+          setIsOrdersHubOpen(true);
+        }}
+      />
+
+      {/* Rich Order Tracking Modal */}
+      <OrderTrackingModal
+        isOpen={isOrderTrackingOpen}
+        onClose={() => setIsOrderTrackingOpen(false)}
+      />
+
+      {/* Customer Orders, Billing, & Tax Invoice Hub */}
+      <CustomerOrdersHubModal
+        isOpen={isOrdersHubOpen}
+        onClose={() => setIsOrdersHubOpen(false)}
+        currentUser={currentUser}
+        initialTab={ordersHubTab}
       />
 
       {/* Editorial Footer */}

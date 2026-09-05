@@ -126,11 +126,12 @@ const AnimatedEyeToggle: React.FC<AnimatedEyeToggleProps> = ({ visible, onClick,
 
 interface LoginViewProps {
   onNavigateHome: () => void;
+  onLoginSuccess?: (userData: { name: string; email: string; phone?: string }) => void;
 }
 
 type AuthView = 'login' | 'signup' | 'recover';
 
-export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome, onLoginSuccess }) => {
   const [view, setView] = useState<AuthView>('login');
   const [showPassword, setShowPassword] = useState(false);
   
@@ -170,12 +171,30 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome }) => {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Logging in with: ${email}`);
+    const rawName = email.includes('@') ? email.split('@')[0] : 'Spirit Being User';
+    const formattedName = rawName.replace(/[^a-zA-Z]/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+    if (onLoginSuccess) {
+      onLoginSuccess({
+        name: formattedName || 'David Jaison',
+        email: email || 'david@spiritbeing.in',
+        phone: '+91 98765 43210'
+      });
+    } else {
+      onNavigateHome();
+    }
   };
 
   const handleSignupSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Signing up with: ${signupEmail}`);
+    if (onLoginSuccess) {
+      onLoginSuccess({
+        name: signupName || 'New Member',
+        email: signupEmail || 'user@spiritbeing.in',
+        phone: '+91 98765 43210'
+      });
+    } else {
+      onNavigateHome();
+    }
   };
 
   const handleRecoverySubmit = (e: React.FormEvent) => {

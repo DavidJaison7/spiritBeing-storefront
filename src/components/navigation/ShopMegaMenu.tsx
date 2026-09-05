@@ -1,5 +1,6 @@
 import React from 'react';
 import './CollectionsMegaMenu.css';
+import { MEGA_MENU_IMAGES } from './megaMenuImages';
 
 interface ShopMegaMenuProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
       >
         <div className="sb-mega-inner">
           <div className="sb-mega-top">
-            <p>Shop by Category</p>
+            <p>Browse by category · find your fit</p>
           </div>
 
           <div className="sb-bento sb-bento-shop">
@@ -45,7 +46,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255723.png" alt="Oversized t-shirts" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.bibleBasics} alt="Oversized t-shirts" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Oversized t-shirts</h3>
@@ -59,7 +60,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
               style={{"--d": ".09s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255729.png" alt="Caps" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.essentials} alt="Caps" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Caps</h3>
@@ -73,7 +74,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
               style={{"--d": ".14s"} as React.CSSProperties}
             >
               <div className="sb-photo">
-                <img src="/assets/Collections/Rectangle 255730.png" alt="Tote Bags" loading="lazy" />
+                <img src={MEGA_MENU_IMAGES.littleBeings} alt="Tote Bags" loading="lazy" decoding="async" />
               </div>
               <span className="sb-pill is-live">LIVE</span>
               <h3>Tote Bags</h3>
