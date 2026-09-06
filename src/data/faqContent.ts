@@ -16,6 +16,52 @@ export interface FaqCategory {
 
 export const FAQ_CATEGORIES: FaqCategory[] = [
   {
+    id: 'brand',
+    label: 'The brand',
+    items: [
+      {
+        question: 'What is Spirit Being?',
+        blocks: [
+          {
+            type: 'p',
+            text: 'A streetwear label out of Chennai, built on the idea that you are spirit first and body second. The graphics carry that: scripture, symbols, and language pulled from faith and set in a street vocabulary.',
+          },
+          {
+            type: 'p',
+            text: "Clothes you'd wear anyway, that happen to say something you'd want said.",
+          },
+        ],
+      },
+      {
+        question: 'Do I have to be religious to wear it?',
+        blocks: [
+          {
+            type: 'p',
+            text: "No. Wear it because the piece is good. If the words on it start a conversation, that's the point, and nobody is checking your credentials at the door.",
+          },
+        ],
+      },
+      {
+        question: 'Where is everything made?',
+        blocks: [
+          {
+            type: 'p',
+            text: 'Cut, stitched, and printed in Tamil Nadu, in small units we visit ourselves. Runs stay small so we can check pieces by hand and keep the people making them paid fairly.',
+          },
+        ],
+      },
+      {
+        question: 'Can we collaborate?',
+        blocks: [
+          {
+            type: 'p',
+            text: 'Artists, churches, musicians, photographers — send what you make to hello@spiritbeinggen.com with a line about what you have in mind. We read everything, and reply to what fits.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: 'garments',
     label: 'Garments',
     items: [
@@ -78,7 +124,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         blocks: [
           {
             type: 'p',
-            text: 'New collections are teased on @spiritbeing about a week out, with the exact date and time. The drop goes live on the site at that moment. No password, no raffle — first come, first served.',
+            text: 'New collections are teased on @spiritbeinggen about a week out, with the exact date and time. The drop goes live on the site at that moment. No password, no raffle — first come, first served.',
           },
         ],
       },
@@ -163,7 +209,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         blocks: [
           {
             type: 'p',
-            text: "Yes, as long as the order still shows as unfulfilled. Mail orders@spiritbeing.in with your order number and the change. Once the label is printed nothing can be edited.",
+            text: "Yes, as long as the order still shows as unfulfilled. Mail orders@spiritbeinggen.com with your order number and the change. Once the label is printed nothing can be edited.",
           },
         ],
       },
@@ -244,53 +290,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         blocks: [
           {
             type: 'p',
-            text: "That one's on us. Mail orders@spiritbeing.in within 48 hours with your order number and photos of the issue. We recall the parcel and send the correct piece out at no cost.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'brand',
-    label: 'The brand',
-    items: [
-      {
-        question: 'What is Spirit Being?',
-        blocks: [
-          {
-            type: 'p',
-            text: 'A streetwear label out of Chennai, built on the idea that you are spirit first and body second. The graphics carry that: scripture, symbols, and language pulled from faith and set in a street vocabulary.',
-          },
-          {
-            type: 'p',
-            text: "Clothes you'd wear anyway, that happen to say something you'd want said.",
-          },
-        ],
-      },
-      {
-        question: 'Do I have to be religious to wear it?',
-        blocks: [
-          {
-            type: 'p',
-            text: "No. Wear it because the piece is good. If the words on it start a conversation, that's the point, and nobody is checking your credentials at the door.",
-          },
-        ],
-      },
-      {
-        question: 'Where is everything made?',
-        blocks: [
-          {
-            type: 'p',
-            text: 'Cut, stitched, and printed in Tamil Nadu, in small units we visit ourselves. Runs stay small so we can check pieces by hand and keep the people making them paid fairly.',
-          },
-        ],
-      },
-      {
-        question: 'Can we collaborate?',
-        blocks: [
-          {
-            type: 'p',
-            text: 'Artists, churches, musicians, photographers — send what you make to hello@spiritbeing.in with a line about what you have in mind. We read everything, and reply to what fits.',
+            text: "That one's on us. Mail orders@spiritbeinggen.com within 48 hours with your order number and photos of the issue. We recall the parcel and send the correct piece out at no cost.",
           },
         ],
       },

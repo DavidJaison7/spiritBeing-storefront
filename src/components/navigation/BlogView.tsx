@@ -10,7 +10,7 @@ const BLOG_POSTS = [
   {
     id: '01',
     tag: 'story',
-    image: 'images/01.jpg',
+    image: '/images/blog-01-official-merch.png',
     title: 'The Spirit Gives Life: The Story Behind The Drop',
     excerpt: 'Two figures, one body. The grey one lying still, the blue one rising out of it. This is the graphic that started Spirit Being, and 2 Corinthians 3:6 is the line that wouldn\'t leave us alone.',
     date: 'Aug 18, 2026',
@@ -19,7 +19,7 @@ const BLOG_POSTS = [
   {
     id: '02',
     tag: 'faith',
-    image: 'images/02.jpg',
+    image: '/images/blog-02-scripture-streetwear.png',
     title: 'Why We Put Scripture On Streetwear',
     excerpt: 'A verse on a hoodie isn\'t decoration. It\'s a sentence someone reads on a train, in a queue, on a crosswalk. We talk about carrying the word into places a pulpit never reaches.',
     date: 'Aug 11, 2026',
@@ -127,7 +127,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onClose }) => {
         </nav>
 
         <h1 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal mt-6">
-          The <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">Journal</span>
+          The <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal">Journal</span>
         </h1>
 
         <p className="mt-4 max-w-[52ch] text-xs sm:text-sm leading-relaxed text-gray-500">

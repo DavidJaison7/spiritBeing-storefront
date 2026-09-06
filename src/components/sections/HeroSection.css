@@ -1,0 +1,514 @@
+/* ============================================================
+   Hero — responsive system (mobile → tablet → desktop)
+   Mobile reference: logo center, Shop Now bottom, minimal chrome
+   ============================================================ */
+
+.hero-video-section {
+  --hero-dock-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  --hero-logo-top: 17vh;
+  --hero-logo-width: min(72vw, 280px);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  min-height: 100svh;
+  height: 100dvh;
+}
+
+@supports not (height: 100dvh) {
+  .hero-video-section {
+    height: 100vh;
+  }
+}
+
+.hero-video-section .hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-video-section .hero-vignette-top,
+.hero-video-section .hero-vignette-radial {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.hero-video-section .hero-vignette-top {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 0%, transparent 38%, rgba(0, 0, 0, 0.28) 100%);
+}
+
+.hero-video-section .hero-vignette-radial {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.12) 100%);
+}
+
+/* ---------- Logo ---------- */
+.hero-logo-wrap {
+  position: absolute;
+  inset-inline: 0;
+  top: var(--hero-logo-top);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding-inline: clamp(20px, 6vw, 40px);
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: opacity 150ms ease;
+}
+
+.hero-logo {
+  width: var(--hero-logo-width);
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.32));
+}
+
+.hero-logo-btn {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  line-height: 0;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.hero-logo-btn:hover {
+  opacity: 0.88;
+}
+
+.hero-logo-btn:active {
+  transform: scale(0.985);
+}
+
+.hero-logo-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+/* ---------- Bottom dock — mobile: Shop Now only ---------- */
+.hero-dock {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 50;
+  bottom: var(--hero-dock-bottom);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.hero-dock-inner {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  max-width: 1720px;
+  margin-inline: auto;
+}
+
+.hero-dock-left {
+  display: none;
+}
+
+.hero-dock-tagline {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-family: var(--sb-font-body, 'Archivo', sans-serif);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+  white-space: nowrap;
+}
+
+.hero-dock-ticks {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 12px;
+}
+
+.hero-dock-ticks i {
+  display: block;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.hero-dock-ticks i:nth-child(1) {
+  width: 12px;
+}
+
+.hero-dock-ticks i:nth-child(2) {
+  width: 3px;
+  opacity: 0.75;
+}
+
+.hero-dock-ticks i:nth-child(3) {
+  width: 8px;
+  opacity: 0.85;
+}
+
+.hero-dock-ticks i:nth-child(4) {
+  width: 3px;
+  opacity: 0.65;
+}
+
+.hero-sound-btn,
+.hero-fomo-card {
+  display: none;
+}
+
+.hero-shop-cta {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  color: #fff;
+}
+
+.hero-shop-cta-label {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero-shop-cta-chevron {
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+  transition: transform 300ms ease;
+}
+
+.hero-shop-cta:hover .hero-shop-cta-chevron {
+  transform: translateY(2px);
+}
+
+/* Hidden elements — restored on tablet+ via media queries */
+.hero-sound-btn {
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: background 300ms ease, border-color 300ms ease;
+}
+
+.hero-sound-btn:hover {
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.hero-fomo-card {
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 16px;
+  background: #0a0a0a;
+  text-align: left;
+  cursor: pointer;
+  transition: background 300ms ease, transform 200ms ease;
+}
+
+.hero-fomo-card:hover {
+  background: #111;
+}
+
+.hero-fomo-thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.hero-fomo-thumb img,
+.hero-fomo-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-fomo-thumb-img,
+.hero-fomo-title {
+  animation: hero-fomo-swap 520ms ease;
+}
+
+@keyframes hero-fomo-swap {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-fomo-copy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.hero-fomo-title {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: #fff;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.hero-fomo-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 300ms ease;
+}
+
+.hero-fomo-card:hover .hero-fomo-cta {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.hero-fomo-cta-chevron {
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* ---------- Large phones ---------- */
+@media (min-width: 390px) {
+  .hero-video-section {
+    --hero-logo-width: min(68vw, 300px);
+    --hero-dock-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-shop-cta-label {
+    font-size: 11.5px;
+  }
+}
+
+/* ---------- Small tablets ---------- */
+@media (min-width: 640px) {
+  .hero-video-section {
+    --hero-logo-top: 18vh;
+    --hero-logo-width: min(52vw, 320px);
+    --hero-dock-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ---------- Tablets — full dock (tagline + shop + FOMO) ---------- */
+@media (min-width: 768px) {
+  .hero-video-section {
+    --hero-logo-top: 17vh;
+    --hero-logo-width: min(30vw, 268px);
+    --hero-dock-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-dock {
+    padding-left: max(24px, env(safe-area-inset-left, 0px));
+    padding-right: max(24px, env(safe-area-inset-right, 0px));
+  }
+
+  .hero-dock-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    column-gap: 24px;
+  }
+
+  .hero-dock-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 14px;
+    justify-self: start;
+    min-width: 0;
+  }
+
+  .hero-sound-btn {
+    display: flex;
+    width: 42px;
+    height: 42px;
+  }
+
+  .hero-shop-cta {
+    justify-self: center;
+    align-self: end;
+  }
+
+  .hero-shop-cta-label {
+    font-size: 12px;
+  }
+
+  .hero-fomo-card {
+    display: flex;
+    justify-self: end;
+    align-self: end;
+    width: min(360px, 100%);
+    max-width: 360px;
+    padding: 10px 12px;
+    gap: 18px;
+  }
+
+  .hero-fomo-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+  }
+
+  .hero-fomo-title {
+    font-size: 11px;
+  }
+
+  .hero-fomo-cta {
+    font-size: 8.5px;
+  }
+}
+
+/* ---------- iPad landscape / laptops ---------- */
+@media (min-width: 1024px) {
+  .hero-video-section {
+    --hero-logo-top: 16vh;
+    --hero-logo-width: min(28vw, 284px);
+    --hero-dock-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-dock {
+    padding-left: max(32px, env(safe-area-inset-left, 0px));
+    padding-right: max(32px, env(safe-area-inset-right, 0px));
+  }
+
+  .hero-dock-tagline {
+    font-size: 9.5px;
+    letter-spacing: 0.36em;
+  }
+
+  .hero-fomo-card {
+    width: min(388px, 36vw);
+    max-width: 388px;
+    gap: 20px;
+  }
+
+  .hero-fomo-thumb {
+    width: 76px;
+    height: 76px;
+  }
+
+  .hero-fomo-title {
+    font-size: 11.5px;
+  }
+}
+
+/* ---------- MacBook / desktop ---------- */
+@media (min-width: 1280px) {
+  .hero-video-section {
+    --hero-logo-top: 17vh;
+    --hero-logo-width: min(26vw, 290px);
+    --hero-dock-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-fomo-card {
+    width: 408px;
+    max-width: 408px;
+    padding: 12px;
+    gap: 22px;
+    border-radius: 18px;
+  }
+
+  .hero-fomo-copy {
+    padding-left: 6px;
+  }
+
+  .hero-fomo-thumb {
+    width: 78px;
+    height: 78px;
+    border-radius: 14px;
+  }
+
+  .hero-fomo-title {
+    font-size: 12px;
+  }
+
+  .hero-fomo-cta {
+    font-size: 9px;
+  }
+
+  .hero-fomo-card:hover {
+    transform: scale(1.01);
+  }
+
+  .hero-fomo-card:active {
+    transform: scale(0.99);
+  }
+}
+
+/* ---------- Short landscape phones ---------- */
+@media (max-width: 767px) and (max-height: 520px) and (orientation: landscape) {
+  .hero-video-section {
+    --hero-logo-top: 10vh;
+    --hero-logo-width: min(36vw, 200px);
+    --hero-dock-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-shop-cta-label {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo-wrap,
+  .hero-sound-btn,
+  .hero-shop-cta-chevron,
+  .hero-fomo-card,
+  .hero-fomo-cta,
+  .hero-fomo-thumb-img,
+  .hero-fomo-title {
+    transition: none !important;
+    animation: none !important;
+  }
+}

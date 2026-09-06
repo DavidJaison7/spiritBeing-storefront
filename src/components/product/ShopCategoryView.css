@@ -5,17 +5,34 @@
   min-height: 100vh;
   background-color: #fbf9f9;
   color: #1b1c1c;
+  --sb-shop-tabs-height: 44px;
 }
 
-/* Sticky Category Tabs Bar */
+.sb-shop-scroll {
+  padding-top: calc(var(--sb-shop-header-offset, var(--sb-header-height, 64px)) + var(--sb-shop-tabs-height));
+}
+
+/* Fixed category tabs — flush under site header */
 .sb-tabs-bar {
-  position: sticky;
-  top: 56px;
-  z-index: 40;
-  background: rgba(251, 249, 249, 0.95);
-  backdrop-filter: blur(12px);
+  position: fixed;
+  top: var(--sb-shop-header-offset, var(--sb-header-height, 64px));
+  left: 0;
+  right: 0;
+  z-index: 50;
+  margin: 0;
+  border-radius: 0;
+  background: #fbf9f9;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+}
+
+.sb-tabs-inner {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  width: 100%;
+  height: var(--sb-shop-tabs-height);
+  padding: 0 1rem;
+  overflow: hidden;
 }
 
 .sb-tab-btn {
@@ -25,14 +42,26 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #666666;
-  padding: 14px 20px;
+  padding: 0 12px;
+  border: 0;
   border-bottom: 2px solid transparent;
-  transition: all 0.25s ease;
+  background: none;
+  transition: color 0.25s ease, border-color 0.25s ease;
   white-space: nowrap;
+  text-align: center;
+  min-width: 0;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sb-tab-btn:first-child {
-  padding-left: 0;
+.sb-tab-label--mobile {
+  display: none;
+}
+
+.sb-tab-label--desktop {
+  display: inline;
 }
 
 .sb-tab-btn:hover {
@@ -44,7 +73,57 @@
   border-bottom-color: #2040FF;
 }
 
+.sb-shop-hero {
+  display: none;
+}
+
 /* Section Anchor Spacing */
 .sb-category-section {
-  scroll-margin-top: 130px;
+  scroll-margin-top: calc(var(--sb-shop-header-offset, var(--sb-header-height, 64px)) + var(--sb-shop-tabs-height) + 8px);
+}
+
+@media (max-width: 860px) {
+  .sb-shop-view-container {
+    --sb-shop-tabs-height: 42px;
+  }
+
+  .sb-tab-btn {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 0 6px;
+  }
+
+  .sb-tab-label--mobile {
+    display: inline;
+  }
+
+  .sb-tab-label--desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 861px) {
+  .sb-shop-hero {
+    display: block;
+  }
+
+  .sb-tabs-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: var(--sb-shop-tabs-height);
+    padding: 0 3rem;
+  }
+
+  .sb-tab-btn {
+    flex: 0 1 auto;
+    height: 100%;
+    padding: 0 20px;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .sb-tab-btn:first-child {
+    padding-left: 0;
+  }
 }

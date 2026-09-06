@@ -302,14 +302,41 @@ export const Header: React.FC<HeaderProps> = ({
     return `Hey ${firstName}`;
   };
 
+  const cornerLogoSrc =
+    isOurStoryView || isBlogView || (isOnHeroSection && !showHeaderStyle)
+      ? '/img_logo_white.png'
+      : '/sb-blue-header.png';
+
+  const centerLogoSrc =
+    isOurStoryView || isBlogView
+      ? '/img_logo_white.png'
+      : showHeaderStyle || isFaqView || (isMegaOpen && !isOnHeroSection)
+      ? '/sb-blue-header.png'
+      : isOnHeroSection
+      ? '/img_logo_white.png'
+      : '/sb-blue-header.png';
+
   const isMenuPanelOpen = isMegaOpen;
 
   return (
     <>
     <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-5 md:px-12 py-2 md:py-2 ${isOnHeroSection ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'transition-[background-color,color,box-shadow,border-color] duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)]' : ''} ${headerBg} ${textColor}`}>
-      {/* Left nav — mobile plain links + desktop mega menus */}
-      <div className="flex items-center gap-4 md:gap-6 md:w-1/3">
-        <div className={`flex md:hidden items-center gap-3 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
+      {/* Left nav — mobile/tablet logo + plain links + desktop mega menus */}
+      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 md:w-1/3 min-w-0">
+        <button
+          type="button"
+          onClick={handleNavigateHomeClick}
+          className="sb-header-logo-corner shrink-0"
+          aria-label="Go to home"
+        >
+          <img
+            src={cornerLogoSrc}
+            alt="Spirit Being"
+            className="sb-header-logo-corner-img"
+          />
+        </button>
+
+        <div className={`flex md:hidden items-center gap-2 min-w-0 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
           <button
             type="button"
             className={`sb-nav-trigger sb-nav-trigger--mobile ${isShopMenuOpen ? 'is-active' : ''}`}
@@ -376,22 +403,24 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Center Logo — desktop / scrolled only */}
-      <div className="hidden md:flex w-1/3 justify-center text-center items-center">
+      {/* Center Logo — desktop (lg+) only */}
+      <div className="hidden lg:flex w-1/3 justify-center text-center items-center">
         <button
           type="button"
           onClick={handleNavigateHomeClick}
-          className={`transition-opacity duration-300 cursor-pointer hover:opacity-70 ${
-            showCenterLogo
-              ? 'opacity-100 pointer-events-auto'
-              : 'opacity-0 pointer-events-none'
+          className={`sb-header-logo-btn ${
+            showCenterLogo ? 'is-visible' : 'is-hidden'
           }`}
+          aria-label="Go to home"
         >
-          <img 
-            src={(isOurStoryView || isBlogView) ? "/assets/img_logo_white.png" : "/sb-blue-header.png"} 
-            alt="Spirit Being Logo" 
-            className="h-[22px] md:h-[28px] object-contain" 
-          />
+          <span className="sb-header-logo-wrap">
+            <span className="sb-header-logo-aura" aria-hidden="true" />
+            <img
+              src={centerLogoSrc}
+              alt="Spirit Being Logo"
+              className="sb-header-logo-img"
+            />
+          </span>
         </button>
       </div>
 

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spirit Being Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Pinyon+Script&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sb-color-paper: #fbf9f9;
+      --sb-color-paper-warm: #f2f0ea;
+      --sb-color-white: #ffffff;
+      --sb-color-tile-muted: #f0f0f0;
+      --sb-color-void: #000000;
+      --sb-color-void-soft: #0a0a0a;
+      --sb-color-ink: #1b1c1c;
+      --sb-color-muted: #737373;
+      --sb-color-ash: #666666;
+      --sb-color-steel: #888888;
+      --sb-color-placeholder: #a6a2ac;
+      --sb-color-accent: #0b3dff;
+      --sb-color-accent-bright: #2040ff;
+      --sb-color-accent-mega: #1e44ff;
+      --sb-color-live: #ff3e3e;
+      --sb-color-wishlist: #f43f5e;
+      --sb-color-discord: #5865f2;
+      --sb-color-success: #34a853;
+      --sb-color-error: #ea4335;
+      --sb-color-line: rgba(0, 0, 0, 0.1);
+      --sb-color-line-soft: rgba(0, 0, 0, 0.06);
+      --sb-color-divider: #e8e8e8;
+      --sb-font-display: 'Anton', sans-serif;
+      --sb-font-body: 'Archivo', sans-serif;
+      --sb-font-script: 'Pinyon Script', cursive;
+      --sb-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+      --sb-radius-xs: 6px;
+      --sb-radius-md: 12px;
+      --sb-radius-lg: 14px;
+      --sb-radius-xl: 16px;
+      --sb-radius-pill: 999px;
+      --sb-radius-fluid: clamp(14px, 2.5vw, 22px);
+      --sb-space-1: 4px;
+      --sb-space-2: 8px;
+      --sb-space-3: 12px;
+      --sb-space-4: 16px;
+      --sb-space-6: 24px;
+      --sb-space-8: 32px;
+      --sb-space-10: 40px;
+      --sb-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--sb-font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--sb-color-ink);
+      background: var(--sb-color-paper);
+    }
+
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 64px 48px;
+      background: var(--sb-color-void-soft);
+      color: var(--sb-color-white);
+      page-break-after: always;
+    }
+
+    .cover-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--sb-color-accent-mega);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 24px;
+    }
+
+    .cover-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sb-color-accent-mega);
+    }
+
+    .cover h1 {
+      font-family: var(--sb-font-display);
+      font-size: clamp(48px, 10vw, 96px);
+      line-height: 0.9;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .cover-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      max-width: 480px;
+      margin: 0 0 32px;
+    }
+
+    .cover-meta {
+      font-family: var(--sb-font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px 80px;
+      gap: 48px;
+    }
+
+    nav.toc {
+      position: sticky;
+      top: 32px;
+      align-self: start;
+    }
+
+    nav.toc h2 {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sb-color-steel);
+      margin: 0 0 12px;
+    }
+
+    nav.toc a {
+      display: block;
+      padding: 6px 0;
+      color: var(--sb-color-ash);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    nav.toc a:hover { color: var(--sb-color-accent); }
+
+    main section {
+      margin-bottom: 56px;
+      page-break-inside: avoid;
+    }
+
+    main h2 {
+      font-family: var(--sb-font-display);
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin: 0 0 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--sb-color-line);
+    }
+
+    main h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sb-color-steel);
+      margin: 28px 0 12px;
+    }
+
+    p.lead {
+      color: var(--sb-color-muted);
+      margin: 0 0 24px;
+      max-width: 640px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--sb-color-line-soft);
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sb-color-steel);
+      background: var(--sb-color-tile-muted);
+    }
+
+    code, .code-block {
+      font-family: var(--sb-font-mono);
+      font-size: 11px;
+      background: var(--sb-color-tile-muted);
+      border-radius: 4px;
+    }
+
+    code { padding: 2px 6px; }
+
+    .code-block {
+      display: block;
+      padding: 14px 16px;
+      margin: 12px 0;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      border: 1px solid var(--sb-color-line-soft);
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .swatch {
+      border: 1px solid var(--sb-color-line-soft);
+      border-radius: var(--sb-radius-lg);
+      overflow: hidden;
+      background: var(--sb-color-white);
+    }
+
+    .swatch-color { height: 72px; }
+    .swatch-info { padding: 10px; }
+    .swatch-name { font-size: 11px; font-weight: 700; margin: 0 0 2px; }
+    .swatch-hex { font-family: var(--sb-font-mono); font-size: 10px; color: var(--sb-color-steel); margin: 0; }
+    .swatch-token { font-family: var(--sb-font-mono); font-size: 9px; color: var(--sb-color-muted); margin: 4px 0 0; word-break: break-all; }
+
+    .type-sample { margin: 12px 0; padding: 12px 0; border-bottom: 1px solid var(--sb-color-line-soft); }
+    .type-meta { font-size: 10px; color: var(--sb-color-steel); margin-top: 4px; font-family: var(--sb-font-mono); }
+
+    .t-display-xl { font-family: var(--sb-font-display); font-size: 48px; line-height: 0.9; text-transform: uppercase; }
+    .t-display-lg { font-family: var(--sb-font-display); font-size: 36px; line-height: 1; text-transform: uppercase; }
+    .t-display-sm { font-family: var(--sb-font-display); font-size: 28px; line-height: 1.05; text-transform: uppercase; }
+    .t-headline { font-family: var(--sb-font-display); font-size: 17px; font-weight: 800; text-transform: uppercase; line-height: 1.08; }
+    .t-title { font-size: 14px; font-weight: 700; }
+    .t-body { font-size: 15px; line-height: 1.65; }
+    .t-body-sm { font-size: 13px; color: var(--sb-color-ash); line-height: 1.55; }
+    .t-caption { font-size: 12px; color: var(--sb-color-muted); }
+    .t-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sb-color-steel); }
+    .t-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: var(--sb-color-accent-mega); display: flex; align-items: center; gap: 9px; }
+    .t-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--sb-color-accent-mega); }
+    .t-script { font-family: var(--sb-font-script); font-size: 36px; color: var(--sb-color-accent); }
+    .t-mono { font-family: var(--sb-font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    .demo-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; }
+
+    .sb-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 40px; padding: 0 18px; border: 0; border-radius: var(--sb-radius-md);
+      font-family: var(--sb-font-body); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; text-decoration: none;
+    }
+    .sb-btn--primary { background: var(--sb-color-ink); color: #fff; }
+    .sb-btn--secondary { background: #fff; color: var(--sb-color-ink); border: 1px solid var(--sb-color-line); }
+    .sb-btn--accent { background: var(--sb-color-accent); color: #fff; }
+    .sb-btn--ghost { background: transparent; color: var(--sb-color-ink); border: 1px solid var(--sb-color-line); }
+    .sb-btn--link { background: none; border: 0; color: var(--sb-color-steel); padding: 0; min-height: auto; }
+    .sb-btn--link span { color: var(--sb-color-accent-mega); }
+
+    .sb-field-input {
+      min-height: 40px; padding: 0 14px; background: #fff;
+      border: 1px solid var(--sb-color-line); border-radius: var(--sb-radius-md);
+      font-family: var(--sb-font-body); font-size: 12px; color: var(--sb-color-ink); width: 100%; max-width: 280px;
+    }
+
+    .sb-newsletter-form { display: flex; gap: 8px; max-width: 360px; }
+    .sb-newsletter-form .sb-field-input { flex: 1; min-width: 0; max-width: none; }
+
+    .sb-tab-bar { display: flex; border-bottom: 1px solid var(--sb-color-line-soft); margin: 16px 0; }
+    .sb-tab {
+      padding: 14px 20px; border: 0; background: none; cursor: pointer;
+      font-family: var(--sb-font-body); font-size: 13px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--sb-color-ash);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .sb-tab.active { color: var(--sb-color-accent-bright); border-bottom-color: var(--sb-color-accent-bright); }
+
+    .sb-tag { display: inline-flex; padding: 4px 8px; border-radius: var(--sb-radius-xs); background: #1c1e25; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sb-color-ash); }
+    .sb-tag--accent { background: var(--sb-color-accent-mega); color: #fff; }
+    .sb-pill { display: inline-flex; padding: 5px 9px; border-radius: var(--sb-radius-xs); background: #1c1e25; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sb-color-ash); }
+    .sb-pill.live { background: var(--sb-color-accent-mega); color: #fff; }
+    .sb-chip { display: inline-flex; padding: 4px 8px; border-radius: var(--sb-radius-pill); background: #0b1230; font-size: 8px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #c9d2ff; margin-right: 5px; }
+
+    .spacing-demo { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .space-block { background: rgba(11,61,255,0.08); border: 1px dashed rgba(11,61,255,0.2); height: 40px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--sb-color-accent); }
+
+    .radius-demo { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .radius-box { width: 64px; height: 64px; background: #fff; border: 1px solid var(--sb-color-line); display: grid; place-items: center; font-size: 9px; font-weight: 700; color: var(--sb-color-steel); text-transform: uppercase; }
+
+    .dark-panel {
+      background: var(--sb-color-void-soft); color: rgba(255,255,255,0.92);
+      padding: 24px; border-radius: var(--sb-radius-lg); margin: 16px 0;
+    }
+
+    .print-note {
+      background: rgba(11,61,255,0.06);
+      border: 1px solid rgba(11,61,255,0.15);
+      border-radius: var(--sb-radius-md);
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 13px;
+    }
+
+    @media print {
+      nav.toc { display: none; }
+      .layout { grid-template-columns: 1fr; padding: 24px; }
+      .cover { min-height: auto; padding: 48px; }
+      .print-note { display: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      nav.toc { position: static; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+      nav.toc a { padding: 4px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="cover">
+    <p class="cover-eyebrow">Design System · v1.0</p>
+    <h1>Spirit Being<br />Library</h1>
+    <p class="cover-sub">Canonical tokens, typography, components, and layout patterns for the SpiritBeing storefront. Prefix: <strong>sb-</strong></p>
+    <p class="cover-meta">Est. 2026 · Faith. Identity. Purpose.</p>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <h2>Contents</h2>
+      <a href="#overview">Overview</a>
+      <a href="#colors">Colors</a>
+      <a href="#typography">Typography</a>
+      <a href="#spacing">Spacing & Radius</a>
+      <a href="#motion">Motion</a>
+      <a href="#layout">Layout</a>
+      <a href="#buttons">Buttons</a>
+      <a href="#forms">Forms</a>
+      <a href="#tabs">Tabs</a>
+      <a href="#tags">Tags & Chips</a>
+      <a href="#usage">Usage</a>
+    </nav>
+
+    <main>
+      <div class="print-note">
+        <strong>Save as PDF:</strong> Open this file in Chrome or Safari → File → Print → Save as PDF. Enable "Background graphics" for color swatches.
+      </div>
+
+      <section id="overview">
+        <h2>Overview</h2>
+        <p class="lead">All shared UI lives under the <code>sb-</code> prefix. Import the system once in your app CSS.</p>
+        <div class="code-block">@import "./design-system/index.css";</div>
+        <h3>File structure</h3>
+        <table>
+          <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>tokens.css</code></td><td>CSS custom properties</td></tr>
+            <tr><td><code>typography.css</code></td><td>Text style utilities</td></tr>
+            <tr><td><code>layout.css</code></td><td>Containers, grids, stacks</td></tr>
+            <tr><td><code>components.css</code></td><td>Buttons, forms, tabs, tags</td></tr>
+            <tr><td><code>tokens.ts</code></td><td>JS/TS exports + class map</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Live reference in app:</strong> <code>/#design-system</code></p>
+      </section>
+
+      <section id="colors">
+        <h2>Color palette</h2>
+        <p class="lead">Use <code>--sb-color-accent</code> (#0b3dff) as the canonical brand blue.</p>
+
+        <h3>Surfaces</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="swatch-color" style="background:#fbf9f9"></div><div class="swatch-info"><p class="swatch-name">Paper</p><p class="swatch-hex">#fbf9f9</p><p class="swatch-token">--sb-color-paper</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#ffffff;border-bottom:1px solid #eee"></div><div class="swatch-info"><p class="swatch-name">White</p><p class="swatch-hex">#ffffff</p><p class="swatch-token">--sb-color-white</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#f2f0ea"></div><div class="swatch-info"><p class="swatch-name">Paper Warm</p><p class="swatch-hex">#f2f0ea</p><p class="swatch-token">--sb-color-paper-warm</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#0a0a0a"></div><div class="swatch-info"><p class="swatch-name">Void Soft</p><p class="swatch-hex">#0a0a0a</p><p class="swatch-token">--sb-color-void-soft</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#000000"></div><div class="swatch-info"><p class="swatch-name">Void</p><p class="swatch-hex">#000000</p><p class="swatch-token">--sb-color-void</p></div></div>
+        </div>
+
+        <h3>Text</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="swatch-color" style="background:#1b1c1c"></div><div class="swatch-info"><p class="swatch-name">Ink</p><p class="swatch-hex">#1b1c1c</p><p class="swatch-token">--sb-color-ink</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#737373"></div><div class="swatch-info"><p class="swatch-name">Muted</p><p class="swatch-hex">#737373</p><p class="swatch-token">--sb-color-muted</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#666666"></div><div class="swatch-info"><p class="swatch-name">Ash</p><p class="swatch-hex">#666666</p><p class="swatch-token">--sb-color-ash</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#888888"></div><div class="swatch-info"><p class="swatch-name">Steel</p><p class="swatch-hex">#888888</p><p class="swatch-token">--sb-color-steel</p></div></div>
+        </div>
+
+        <h3>Accent blues</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="swatch-color" style="background:#0b3dff"></div><div class="swatch-info"><p class="swatch-name">Accent ★</p><p class="swatch-hex">#0b3dff</p><p class="swatch-token">--sb-color-accent</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#2040ff"></div><div class="swatch-info"><p class="swatch-name">Bright</p><p class="swatch-hex">#2040ff</p><p class="swatch-token">--sb-color-accent-bright</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#1e44ff"></div><div class="swatch-info"><p class="swatch-name">Mega</p><p class="swatch-hex">#1e44ff</p><p class="swatch-token">--sb-color-accent-mega</p></div></div>
+        </div>
+
+        <h3>Semantic</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="swatch-color" style="background:#ff3e3e"></div><div class="swatch-info"><p class="swatch-name">Live</p><p class="swatch-hex">#ff3e3e</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#f43f5e"></div><div class="swatch-info"><p class="swatch-name">Wishlist</p><p class="swatch-hex">#f43f5e</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#5865f2"></div><div class="swatch-info"><p class="swatch-name">Discord</p><p class="swatch-hex">#5865f2</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#34a853"></div><div class="swatch-info"><p class="swatch-name">Success</p><p class="swatch-hex">#34a853</p></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#ea4335"></div><div class="swatch-info"><p class="swatch-name">Error</p><p class="swatch-hex">#ea4335</p></div></div>
+        </div>
+      </section>
+
+      <section id="typography">
+        <h2>Typography</h2>
+        <p class="lead">Three-font system: Anton (display), Archivo (body), Pinyon Script (accent).</p>
+        <table>
+          <thead><tr><th>Role</th><th>Class</th><th>Font</th></tr></thead>
+          <tbody>
+            <tr><td>Display XL</td><td><code>.sb-type-display-xl</code></td><td>Anton</td></tr>
+            <tr><td>Display LG</td><td><code>.sb-type-display-lg</code></td><td>Anton</td></tr>
+            <tr><td>Headline</td><td><code>.sb-type-headline</code></td><td>Anton</td></tr>
+            <tr><td>Title</td><td><code>.sb-type-title</code></td><td>Archivo</td></tr>
+            <tr><td>Body</td><td><code>.sb-type-body</code></td><td>Archivo</td></tr>
+            <tr><td>Label</td><td><code>.sb-type-label</code></td><td>Archivo</td></tr>
+            <tr><td>Eyebrow</td><td><code>.sb-type-eyebrow</code></td><td>Archivo + blue dot</td></tr>
+            <tr><td>Script</td><td><code>.sb-type-script</code></td><td>Pinyon Script</td></tr>
+            <tr><td>Mono</td><td><code>.sb-type-mono</code></td><td>Monospace</td></tr>
+          </tbody>
+        </table>
+
+        <div class="type-sample"><div class="t-display-xl">Display XL</div><div class="type-meta">.sb-type-display-xl · Anton · FAQ titles</div></div>
+        <div class="type-sample"><div class="t-display-lg">Display LG</div><div class="type-meta">.sb-type-display-lg</div></div>
+        <div class="type-sample"><div class="t-headline">Headline · Tile Title</div><div class="type-meta">.sb-type-headline</div></div>
+        <div class="type-sample"><div class="t-body">Body — Faith. Identity. Purpose. Designed for the chosen ones.</div><div class="type-meta">.sb-type-body · 15px · line-height 1.65</div></div>
+        <div class="type-sample"><div class="t-eyebrow">Eyebrow label</div><div class="type-meta">.sb-type-eyebrow · letter-spacing 0.26em</div></div>
+        <div class="type-sample"><div class="t-script">Script accent</div><div class="type-meta">.sb-type-script · Pinyon Script</div></div>
+        <div class="type-sample"><div class="t-mono">24/7 online store</div><div class="type-meta">.sb-type-mono · ticker / footer</div></div>
+      </section>
+
+      <section id="spacing">
+        <h2>Spacing & radius</h2>
+        <h3>Spacing scale (4px base)</h3>
+        <table>
+          <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sb-space-1</code></td><td>4px</td><td>Tight gaps</td></tr>
+            <tr><td><code>--sb-space-2</code></td><td>8px</td><td>Form gaps, bento grid</td></tr>
+            <tr><td><code>--sb-space-4</code></td><td>16px</td><td>Standard section gap</td></tr>
+            <tr><td><code>--sb-space-6</code></td><td>24px</td><td>Stack large</td></tr>
+            <tr><td><code>--sb-space-10</code></td><td>40px</td><td>Section padding</td></tr>
+            <tr><td><code>--sb-space-16</code></td><td>64px</td><td>Hero / page margins</td></tr>
+          </tbody>
+        </table>
+        <div class="spacing-demo">
+          <div class="space-block" style="width:4px">1</div>
+          <div class="space-block" style="width:8px">2</div>
+          <div class="space-block" style="width:12px">3</div>
+          <div class="space-block" style="width:16px">4</div>
+          <div class="space-block" style="width:24px">6</div>
+          <div class="space-block" style="width:32px">8</div>
+        </div>
+
+        <h3>Border radius</h3>
+        <table>
+          <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sb-radius-xs</code></td><td>6px</td><td>Pills, tags</td></tr>
+            <tr><td><code>--sb-radius-md</code></td><td>12px</td><td>Buttons, inputs</td></tr>
+            <tr><td><code>--sb-radius-lg</code></td><td>14px</td><td>Tiles, mega menu</td></tr>
+            <tr><td><code>--sb-radius-xl</code></td><td>16px</td><td>Drawer</td></tr>
+            <tr><td><code>--sb-radius-pill</code></td><td>999px</td><td>Chips, badges</td></tr>
+            <tr><td><code>--sb-radius-fluid</code></td><td>clamp(14px, 2.5vw, 22px)</td><td>Instagram cards</td></tr>
+          </tbody>
+        </table>
+        <div class="radius-demo">
+          <div class="radius-box" style="border-radius:6px">xs</div>
+          <div class="radius-box" style="border-radius:12px">md</div>
+          <div class="radius-box" style="border-radius:14px">lg</div>
+          <div class="radius-box" style="border-radius:999px">pill</div>
+        </div>
+      </section>
+
+      <section id="motion">
+        <h2>Motion</h2>
+        <table>
+          <thead><tr><th>Token</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sb-ease-standard</code></td><td>cubic-bezier(0.16, 1, 0.3, 1)</td></tr>
+            <tr><td><code>--sb-ease-liquid</code></td><td>cubic-bezier(0.22, 1.15, 0.36, 1)</td></tr>
+            <tr><td><code>--sb-duration-base</code></td><td>0.25s</td></tr>
+            <tr><td><code>--sb-duration-unfold</code></td><td>760ms (accordions)</td></tr>
+          </tbody>
+        </table>
+        <h3>Z-index</h3>
+        <table>
+          <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sb-z-dropdown</code></td><td>40</td><td>Sticky tabs</td></tr>
+            <tr><td><code>--sb-z-scrim</code></td><td>60</td><td>Mega scrim</td></tr>
+            <tr><td><code>--sb-z-mega</code></td><td>70</td><td>Mega menu</td></tr>
+            <tr><td><code>--sb-z-drawer</code></td><td>80</td><td>Cart / nav drawer</td></tr>
+            <tr><td><code>--sb-z-modal</code></td><td>90</td><td>Modals</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="layout">
+        <h2>Layout</h2>
+        <table>
+          <thead><tr><th>Class</th><th>Max width</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>.sb-container</code></td><td>1600px</td><td>Default page</td></tr>
+            <tr><td><code>.sb-container--sm</code></td><td>1280px</td><td>FAQ</td></tr>
+            <tr><td><code>.sb-container--xl</code></td><td>1720px</td><td>Mega menus</td></tr>
+            <tr><td><code>.sb-stack</code></td><td>—</td><td>Vertical flex, 16px gap</td></tr>
+            <tr><td><code>.sb-cluster</code></td><td>—</td><td>Horizontal wrap</td></tr>
+            <tr><td><code>.sb-grid-4</code></td><td>—</td><td>Product grid</td></tr>
+            <tr><td><code>.sb-grid-bento</code></td><td>—</td><td>12-col mega menu</td></tr>
+            <tr><td><code>.sb-rule</code></td><td>—</td><td>1px divider</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="buttons">
+        <h2>Buttons & CTAs</h2>
+        <div class="demo-row">
+          <button class="sb-btn sb-btn--primary">Primary</button>
+          <button class="sb-btn sb-btn--secondary">Secondary</button>
+          <button class="sb-btn sb-btn--accent">Accent</button>
+          <button class="sb-btn sb-btn--ghost">Ghost</button>
+          <button class="sb-btn sb-btn--link">Explore <span>→</span></button>
+        </div>
+        <div class="code-block">&lt;button class="sb-btn sb-btn--primary"&gt;Primary&lt;/button&gt;
+&lt;a class="sb-drawer-auth-cta"&gt;Full-width CTA&lt;/a&gt;
+&lt;a class="sb-drawer-auth-cta sb-drawer-auth-cta--compact"&gt;Join&lt;/a&gt;</div>
+      </section>
+
+      <section id="forms">
+        <h2>Forms</h2>
+        <input class="sb-field-input" type="email" placeholder="Email address" />
+        <div class="sb-newsletter-form" style="margin-top:16px">
+          <input class="sb-field-input" type="email" placeholder="Email address" />
+          <button class="sb-btn sb-btn--primary">Join</button>
+        </div>
+        <div class="code-block">&lt;input class="sb-field-input" type="email" placeholder="Email address" /&gt;
+
+&lt;form class="sb-newsletter-form"&gt;
+  &lt;input class="sb-field-input" type="email" /&gt;
+  &lt;button class="sb-drawer-auth-cta sb-drawer-auth-cta--compact"&gt;Join&lt;/button&gt;
+&lt;/form&gt;</div>
+      </section>
+
+      <section id="tabs">
+        <h2>Tabs</h2>
+        <div class="sb-tab-bar">
+          <button class="sb-tab active">Brand</button>
+          <button class="sb-tab">Orders</button>
+          <button class="sb-tab">Shipping</button>
+        </div>
+        <div class="code-block">&lt;div class="sb-tabs-bar"&gt;
+  &lt;div class="sb-tabs"&gt;
+    &lt;button class="sb-tab is-active"&gt;Brand&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+      </section>
+
+      <section id="tags">
+        <h2>Tags · Pills · Chips</h2>
+        <div class="demo-row">
+          <span class="sb-tag">Tag</span>
+          <span class="sb-tag sb-tag--accent">Accent</span>
+          <span class="sb-pill live">Live</span>
+          <span class="sb-pill">Coming</span>
+        </div>
+        <div style="margin-top:12px">
+          <span class="sb-chip">Oversized</span>
+          <span class="sb-chip">Heavyweight</span>
+          <span class="sb-chip">Cotton</span>
+        </div>
+      </section>
+
+      <section id="usage">
+        <h2>Usage guidelines</h2>
+        <ol style="padding-left:20px;color:var(--sb-color-muted);line-height:1.8">
+          <li><strong>New UI</strong> — use <code>sb-*</code> classes first.</li>
+          <li><strong>Colors</strong> — prefer <code>var(--sb-color-*)</code> over hardcoded hex.</li>
+          <li><strong>Dark sections</strong> — wrap in <code>.sb-surface-dark</code> for #0a0a0a bands.</li>
+          <li><strong>TypeScript</strong> — import from <code>src/design-system/tokens.ts</code>.</li>
+          <li><strong>Legacy</strong> — aliases like <code>--paper</code>, <code>--electric</code> still work.</li>
+        </ol>
+
+        <div class="dark-panel">
+          <p class="t-eyebrow" style="color:#1e44ff">Dark surface</p>
+          <p style="margin:12px 0 0;font-size:13px;color:rgba(255,255,255,0.55)">Use .sb-surface-dark for Instagram feed, hero overlays, and editorial dark bands.</p>
+        </div>
+
+        <p style="margin-top:40px;font-size:11px;color:var(--sb-color-steel);text-align:center">
+          Spirit Being Design System · Generated from src/design-system/ · © SpiritBeing 2026
+        </p>
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>

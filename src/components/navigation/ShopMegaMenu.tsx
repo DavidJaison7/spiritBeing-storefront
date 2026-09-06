@@ -4,6 +4,7 @@ import { MEGA_MENU_IMAGES } from './megaMenuImages';
 
 interface ShopMegaMenuProps {
   isOpen: boolean;
+  isHeroContext?: boolean;
   onClose: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -11,7 +12,8 @@ interface ShopMegaMenuProps {
 }
 
 export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({ 
-  isOpen, 
+  isOpen,
+  isHeroContext = false,
   onClose, 
   onMouseEnter, 
   onMouseLeave,
@@ -20,20 +22,20 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
   return (
     <>
       <div 
-        className={`sb-scrim ${isOpen ? 'is-open' : ''}`} 
+        className={`sb-scrim ${isHeroContext ? 'sb-scrim--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
         hidden={!isOpen} 
         onMouseEnter={onClose} 
         onClick={onClose}
       ></div>
       
       <div 
-        className={`sb-mega ${isOpen ? 'is-open' : ''}`} 
+        className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
         role="region" 
         aria-label="Shop Categories"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <div className="sb-mega-inner">
+        <div className="sb-mega-inner" data-lenis-prevent>
           <div className="sb-mega-top">
             <p>Browse by category · find your fit</p>
           </div>
@@ -83,11 +85,12 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
           </div>
 
           <div className="sb-mega-foot">
-            <button 
-              className="hover:underline text-sm font-medium tracking-wide"
+            <button
+              type="button"
+              className="sb-mega-link"
               onClick={() => { onClose(); onNavigateShop('tshirts'); }}
             >
-              View all products &rarr;
+              View all products <span>→</span>
             </button>
           </div>
         </div>

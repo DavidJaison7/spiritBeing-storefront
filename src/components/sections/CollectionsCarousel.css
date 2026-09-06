@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 4vw;
-  padding: 0 7vw;
+  padding: 0 7vw 52px;
   box-sizing: border-box;
   overflow: hidden;
   --charcoal: #151515;
@@ -309,29 +309,107 @@
   animation: cute-heart-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Rail */
+/* Bottom rail — count left, paired arrow CTAs right */
 .collections-carousel-wrapper .rail {
   position: absolute;
-  right: 38px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  top: auto;
+  transform: none;
   z-index: 40;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 5vw;
+  background: none;
+  pointer-events: none;
 }
 
-.collections-carousel-wrapper .rail .count {
-  font-size: 11px;
-  letter-spacing: .3em;
-  color: var(--gray);
-  margin-bottom: 22px;
+.collections-carousel-wrapper .rail > * {
+  pointer-events: auto;
+}
+
+.collections-carousel-wrapper .rail-count {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.32);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  user-select: none;
+  line-height: 1;
 }
 
-.collections-carousel-wrapper .rail .count b {
-  color: var(--warm);
-  font-weight: 500;
+.collections-carousel-wrapper .rail-count b {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.collections-carousel-wrapper .rail-count-total {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+.collections-carousel-wrapper .rail-arrows {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.collections-carousel-wrapper .rail-arrow-btn {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.52);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+  flex-shrink: 0;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.collections-carousel-wrapper .rail-arrow-btn--next {
+  animation: rail-arrow-nudge 3s ease-in-out infinite;
+}
+
+.collections-carousel-wrapper .rail-arrow-btn::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+}
+
+.collections-carousel-wrapper .rail-arrow-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.collections-carousel-wrapper .rail-arrow-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.collections-carousel-wrapper .rail-arrow-btn:active {
+  transform: scale(0.92);
+}
+
+@keyframes rail-arrow-nudge {
+  0%, 100% { opacity: 0.75; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(1px); }
 }
 
 .collections-carousel-wrapper .dot {
@@ -367,40 +445,11 @@
 
 .collections-carousel-wrapper .dot.active {
   background: var(--white);
-  transform: scale(1.6);
+  transform: scale(1.35);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.collections-carousel-wrapper .rail .line {
-  width: 1px;
-  height: 24px;
-  background: #2a2a2a;
-}
-
-/* Hint */
-.collections-carousel-wrapper .hint {
-  position: absolute;
-  left: 50%;
-  bottom: 26px;
-  transform: translateX(-50%);
-  z-index: 40;
-  font-size: 10px;
-  letter-spacing: .44em;
-  text-transform: uppercase;
-  color: #4a4a4a;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: opacity .5s;
-}
-
-.collections-carousel-wrapper .hint::after {
-  content: '';
-  width: 1px;
-  height: 26px;
-  background: linear-gradient(to bottom, #4a4a4a, transparent);
-  animation: drip 2.2s ease-in-out infinite;
-}
+/* Hint removed — scroll cue lives in bottom rail */
 
 @keyframes drip {
   0% { transform: scaleY(.2); transform-origin: top; opacity: 0; }
@@ -415,20 +464,20 @@
     align-items: stretch;
     justify-content: flex-start;
     gap: 0;
-    padding: 9vh 6vw 3vh;
+    padding: 8vh 5vw calc(48px + env(safe-area-inset-bottom, 0px));
   }
   .collections-carousel-wrapper .frame {
     width: 100%;
     max-width: none;
     aspect-ratio: auto;
-    height: 46vh;
+    height: 42vh;
     border-radius: 22px;
   }
   .collections-carousel-wrapper .content {
     max-width: none;
     height: auto;
     flex: 1 1 auto;
-    margin-top: 3.5vh;
+    margin-top: 2.5vh;
   }
   .collections-carousel-wrapper .txt {
     justify-content: flex-start;
@@ -456,10 +505,13 @@
     will-change: auto;
   }
   .collections-carousel-wrapper .rail {
-    right: 12px;
+    padding: 0 4vw;
   }
-  .collections-carousel-wrapper .hint {
-    display: none;
+  .collections-carousel-wrapper .rail-count b {
+    font-size: 16px;
+  }
+  .collections-carousel-wrapper .rail-arrows {
+    gap: 8px;
   }
   .collections-carousel-wrapper h2 .title-part {
     display: inline;

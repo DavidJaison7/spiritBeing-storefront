@@ -22,6 +22,7 @@ import {
   Footer 
 } from './components';
 import { UserProfile } from './components/layout/Header';
+import { DesignSystemView } from './design-system/DesignSystemView';
 import { fetchProductsFromShopify, createShopifyCheckout } from './lib/shopify';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -107,6 +108,7 @@ export default function App() {
   const [isOurStoryView, setIsOurStoryView] = useState(false);
   const [isBlogView, setIsBlogView] = useState(false);
   const [isFaqView, setIsFaqView] = useState(false);
+  const [isDesignSystemView, setIsDesignSystemView] = useState(false);
   const [isShopCategoryView, setIsShopCategoryView] = useState(false);
   const [targetCategorySection, setTargetCategorySection] = useState('tshirts');
 
@@ -115,13 +117,14 @@ export default function App() {
     setIsOurStoryView(false);
     setIsBlogView(false);
     setIsFaqView(false);
+    setIsDesignSystemView(false);
     setTargetCategorySection(sectionTarget);
     setIsShopCategoryView(true);
     window.scrollTo(0, 0);
   };
 
   const handleNavigateHome = () => {
-    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isShopCategoryView;
+    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isDesignSystemView || isShopCategoryView;
     if (isOnSubPage) {
       window.scrollTo(0, 0);
       if ((window as any).lenis) {
@@ -132,6 +135,7 @@ export default function App() {
       setIsOurStoryView(false);
       setIsBlogView(false);
       setIsFaqView(false);
+      setIsDesignSystemView(false);
       setIsShopCategoryView(false);
     } else if ((window as any).lenis) {
       (window as any).lenis.scrollTo(0, { duration: 1.1 });
@@ -203,7 +207,7 @@ export default function App() {
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [selectedProduct, isBlogView, isFaqView, isOurStoryView, products]);
+  }, [selectedProduct, isBlogView, isFaqView, isDesignSystemView, isOurStoryView, products]);
 
   // Sync view states to URL hash for shareable links
   useEffect(() => {
@@ -215,12 +219,14 @@ export default function App() {
       window.location.hash = 'blog';
     } else if (isFaqView) {
       window.location.hash = 'faq';
+    } else if (isDesignSystemView) {
+      window.location.hash = 'design-system';
     } else {
       if (window.location.hash) {
         window.history.pushState('', document.title, window.location.pathname + window.location.search);
       }
     }
-  }, [selectedProduct, isOurStoryView, isBlogView, isFaqView]);
+  }, [selectedProduct, isOurStoryView, isBlogView, isFaqView, isDesignSystemView]);
 
   // Read URL hash on load/change to render correct view
   useEffect(() => {
@@ -244,6 +250,7 @@ export default function App() {
         setSelectedProduct(null);
         setIsBlogView(false);
         setIsFaqView(false);
+        setIsDesignSystemView(false);
         setIsShopCategoryView(false);
         window.scrollTo(0, 0);
       } else if (hash === '#blog') {
@@ -251,6 +258,7 @@ export default function App() {
         setSelectedProduct(null);
         setIsOurStoryView(false);
         setIsFaqView(false);
+        setIsDesignSystemView(false);
         setIsShopCategoryView(false);
         window.scrollTo(0, 0);
       } else if (hash === '#faq') {
@@ -258,6 +266,15 @@ export default function App() {
         setSelectedProduct(null);
         setIsOurStoryView(false);
         setIsBlogView(false);
+        setIsDesignSystemView(false);
+        setIsShopCategoryView(false);
+        window.scrollTo(0, 0);
+      } else if (hash === '#design-system') {
+        setIsDesignSystemView(true);
+        setSelectedProduct(null);
+        setIsOurStoryView(false);
+        setIsBlogView(false);
+        setIsFaqView(false);
         setIsShopCategoryView(false);
         window.scrollTo(0, 0);
       } else if (!hash) {
@@ -265,6 +282,7 @@ export default function App() {
         setIsOurStoryView(false);
         setIsBlogView(false);
         setIsFaqView(false);
+        setIsDesignSystemView(false);
         setIsShopCategoryView(false);
       }
     };
@@ -466,6 +484,14 @@ export default function App() {
           <BlogView onClose={() => setIsBlogView(false)} />
         ) : isFaqView ? (
           <FaqView />
+        ) : isDesignSystemView ? (
+          <DesignSystemView
+            onBack={() => {
+              setIsDesignSystemView(false);
+              window.history.pushState('', document.title, window.location.pathname + window.location.search);
+              window.scrollTo(0, 0);
+            }}
+          />
         ) : isOurStoryView ? (
           <OurStorySection />
         ) : isShopCategoryView ? (
@@ -626,18 +652,22 @@ export default function App() {
       />
 
       {/* Editorial Footer */}
-      <InstagramFeedSection />
-      <Footer
-        onScrollToTop={handleScrollToTopCurrentPage}
-        onOpenFaq={() => {
-          setSelectedProduct(null);
-          setIsOurStoryView(false);
-          setIsBlogView(false);
-          setIsFaqView(true);
-          setIsShopCategoryView(false);
-          window.scrollTo(0, 0);
-        }}
-      />
+      {!isDesignSystemView && (
+        <>
+          <InstagramFeedSection />
+          <Footer
+            onScrollToTop={handleScrollToTopCurrentPage}
+            onOpenFaq={() => {
+              setSelectedProduct(null);
+              setIsOurStoryView(false);
+              setIsBlogView(false);
+              setIsFaqView(true);
+              setIsShopCategoryView(false);
+              window.scrollTo(0, 0);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }

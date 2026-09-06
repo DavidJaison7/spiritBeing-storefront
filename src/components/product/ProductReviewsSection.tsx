@@ -29,6 +29,9 @@ const getStarLabel = (stars: number) => {
 
 interface ProductReviewsSectionProps {
   product: Product;
+  initialVisibleCount?: number;
+  loadMoreStep?: number;
+  loadMoreLabel?: string;
 }
 
 const DEFAULT_REVIEWS: ReviewItem[] = [
@@ -132,7 +135,12 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
 
 const RATING_WORDS = ['', 'FELL SHORT', 'NOT MY VIBE', 'DECENT', 'REALLY GREAT', 'ABSOLUTELY HOLY GRAIL'];
 
-export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ product }) => {
+export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
+  product,
+  initialVisibleCount = 2,
+  loadMoreStep = 4,
+  loadMoreLabel = 'Show more',
+}) => {
   const localStorageKey = `sb_reviews_${product.id}`;
 
   const [reviews, setReviews] = useState<ReviewItem[]>(() => {
@@ -154,10 +162,15 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       console.error(e);
     }
   }, [reviews, localStorageKey]);
+
   const [filterStar, setFilterStar] = useState<number | null>(null);
   const [withPhotosOnly, setWithPhotosOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('highest');
-  const [visibleCount, setVisibleCount] = useState<number>(4);
+  const [visibleCount, setVisibleCount] = useState<number>(initialVisibleCount);
+
+  React.useEffect(() => {
+    setVisibleCount(initialVisibleCount);
+  }, [product.id, initialVisibleCount]);
 
   // Review Writer Drawer state
   const [isWriterOpen, setIsWriterOpen] = useState<boolean>(false);
@@ -304,7 +317,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               <span>WHAT OTHER SPIRIT</span>
               <span className="flex items-baseline gap-2 sm:gap-3 mt-1 flex-wrap lg:flex-nowrap justify-between w-full lg:w-auto">
                 <span>BEINGS</span>
-                <span className="text-[#0B3DFF] font-yellowtail capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
+                <span className="text-[#0B3DFF] font-script capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
                   Are Saying
                 </span>
               </span>
@@ -728,10 +741,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             <div className="mt-10 flex justify-center">
               <button
                 type="button"
-                onClick={() => setVisibleCount((prev) => prev + 4)}
+                onClick={() => setVisibleCount((prev) => prev + loadMoreStep)}
                 className="px-8 py-3 rounded-2xl border border-white/20 text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer shadow-lg select-none"
               >
-                LOAD MORE REVIEWS
+                {loadMoreLabel}
               </button>
             </div>
           )}

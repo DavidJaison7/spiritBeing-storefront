@@ -137,22 +137,18 @@ export const FaqView: React.FC = () => {
           <p className="sb-faq__blurb">
             Fit, shipping, exchanges, and what the brand is actually about. Pick a section, open a
             question.
-            <br />
-            <br />
-            <span className="sb-faq__verse">
-              Ask, and it will be given to you &nbsp;·&nbsp; Matthew 7:7
-            </span>
           </p>
+          <p className="sb-faq__verse">Ask, and it will be given to you. mathew 7:7</p>
 
           <div className="sb-faq__contact">
             <div className="sb-faq__contact-label">Still searching</div>
             <div className="sb-faq__contact-row">
-              <a href="mailto:orders@spiritbeing.in">orders@spiritbeing.in</a>
+              <a href="mailto:orders@spiritbeinggen.com">orders@spiritbeinggen.com</a>
               <a href="https://wa.me/919000000000" target="_blank" rel="noopener noreferrer">
                 WhatsApp us
               </a>
-              <a href="https://instagram.com/spiritbeing" target="_blank" rel="noopener noreferrer">
-                @spiritbeing
+              <a href="https://instagram.com/spiritbeinggen" target="_blank" rel="noopener noreferrer">
+                @spiritbeinggen
               </a>
             </div>
           </div>
@@ -257,7 +253,10 @@ export const FaqView: React.FC = () => {
                 We reply within one working day, Monday to Saturday.
               </div>
             </div>
-            <a className="sb-faq__closing-cta" href="mailto:orders@spiritbeing.in">
+            <a
+              className="sb-drawer-auth-cta sb-faq__closing-cta"
+              href="mailto:orders@spiritbeinggen.com"
+            >
               Write to us
             </a>
           </div>

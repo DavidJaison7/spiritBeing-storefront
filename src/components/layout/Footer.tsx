@@ -85,17 +85,18 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToTop, onOpenFaq }) => {
         <div className="flex flex-col gap-3 font-sans text-[12px] sm:text-[13px] lg:items-center">
           <div className="w-full max-w-[300px]">
             <h3 className="font-bold text-black mb-3 text-[13px] sm:text-[14px] uppercase tracking-wider">Sign up for our newsletter</h3>
-            <form onSubmit={(e) => e.preventDefault()} className="flex gap-2 w-full">
+            <form onSubmit={(e) => e.preventDefault()} className="sb-newsletter-form">
               <input
                 type="email"
-                placeholder="enter email"
-                className="bg-transparent border border-black/25 rounded-sm px-3 py-2.5 text-[12px] sm:text-[13px] w-full focus:outline-none focus:border-black font-sans font-medium lowercase"
+                placeholder="Email address"
+                autoComplete="email"
+                className="sb-field-input"
               />
               <button
                 type="submit"
-                className="bg-black text-white px-5 py-2.5 rounded-sm text-[12px] font-bold tracking-wider hover:bg-black/80 transition-colors cursor-pointer"
+                className="sb-drawer-auth-cta sb-drawer-auth-cta--compact"
               >
-                JOIN
+                Join
               </button>
             </form>
           </div>

@@ -92,8 +92,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   const [wishlistActive, setWishlistActive] = useState<boolean[]>([false, false, false, false, false, false]);
 
   const curRef = useRef<number>(0);
-  const isDotJumpingRef = useRef<boolean>(false);
   const transitionRef = useRef<((next: number, dir: number) => void) | null>(null);
+  const goToSlideRef = useRef<((next: number) => void) | null>(null);
 
   const toggleWishlist = (idx: number) => {
     setWishlistActive(prev => {
@@ -120,10 +120,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const panels = Array.from(el.querySelectorAll('.panel')) as HTMLDivElement[];
     const texts = Array.from(el.querySelectorAll('.txt')) as HTMLDivElement[];
-    const dots = Array.from(el.querySelectorAll('.dot')) as HTMLButtonElement[];
     const steps = Array.from(el.querySelectorAll('.step')) as HTMLDivElement[];
     const railNum = el.querySelector<HTMLElement>('#railNum');
-    const hint = el.querySelector<HTMLElement>('#hint');
     const frame = el.querySelector<HTMLDivElement>('#frame');
     const bobs = Array.from(el.querySelectorAll('.bob')) as HTMLDivElement[];
 
@@ -134,12 +132,10 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
     function setRail(i: number) {
       if (railNum) railNum.textContent = String(i + 1).padStart(2, '0');
-      dots.forEach((d, j) => d.classList.toggle('active', j === i));
     }
 
     setRail(0);
 
-    let io: IntersectionObserver | null = null;
     let mmListener: ((e: MouseEvent) => void) | null = null;
     let bobAnimation: gsap.core.Tween[] = [];
 
@@ -208,28 +204,9 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         );
 
         setRail(next);
-        if (next > 0 && hint) {
-          gsap.to(hint, { opacity: 0, duration: 0.4 });
-        } else if (next === 0 && hint) {
-          gsap.to(hint, { opacity: 1, duration: 0.4 });
-        }
       };
 
       transitionRef.current = transition;
-
-      // Intersection Observer drives the active index
-      io = new IntersectionObserver((entries) => {
-        if (isDotJumpingRef.current) return;
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          const i = steps.indexOf(e.target as HTMLDivElement);
-          if (i !== -1 && i !== curRef.current) {
-            transition(i, i > curRef.current ? 1 : -1);
-          }
-        });
-      }, { threshold: 0.55 });
-
-      steps.forEach((s) => io?.observe(s));
 
       // Mouse Parallax Effect on frame container and models
       if (frame) {
@@ -299,17 +276,38 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       return hero ? hero.offsetHeight : window.innerHeight;
     };
 
-    const snapTo = (target: HTMLElement | number) => {
-      if (snapCooldown) return;
+    const getScrollY = (): number => {
+      const lenis = (window as any).lenis;
+      return lenis ? lenis.scroll : window.scrollY;
+    };
+
+    const carouselTop = (): number => {
+      const rect = el.getBoundingClientRect();
+      return getScrollY() + rect.top;
+    };
+
+    const isInCarouselZone = (scrollY: number, heroH: number, vh: number): boolean => {
+      const top = carouselTop();
+      const bottom = top + el.offsetHeight - vh * 0.35;
+      return scrollY >= top - 40 && scrollY <= bottom && scrollY >= heroH * 0.45;
+    };
+
+    const snapTo = (target: HTMLElement | number, onComplete?: () => void) => {
+      if (snapCooldown) return false;
       snapCooldown = true;
+
+      const release = () => {
+        snapCooldown = false;
+        onComplete?.();
+      };
 
       const lenis = (window as any).lenis;
       if (lenis) {
         lenis.scrollTo(target, {
           duration: 0.82,
-          easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t, // ease-in-out quad
+          easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
           lock: true,
-          onComplete: () => { snapCooldown = false; },
+          onComplete: release,
         });
       } else {
         if (typeof target === 'number') {
@@ -317,60 +315,105 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         } else {
           target.scrollIntoView({ behavior: 'smooth' });
         }
-        setTimeout(() => { snapCooldown = false; }, 900);
+        setTimeout(release, 900);
+      }
+      return true;
+    };
+
+    const goToSlide = (next: number) => {
+      if (next === curRef.current || snapCooldown) return;
+      if (next < 0 || next >= steps.length) return;
+
+      const targetStep = steps[next];
+      if (!targetStep) return;
+
+      snapCooldown = true;
+      const dir = next > curRef.current ? 1 : -1;
+      if (transitionRef.current) {
+        transitionRef.current(next, dir);
+      } else {
+        curRef.current = next;
+        setRail(next);
+      }
+
+      const release = () => { snapCooldown = false; };
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(targetStep, {
+          duration: 0.82,
+          easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+          lock: true,
+          onComplete: release,
+        });
+      } else {
+        targetStep.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(release, 900);
       }
     };
 
-    const getScrollY = (): number => {
-      const lenis = (window as any).lenis;
-      return lenis ? lenis.scroll : window.scrollY;
-    };
+    goToSlideRef.current = goToSlide;
 
     const handleSnapWheel = (e: WheelEvent) => {
-      if (snapCooldown) { e.preventDefault(); return; }
+      if (snapCooldown) {
+        e.preventDefault();
+        return;
+      }
 
       const scrollY = getScrollY();
       const heroH = heroHeight();
       const vh = window.innerHeight;
+      const scrollingDown = e.deltaY > 4;
+      const scrollingUp = e.deltaY < -4;
+      if (!scrollingDown && !scrollingUp) return;
 
-      // A) Hero → Carousel Slide 1: scrolling down while in Hero zone
-      if (e.deltaY > 4 && scrollY < heroH * 0.9) {
+      // A) Hero → Carousel Slide 1
+      if (scrollingDown && scrollY < heroH * 0.9) {
         e.preventDefault();
-        const firstStep = steps[0];
-        if (firstStep) snapTo(firstStep);
+        goToSlide(0);
         return;
       }
 
-      // B) Carousel Slide 1 → Hero: scrolling up while on Slide 1
-      if (e.deltaY < -4 && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 50) {
+      // B) Carousel Slide 1 → Hero
+      if (scrollingUp && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 80) {
         e.preventDefault();
         snapTo(0);
         return;
       }
 
-      // C) Carousel Slide 6 → StatementParticles: scrolling down from last slide
-      // Guard: only fire if the user has been on slide 6 for at least 1000ms
-      // (prevents auto-snap on the same wheel event that transitioned into slide 6)
-      if (e.deltaY > 4 && curRef.current === 5 && Date.now() - slideArrivedAt >= 1000) {
-        const stmtSection = document.getElementById('sbStatement');
-        if (stmtSection) {
-          const stmtRect = stmtSection.getBoundingClientRect();
-          if (stmtRect.top > 50) {
-            e.preventDefault();
-            snapTo(stmtSection);
+      // Within carousel: one wheel tick = exactly one slide
+      if (isInCarouselZone(scrollY, heroH, vh)) {
+        e.preventDefault();
+
+        if (scrollingDown) {
+          if (curRef.current < steps.length - 1) {
+            goToSlide(curRef.current + 1);
+            return;
           }
+
+          // C) Slide 6 → Statement (dwell guard)
+          if (curRef.current === steps.length - 1 && Date.now() - slideArrivedAt >= 800) {
+            const stmtSection = document.getElementById('sbStatement');
+            if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
+              snapTo(stmtSection);
+            }
+          }
+          return;
         }
-        return;
+
+        if (scrollingUp) {
+          if (curRef.current > 0) {
+            goToSlide(curRef.current - 1);
+          } else {
+            snapTo(0);
+          }
+          return;
+        }
       }
 
-      // D) StatementParticles → Carousel Slide 6: scrolling up from top of StatementParticles
-      if (e.deltaY < -4 && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
-        const lastStep = steps[5];
-        if (lastStep) {
-          e.preventDefault();
-          snapTo(lastStep);
-        }
-        return;
+      // D) StatementParticles → Carousel Slide 6
+      if (scrollingUp && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
+        e.preventDefault();
+        goToSlide(steps.length - 1);
       }
     };
 
@@ -380,40 +423,57 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (snapCooldown) return;
+
       const deltaY = touchStartY - (e.changedTouches[0]?.clientY ?? touchStartY);
-      if (Math.abs(deltaY) < 25) return; // ignore micro-swipes
+      if (Math.abs(deltaY) < 40) return;
 
       const scrollY = getScrollY();
       const heroH = heroHeight();
       const vh = window.innerHeight;
+      const swipingUp = deltaY > 0;
+      const swipingDown = deltaY < 0;
 
       // A) Hero → Carousel Slide 1
-      if (deltaY > 0 && scrollY < heroH * 0.9) {
-        const firstStep = steps[0];
-        if (firstStep) snapTo(firstStep);
+      if (swipingUp && scrollY < heroH * 0.9) {
+        goToSlide(0);
         return;
       }
 
       // B) Carousel Slide 1 → Hero
-      if (deltaY < 0 && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 50) {
+      if (swipingDown && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 80) {
         snapTo(0);
         return;
       }
 
-      // C) Carousel Slide 6 → StatementParticles (touch — guard with 1000ms dwell)
-      if (deltaY > 0 && curRef.current === 5 && Date.now() - slideArrivedAt >= 1000) {
-        const stmtSection = document.getElementById('sbStatement');
-        if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
-          snapTo(stmtSection);
+      if (isInCarouselZone(scrollY, heroH, vh)) {
+        if (swipingUp) {
+          if (curRef.current < steps.length - 1) {
+            goToSlide(curRef.current + 1);
+            return;
+          }
+
+          if (curRef.current === steps.length - 1 && Date.now() - slideArrivedAt >= 800) {
+            const stmtSection = document.getElementById('sbStatement');
+            if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
+              snapTo(stmtSection);
+            }
+          }
+          return;
+        }
+
+        if (swipingDown) {
+          if (curRef.current > 0) {
+            goToSlide(curRef.current - 1);
+          } else {
+            snapTo(0);
+          }
         }
         return;
       }
 
-      // D) StatementParticles → Carousel Slide 6 (touch)
-      if (deltaY < 0 && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
-        const lastStep = steps[5];
-        if (lastStep) snapTo(lastStep);
-        return;
+      // D) Statement → Slide 6
+      if (swipingDown && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
+        goToSlide(steps.length - 1);
       }
     };
 
@@ -426,46 +486,45 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       window.removeEventListener('wheel', handleSnapWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchend', handleTouchEnd);
-      io?.disconnect();
       if (mmListener) window.removeEventListener('mousemove', mmListener);
       transitionRef.current = null;
+      goToSlideRef.current = null;
       bobAnimation.forEach(tween => tween.kill());
       if (tl) tl.kill();
     };
   }, []);
 
-  const handleDotClick = (idx: number) => {
-    if (idx === curRef.current) return;
-    const el = containerRef.current;
-    if (!el) return;
-
-    const steps = Array.from(el.querySelectorAll('.step')) as HTMLDivElement[];
-    const targetStep = steps[idx];
-    if (!targetStep) return;
-
-    isDotJumpingRef.current = true;
-
-    // Trigger direct transition
-    if (transitionRef.current) {
-      transitionRef.current(idx, idx > curRef.current ? 1 : -1);
+  const handleNextClick = () => {
+    if (curRef.current < SLIDES.length - 1) {
+      handleDotClick(curRef.current + 1);
+      return;
     }
-
-    if ((window as any).lenis) {
-      (window as any).lenis.scrollTo(targetStep, {
-        duration: 0.65,
-        easing: (t: number) => 1 - Math.pow(1 - t, 2.5),
-        lock: true,
-        onComplete: () => {
-          isDotJumpingRef.current = false;
-        }
-      });
+    const stmtSection = document.getElementById('sbStatement');
+    if (!stmtSection) return;
+    const lenis = (window as any).lenis;
+    if (lenis) {
+      lenis.scrollTo(stmtSection, { duration: 0.82, lock: true });
     } else {
-      targetStep.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        isDotJumpingRef.current = false;
-      }, 650);
+      stmtSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const handleDotClick = (idx: number) => {
+    if (idx === curRef.current) return;
+    goToSlideRef.current?.(idx);
+  };
+
+  useEffect(() => {
+    const onNavigateSlide = (event: Event) => {
+      const slideIndex = (event as CustomEvent<{ slideIndex?: number }>).detail?.slideIndex;
+      if (typeof slideIndex === 'number') {
+        handleDotClick(slideIndex);
+      }
+    };
+
+    window.addEventListener('sb-go-to-collection-slide', onNavigateSlide);
+    return () => window.removeEventListener('sb-go-to-collection-slide', onNavigateSlide);
+  }, []);
 
   return (
     <div className="collections-carousel-wrapper" id="collections-section" ref={containerRef}>
@@ -520,7 +579,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                 <div className="num-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-sans self-start mb-2 select-none shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                   <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF] animate-pulse shrink-0 ml-1" />
                   <span className="text-white font-bold tracking-[0.2em] uppercase">SPIRITBEING</span>
-                  <span className="bg-[#0B3DFF] text-white font-yellowtail text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
+                  <span className="bg-[#0B3DFF] text-white font-script text-[16px] leading-none px-3 pt-1 pb-1.5 rounded-full shadow-[0_0_15px_rgba(11,61,255,0.4)] ml-1">
                     Special Edition
                   </span>
                 </div>
@@ -560,7 +619,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                     </svg>
                   </span>
                   <span className="label">
-                    {wishlistActive[idx] ? 'Liked' : 'Like Drop'}
+                    {wishlistActive[idx] ? 'Liked' : 'Drop Like'}
                   </span>
                 </button>
               </div>
@@ -569,48 +628,36 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         })}
         </div>
 
-        {/* Right-hand Rail Indicators inside Sticky Stage */}
-        <div className="rail">
-          <div className="count">
-            <b id="railNum">01</b>&nbsp;/&nbsp;06
+        {/* Bottom nav — count left, paired arrow CTAs right */}
+        <nav className="rail" aria-label="Collection slides">
+          <span className="rail-count" aria-live="polite">
+            <b id="railNum">01</b>
+            <span className="rail-count-total">/{String(SLIDES.length).padStart(2, '0')}</span>
+          </span>
+
+          <div className="rail-arrows">
+            <button
+              type="button"
+              className="rail-arrow-btn rail-arrow-btn--prev"
+              onClick={() => handleDotClick(Math.max(0, curRef.current - 1))}
+              aria-label="Previous piece"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="rail-arrow-btn rail-arrow-btn--next"
+              onClick={handleNextClick}
+              aria-label="Next piece"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
           </div>
-
-          <button
-            className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mb-3 mx-auto shadow-sm group backdrop-blur-sm"
-            onClick={() => handleDotClick(Math.max(0, curRef.current - 1))}
-            aria-label="Previous slide"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </button>
-
-          {SLIDES.map((_, idx) => (
-            <React.Fragment key={idx}>
-              <button
-                className={`dot ${idx === 0 ? 'active' : ''}`}
-                onClick={() => handleDotClick(idx)}
-                aria-label={`Go to piece ${idx + 1}`}
-              ></button>
-              {idx < SLIDES.length - 1 && <div className="line"></div>}
-            </React.Fragment>
-          ))}
-
-          <button
-            className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-white/20 text-[#8A8D95] hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 mt-3 mx-auto shadow-sm group backdrop-blur-sm"
-            onClick={() => handleDotClick(Math.min(SLIDES.length - 1, curRef.current + 1))}
-            aria-label="Next slide"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 group-hover:translate-y-0.5 transition-transform">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-        </div>
-
-        {/* Downward hint visual drip indicator inside Sticky Stage */}
-        <div className="hint" id="hint">
-          Scroll
-        </div>
+        </nav>
       </div>
 
       {/* Six Scroll target elements to drive sticky animations (positioned absolutely) */}

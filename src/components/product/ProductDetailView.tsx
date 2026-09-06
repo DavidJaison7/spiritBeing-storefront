@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Product } from '../../types';
 import { ArrowLeft, ArrowRight, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import { ProductReviewsSection } from './ProductReviewsSection';
+import { ProductCard } from './ProductGrid';
+import './ProductDetailView.css';
 
 interface ProductDetailViewProps {
   product: Product;
@@ -297,21 +299,24 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
 
         {/* Horizontal CSS Transform Slider */}
         <div
-          className="w-full h-full flex transition-transform duration-500 ease-out pointer-events-none"
+          className="w-full h-full flex flex-nowrap transition-transform duration-500 ease-out pointer-events-none"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
           {productImages.map((imgUrl, idx) => (
-            <img
-              key={idx}
-              src={imgUrl}
-              alt={`${product.title} view ${idx + 1}`}
-              draggable={false}
-              className={`w-full h-full object-cover shrink-0 transition-transform duration-700 ease-out select-none ${
-                isSoldOut
-                  ? 'grayscale-[0.4] brightness-[0.62] saturate-[0.55]'
-                  : 'group-hover:scale-102'
-              }`}
-            />
+            <div key={idx} className="w-full h-full shrink-0 overflow-hidden">
+              <img
+                src={imgUrl}
+                alt={`${product.title} view ${idx + 1}`}
+                draggable={false}
+                className={`w-full h-full object-cover transition-transform duration-700 ease-out select-none ${
+                  isSoldOut
+                    ? 'grayscale-[0.4] brightness-[0.62] saturate-[0.55]'
+                    : idx === activeIndex
+                      ? 'group-hover:scale-105'
+                      : ''
+                }`}
+              />
+            </div>
           ))}
         </div>
 
@@ -493,7 +498,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onSelectProduct,
   onAddToCart,
 }) => {
-  const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'M';
+  const availableSizes = React.useMemo(() => {
+    const standard = ['S', 'M', 'L', 'XL'];
+    if (!product.sizes || product.sizes.length === 0) return [];
+    return standard.filter((size) => product.sizes!.includes(size));
+  }, [product.sizes]);
+
+  const defaultSize = availableSizes[0] || 'M';
   const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : undefined;
   const [selectedSize, setSelectedSize] = useState<string>(defaultSize);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(defaultColor);
@@ -502,7 +513,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [added, setAdded] = useState<boolean>(false);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
   const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
-  const mobileScrollRef = React.useRef<HTMLDivElement>(null);
+  const thumbsScrollRef = React.useRef<HTMLDivElement>(null);
 
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
   const [isBlessing, setIsBlessing] = useState<boolean>(false);
@@ -559,18 +570,15 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   // Update default state if product changes
   React.useEffect(() => {
-    setSelectedSize(product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'M');
+    setSelectedSize(availableSizes[0] || 'M');
     setSelectedColor(product.colors && product.colors.length > 0 ? product.colors[0] : undefined);
     setSelectedImage(null);
     setMobileActiveIndex(0);
-    if (mobileScrollRef.current) {
-      mobileScrollRef.current.scrollTo({ left: 0 });
-    }
     window.scrollTo(0, 0);
     if ((window as any).lenis) {
       (window as any).lenis.scrollTo(0, { immediate: true });
     }
-  }, [product]);
+  }, [product, availableSizes]);
 
   const triggerParticles = () => {
     const newParticles = Array.from({ length: 24 }).map((_, i) => {
@@ -607,6 +615,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   React.useEffect(() => {
     const handleScroll = () => {
+      if (window.innerWidth < 1024) return;
+
       const section = relatedSectionRef.current;
       const track = relatedTrackRef.current;
       if (!section || !track) return;
@@ -654,130 +664,131 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   const mobileGalleryImages = [mainFixedImage, ...secondaryImagesStack];
 
+  const scrollThumbIntoView = (index: number) => {
+    const container = thumbsScrollRef.current;
+    if (!container) return;
+    const thumb = container.children[index] as HTMLElement | undefined;
+    thumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  };
+
+  const handleMobileThumbNext = () => {
+    if (mobileGalleryImages.length <= 1) return;
+    const next = (mobileActiveIndex + 1) % mobileGalleryImages.length;
+    setMobileActiveIndex(next);
+    scrollThumbIntoView(next);
+  };
+
   return (
-    <div className="w-full pb-12 pt-16 md:pt-20 flex flex-col gap-6 sm:gap-8 relative">
+    <div className="w-full pt-14 md:pt-20 pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
       {/* Top Section: Main Product Details (White Background Container) */}
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <section className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12 items-start">
-          {/* MOBILE GALLERY: Horizontal Swipe Carousel with Curved Square Arrow Controls (md:hidden) */}
-          <div className="md:hidden w-full flex flex-col gap-3.5">
-            <div
-              ref={mobileScrollRef}
-              onScroll={(e) => {
-                const target = e.currentTarget;
-                if (target.clientWidth > 0) {
-                  const idx = Math.round(target.scrollLeft / target.clientWidth);
-                  setMobileActiveIndex(idx);
-                }
-              }}
-              className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
-            >
-              {mobileGalleryImages.map((imgUrl, idx) => {
-                return (
-                  <div key={idx} className="w-full shrink-0 snap-center">
-                    <img
-                      src={imgUrl}
-                      alt={`${product.title} view ${idx + 1}`}
-                      className="w-full h-[68vh] min-h-[460px] object-cover"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Curved Square Arrow Bubble Controls & Indicators */}
-            <div className="flex items-center justify-between px-2 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  const nextIdx = Math.max(0, mobileActiveIndex - 1);
-                  if (mobileScrollRef.current) {
-                    mobileScrollRef.current.scrollTo({
-                      left: nextIdx * mobileScrollRef.current.clientWidth,
-                      behavior: 'smooth'
-                    });
-                  }
-                }}
-                disabled={mobileActiveIndex === 0}
-                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${mobileActiveIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-                  }`}
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
-              </button>
-
-              <div className="flex items-center gap-2">
-                {mobileGalleryImages.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      if (mobileScrollRef.current) {
-                        mobileScrollRef.current.scrollTo({
-                          left: idx * mobileScrollRef.current.clientWidth,
-                          behavior: 'smooth'
-                        });
-                      }
-                    }}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${idx === mobileActiveIndex ? 'w-6 bg-black' : 'w-2 bg-black/25'
-                      }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-start">
+          {/* MOBILE + TABLET: Compact gallery + meta in first viewport */}
+          <div className="lg:hidden sb-pdp-mobile w-full">
+            <div className="sb-pdp-mobile-hero">
+              <div className="sb-pdp-main-image">
+                <img
+                  src={mobileGalleryImages[mobileActiveIndex] || mainFixedImage}
+                  alt={product.title}
+                />
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  const nextIdx = Math.min(mobileGalleryImages.length - 1, mobileActiveIndex + 1);
-                  if (mobileScrollRef.current) {
-                    mobileScrollRef.current.scrollTo({
-                      left: nextIdx * mobileScrollRef.current.clientWidth,
-                      behavior: 'smooth'
-                    });
-                  }
-                }}
-                disabled={mobileActiveIndex === mobileGalleryImages.length - 1}
-                className={`w-10 h-10 rounded-xl bg-white shadow-md border border-black/10 flex items-center justify-center cursor-pointer transition-all ${mobileActiveIndex === mobileGalleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95 text-black'
-                  }`}
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-              </button>
+              <div className="sb-pdp-thumbs-wrap">
+                <div
+                  ref={thumbsScrollRef}
+                  className="sb-pdp-thumbs"
+                  aria-label="Product image thumbnails"
+                >
+                  {mobileGalleryImages.map((imgUrl, idx) => (
+                    <button
+                      key={`${imgUrl}-${idx}`}
+                      type="button"
+                      className={`sb-pdp-thumb ${idx === mobileActiveIndex ? 'active' : ''}`}
+                      onClick={() => {
+                        setMobileActiveIndex(idx);
+                        scrollThumbIntoView(idx);
+                      }}
+                      aria-label={`View image ${idx + 1}`}
+                      aria-current={idx === mobileActiveIndex ? 'true' : undefined}
+                    >
+                      <img src={imgUrl} alt="" />
+                    </button>
+                  ))}
+                </div>
+
+                {mobileGalleryImages.length > 1 && (
+                  <button
+                    type="button"
+                    className="sb-pdp-thumbs-next"
+                    onClick={handleMobileThumbNext}
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
+                  </button>
+                )}
+              </div>
+
+              <div className="sb-pdp-mobile-meta">
+                <h1 className="sb-pdp-mobile-title">{product.title}</h1>
+                <p className="sb-pdp-mobile-price">₹{product.price.toFixed(2)}</p>
+
+                {product.colors && product.colors.length > 0 && (
+                  <div className="sb-pdp-mobile-colors">
+                    {product.colors.map((color) => {
+                      const isSelected = selectedColor === color;
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          className={`sb-pdp-color-chip ${isSelected ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedColor(color);
+                            setMobileActiveIndex(0);
+                          }}
+                          aria-label={`Select ${color}`}
+                        >
+                          <span
+                            className="sb-pdp-color-dot"
+                            style={{ backgroundColor: getColorHex(color) }}
+                          />
+                          {color}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* DESKTOP GALLERY: 60% Width (lg:col-span-6) -> 30% Stationary Main + 30% Vertical Scrolling Stack (hidden md:grid) */}
-          <div className="hidden md:grid lg:col-span-6 w-full grid-cols-2 gap-1 items-start">
-            {/* Sub-column 1: 30% Width - Completely Stationary Main Image */}
-            <div className="md:sticky md:top-16 w-full self-start">
+          {/* DESKTOP GALLERY (lg+): portrait main fixed + scrolling stack */}
+          <div className="hidden lg:grid lg:col-span-8 w-full gap-1 items-start sb-pdp-desktop-gallery">
+            <div className="lg:sticky lg:top-16 w-full self-start">
               <img
                 src={mainFixedImage}
                 alt={product.title}
-                className="w-full h-[calc(100vh-80px)] object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
+                className="sb-pdp-desktop-main w-full object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
               />
             </div>
 
-            {/* Sub-column 2: 30% Width - Vertical Scrolling Secondary Stack */}
             <div className="flex flex-col gap-1 w-full">
-              {secondaryImagesStack.map((imgUrl, idx) => {
-                return (
-                  <img
-                    key={idx}
-                    src={imgUrl}
-                    alt={`${product.title} detail view ${idx + 1}`}
-                    className="w-full h-auto object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
-                  />
-                );
-              })}
+              {secondaryImagesStack.map((imgUrl, idx) => (
+                <img
+                  key={idx}
+                  src={imgUrl}
+                  alt={`${product.title} detail view ${idx + 1}`}
+                  className="w-full h-auto object-cover rounded-2xl sm:rounded-[20px] border border-black/5 shadow-sm"
+                />
+              ))}
             </div>
           </div>
 
-          {/* Right Column: 40% Width (lg:col-span-4) - Product Details & Actions (with Mobile Side Padding) */}
-          <div className={`lg:col-span-4 flex flex-col items-center text-center max-w-lg mx-auto w-full lg:sticky self-start px-4 sm:px-6 md:px-2 scrollbar-none transition-all duration-300 ${isTallViewport
+          {/* Product details — mobile/tablet stack below hero · desktop far-right column */}
+          <div className={`sb-pdp-details-panel lg:col-span-4 lg:col-start-9 flex flex-col items-start text-left w-full lg:max-w-none lg:mx-0 lg:sticky lg:self-start px-0 scrollbar-none transition-all duration-300 ${isTallViewport
               ? 'lg:top-28 lg:pt-16 lg:max-h-none'
               : 'lg:top-14 xl:top-16 lg:pt-0 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto'
             }`}>
-            <div className="mb-3 lg:mb-4 2xl:mb-4 text-left w-full">
+            <div className="hidden lg:block mb-3 lg:mb-4 2xl:mb-4 text-left w-full">
               <h1 className="text-4xl sm:text-5xl 2xl:text-6xl font-sans font-medium text-black tracking-tight leading-[1.1] mb-3">
                 {product.title}
               </h1>
@@ -791,12 +802,15 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </div>
 
-            <p className="text-gray-800 font-sans text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base leading-relaxed mb-3 lg:mb-3.5 2xl:mb-4 text-justify">
+            <p className="sb-pdp-desc-clamp lg:hidden w-full mb-3 text-left">
+              {product.description}
+            </p>
+            <p className="hidden lg:block text-gray-800 font-sans text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base leading-relaxed mb-3 lg:mb-3.5 2xl:mb-4 text-justify w-full">
               {product.description}
             </p>
 
             {/* Sizes & Size Guide */}
-            {!product.title.toLowerCase().includes('cap') && (
+            {availableSizes.length > 0 && !product.title.toLowerCase().includes('cap') && (
               <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
@@ -811,28 +825,19 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   </button>
                 </div>
                 <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
-                  {['S', 'M', 'L', 'XL'].map((size) => {
-                    const isAvailable = (product.sizes && product.sizes.length > 0) ? product.sizes.includes(size) : true;
+                  {availableSizes.map((size) => {
                     const isSelected = selectedSize === size;
                     return (
                       <button
                         key={size}
-                        disabled={!isAvailable}
-                        onClick={() => isAvailable && setSelectedSize(size)}
-                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer relative overflow-hidden ${!isAvailable
-                            ? 'bg-[#f5f4f0]/50 text-black/25 border border-dashed border-black/15 cursor-not-allowed'
-                            : isSelected
-                              ? 'bg-black text-white shadow-md scale-[1.03]'
-                              : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
-                          }`}
+                        onClick={() => setSelectedSize(size)}
+                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                          isSelected
+                            ? 'bg-black text-white shadow-md scale-[1.03]'
+                            : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                        }`}
                       >
-                        <span className={!isAvailable ? 'opacity-30' : ''}>{size}</span>
-                        {/* Blue diagonal line overlay for out of stock sizes */}
-                        {!isAvailable && (
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-[140%] h-[1.5px] bg-[#0B3DFF]/60 rotate-45 transform" />
-                          </div>
-                        )}
+                        {size}
                       </button>
                     );
                   })}
@@ -842,7 +847,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
-              <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
+              <div className="hidden lg:block space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
                 <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2 2xl:mb-2.5">
                   COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
                 </span>
@@ -856,9 +861,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         onClick={() => {
                           setSelectedColor(color);
                           setMobileActiveIndex(0);
-                          if (mobileScrollRef.current) {
-                            mobileScrollRef.current.scrollTo({ left: 0 });
-                          }
                         }}
                         className={`flex items-center gap-2 2xl:gap-2.5 px-3.5 py-2 2xl:px-4 2xl:py-2.5 rounded-[14px] 2xl:rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${isSelected
                             ? 'border-black bg-black text-white shadow-md scale-[1.03]'
@@ -880,8 +882,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             )}
 
-            {/* Add to Bag & Community Like Buttons (Dynamic Bento Layout) */}
-            <div className="w-full flex gap-3 mb-4 lg:mb-6 2xl:mb-8 px-0.5 py-0.5">
+            {/* Desktop: side-by-side CTAs (lg+ only) */}
+            <div className="hidden lg:flex w-full gap-3 mb-4 lg:mb-6 2xl:mb-8 px-0.5 py-0.5">
               <button
                 disabled={!product.inStock}
                 onClick={handleAddToCart}
@@ -993,18 +995,18 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
 
             {/* Share Drop Options */}
-            <div className="w-full pb-4 pt-1">
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-widest text-black/55 block mb-2.5 text-left">
+            <div className="w-full pb-4 pt-1 text-left">
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-widest text-black/55 block mb-2.5">
                 Share this drop
               </span>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="sb-pdp-share-row">
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/15 bg-white text-black hover:bg-black hover:text-white transition-all text-[11px] font-bold uppercase tracking-wider cursor-pointer"
+                  className="sb-pdp-share-btn cursor-pointer hover:bg-black hover:text-white"
                   title="Copy link to clipboard"
                 >
-                  <LinkIcon />
+                  <LinkIcon className="w-3.5 h-3.5" />
                   <span>{copied ? 'Copied' : 'Copy Link'}</span>
                 </button>
 
@@ -1012,67 +1014,49 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out the ' + product.title + ' on Spirit Being: ' + window.location.href)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all cursor-pointer"
+                  className="sb-pdp-share-icon hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
                   title="Share on WhatsApp"
+                  aria-label="Share on WhatsApp"
                 >
                   <WhatsappIcon />
                 </a>
 
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out the ' + product.title + ' on Spirit Being: ')}&url=${encodeURIComponent(window.location.href)}`}
+                  href={`https://www.instagram.com/spiritbeinggen`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer"
-                  title="Share on X"
-                >
-                  <XIcon />
-                </a>
-
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all cursor-pointer"
-                  title="Share on Facebook"
-                >
-                  <FacebookIcon />
-                </a>
-
-                <a
-                  href={`mailto:?subject=${encodeURIComponent(product.title)}&body=${encodeURIComponent('Check out the ' + product.title + ' on Spirit Being: ' + window.location.href)}`}
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all cursor-pointer"
-                  title="Share via Email"
-                >
-                  <MailIcon />
-                </a>
-
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition-all cursor-pointer"
-                  title="Instagram"
+                  className="sb-pdp-share-icon hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200"
+                  title="Share on Instagram"
+                  aria-label="Share on Instagram"
                 >
                   <InstagramIcon />
-                </a>
-
-                <a
-                  href={`sms:?&body=${encodeURIComponent('Check out the ' + product.title + ' on Spirit Being: ' + window.location.href)}`}
-                  className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all cursor-pointer"
-                  title="Share via Messages"
-                >
-                  <MessagesIcon />
                 </a>
               </div>
             </div>
 
             {/* Spec Meta */}
-            <div className="w-full pt-4 2xl:pt-6">
-              <div className="text-[11px] md:text-[12px] text-gray-700 font-sans uppercase tracking-[0.08em] space-y-1.5 2xl:space-y-2 font-bold text-left">
-                {product.material && <p>MATERIAL: {product.material}</p>}
-                <p>COLOR: {selectedColor || product.color || 'BLACK'}</p>
-                {product.origin && <p>ORIGIN: {product.origin}</p>}
-                <p>WASH CARE: REVERSE WASH ONLY</p>
+            <div className="w-full pt-2 2xl:pt-4">
+              <div className="sb-pdp-specs">
+                {product.material && (
+                  <div className="sb-pdp-spec-card">
+                    <span className="sb-pdp-spec-label">Material</span>
+                    <span className="sb-pdp-spec-value">{product.material}</span>
+                  </div>
+                )}
+                <div className="sb-pdp-spec-card">
+                  <span className="sb-pdp-spec-label">Color</span>
+                  <span className="sb-pdp-spec-value">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
+                </div>
+                {product.origin && (
+                  <div className="sb-pdp-spec-card">
+                    <span className="sb-pdp-spec-label">Origin</span>
+                    <span className="sb-pdp-spec-value">{product.origin}</span>
+                  </div>
+                )}
+                <div className="sb-pdp-spec-card">
+                  <span className="sb-pdp-spec-label">Wash Care</span>
+                  <span className="sb-pdp-spec-value">Reverse wash only</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1082,13 +1066,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       {/* Middle Section: Full-Width Pitch Black Reviews (Straight Edges, No Curved Borders) */}
       <div className="w-full bg-[#000000] text-white border-y border-white/10 pt-10 pb-3 sm:pt-14 sm:pb-4 mt-0 mb-0">
         <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <ProductReviewsSection product={product} />
+          <ProductReviewsSection product={product} initialVisibleCount={2} loadMoreStep={4} loadMoreLabel="Show more" />
         </div>
       </div>
 
-      {/* Bottom Section: Scroll-Driven Pinned Horizontal Track for YOU MAY ALSO LIKE */}
-      <div ref={relatedSectionRef} className="w-full h-[180vh] relative bg-[#fbf9f9]">
-        <div className="sticky top-20 w-full pt-0 pb-4 overflow-hidden bg-[#fbf9f9]">
+      {/* Bottom Section: Curated Drops */}
+      <div ref={relatedSectionRef} className="w-full h-auto lg:h-[180vh] relative bg-[#fbf9f9]">
+        <div className="lg:sticky lg:top-20 w-full pt-0 pb-4 lg:overflow-hidden bg-[#fbf9f9]">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
             <div className="border-b border-gray-200 pb-4">
               {/* Eyebrow */}
@@ -1099,11 +1083,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </span>
               </div>
 
-              {/* Main Headline with Electric Blue Cursive Script "Like" */}
-              <div className="flex items-baseline justify-between flex-wrap gap-4">
-                <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex items-baseline gap-3">
-                  <span>CHOSEN FOR</span>
-                  <span className="text-[#0B3DFF] font-yellowtail text-5xl sm:text-7xl capitalize font-normal">
+              {/* Main Headline — two lines: Chosen for / Spirit Beings */}
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
+                <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex flex-col items-start leading-[0.92]">
+                  <span>Chosen for</span>
+                  <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal normal-case">
                     Spirit Beings
                   </span>
                 </h2>
@@ -1113,7 +1097,27 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </div>
 
-            <div className="w-full overflow-hidden pt-2 pb-4">
+            <div className="sb-product-grid lg:hidden pt-2 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))]">
+              {relatedProducts.map((rel) => (
+                <ProductCard
+                  key={rel.id}
+                  product={rel}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist || (() => {})}
+                  onSelect={(color) => {
+                    onSelectProduct(rel, color);
+                    window.scrollTo(0, 0);
+                    if ((window as any).lenis) {
+                      (window as any).lenis.scrollTo(0, { immediate: true });
+                    }
+                  }}
+                  onAddToCart={(e, size, color) => handleRelatedPlusClick(e, rel, size, color)}
+                  isAdded={justAddedId === rel.id}
+                />
+              ))}
+            </div>
+
+            <div className="hidden lg:block w-full overflow-hidden pt-2 pb-4">
               <div
                 ref={relatedTrackRef}
                 className="flex gap-3.5 transition-transform duration-75 ease-out will-change-transform"
@@ -1148,8 +1152,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Size Guide Modal Overlay */}
       {showSizeGuideModal && (
         <div
           className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
@@ -1195,6 +1197,72 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Mobile + tablet: fixed bottom CTAs */}
+      <div className="sb-pdp-fixed-ctas lg:hidden" role="region" aria-label="Product actions">
+        <div className="sb-pdp-fixed-ctas-inner">
+          <div className="sb-pdp-mobile-ctas sb-pdp-mobile-ctas--fixed">
+            {onToggleWishlist && (
+              <div className="relative flex-1 min-w-0">
+                {toastMessage && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black border border-black/5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-md z-30 pointer-events-none whitespace-nowrap">
+                    {toastMessage}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onToggleWishlist(product.id);
+                    if (!isProductLiked) {
+                      soundOptions.choir();
+                      setToastMessage('BLESSED ❤️');
+                      setTimeout(() => setToastMessage(null), 2000);
+                    }
+                  }}
+                  className={`sb-pdp-btn-bless ${isProductLiked ? 'is-blessed' : ''}`}
+                >
+                  <Heart className={`w-3.5 h-3.5 shrink-0 ${isProductLiked ? 'fill-white text-white' : 'text-rose-500'}`} />
+                  <span className="truncate">Bless the Drop</span>
+                  <span className={`shrink-0 px-1.5 py-0.5 rounded-full font-mono text-[9px] ${isProductLiked ? 'bg-white/20' : 'bg-black/5'}`}>
+                    {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
+                  </span>
+                </button>
+              </div>
+            )}
+
+            <button
+              disabled={!product.inStock}
+              onClick={handleAddToCart}
+              style={{ overflow: 'visible' }}
+              className={`sb-pdp-btn-primary sb-pdp-btn-primary--fixed relative ${
+                !product.inStock
+                  ? 'border-black/10 bg-black/5 text-black/40 cursor-not-allowed'
+                  : added
+                  ? 'border-black bg-black text-white'
+                  : 'bg-black text-white hover:bg-[#2040FF] hover:border-[#2040FF]'
+              } ${isBouncing && product.inStock ? 'animate-bounce-click' : ''}`}
+            >
+              {product.inStock && particles.map((p) => (
+                <span
+                  key={p.id}
+                  className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    backgroundColor: p.color,
+                    '--tx': `${p.x}px`,
+                    '--ty': `${p.y}px`,
+                    '--scale': p.scale,
+                    animationDelay: `${p.delay}s`,
+                  } as React.CSSProperties}
+                />
+              ))}
+              {!product.inStock ? 'Sold Out' : added ? 'Added ✓' : 'Add to Bag'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @keyframes cloud-fade-up {
           0% {
@@ -1272,36 +1340,11 @@ const WhatsappIcon: React.FC = () => (
   </svg>
 );
 
-const XIcon: React.FC = () => (
-  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-  </svg>
-);
-
-const FacebookIcon: React.FC = () => (
-  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const MailIcon: React.FC = () => (
-  <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-);
-
 const InstagramIcon: React.FC = () => (
   <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
-
-const MessagesIcon: React.FC = () => (
-  <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
   </svg>
 );
 

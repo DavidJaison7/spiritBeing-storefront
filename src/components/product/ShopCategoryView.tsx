@@ -79,6 +79,29 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
     }
   }, [initialSection]);
 
+  // Pin tabs flush under the fixed site header (measured — avoids token mismatch gap)
+  useEffect(() => {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    const syncHeaderOffset = () => {
+      const height = Math.round(header.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--sb-shop-header-offset', `${height}px`);
+    };
+
+    syncHeaderOffset();
+    window.addEventListener('resize', syncHeaderOffset);
+
+    const observer = new ResizeObserver(syncHeaderOffset);
+    observer.observe(header);
+
+    return () => {
+      window.removeEventListener('resize', syncHeaderOffset);
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--sb-shop-header-offset');
+    };
+  }, []);
+
   // Scroll Spy: Update activeTab dynamically as user scrolls through sections
   useEffect(() => {
     const observerOptions: IntersectionObserverInit = {
@@ -127,38 +150,16 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
   };
 
   return (
-    <div className="sb-shop-view-container pt-20 pb-24">
-      {/* Header Banner */}
-      <div className="w-full px-6 md:px-12 pt-6 pb-5">
-        {/* Small Top Tag Dot */}
-        <div className="inline-flex items-center gap-2 mb-2 select-none">
-          <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_10px_#0B3DFF] animate-pulse shrink-0" />
-          <span className="font-mono text-xs font-bold tracking-[0.25em] text-[#666666] uppercase">
-            SHOP BY CATEGORY
-          </span>
-        </div>
-
-        {/* Main Title matching Reference Image font format */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-anton font-black uppercase text-[#1b1c1c] tracking-tight leading-none">
-          CATEGORIES OF{' '}
-          <span className="font-yellowtail normal-case text-[#2040FF] font-normal tracking-normal ml-1 inline-block">
-            Spirit Being
-          </span>
-        </h1>
-
-        <p className="text-sm md:text-base text-[#666666] font-sans mt-3 max-w-2xl leading-relaxed">
-          Explore our heavy-weight oversized Unisex Tees, premium caps, and everyday streetwear canvas totes designed with faith and purpose.
-        </p>
-      </div>
-
-      {/* Sticky 3-Tabs Bar */}
+    <div className="sb-shop-view-container pb-24">
+      {/* Fixed category tabs — flush under site header */}
       <div className="sb-tabs-bar">
-        <div className="w-full px-6 md:px-12 flex items-center gap-2 md:gap-4 overflow-x-auto no-scrollbar">
+        <div className="sb-tabs-inner">
           <button
             onClick={() => scrollToCategory('tshirts')}
             className={`sb-tab-btn cursor-pointer ${activeTab === 'tshirts' ? 'active' : ''}`}
           >
-            Oversized T-Shirts
+            <span className="sb-tab-label sb-tab-label--mobile">T-Shirts</span>
+            <span className="sb-tab-label sb-tab-label--desktop">Oversized T-Shirts</span>
           </button>
           <button
             onClick={() => scrollToCategory('caps')}
@@ -170,13 +171,36 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
             onClick={() => scrollToCategory('totebags')}
             className={`sb-tab-btn cursor-pointer ${activeTab === 'totebags' ? 'active' : ''}`}
           >
-            Tote Bags
+            <span className="sb-tab-label sb-tab-label--mobile">Totes</span>
+            <span className="sb-tab-label sb-tab-label--desktop">Tote Bags</span>
           </button>
         </div>
       </div>
 
+      <div className="sb-shop-scroll">
+        {/* Header Banner — desktop only */}
+        <div className="sb-shop-hero w-full px-6 md:px-12 pt-2 pb-4">
+          <div className="inline-flex items-center gap-2 mb-2 select-none">
+            <span className="w-2 h-2 rounded-full bg-[#0B3DFF] shadow-[0_0_10px_#0B3DFF] animate-pulse shrink-0" />
+            <span className="font-mono text-xs font-bold tracking-[0.25em] text-[#666666] uppercase">
+              SHOP BY CATEGORY
+            </span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-anton font-black uppercase text-[#1b1c1c] tracking-tight leading-none">
+            CATEGORIES OF{' '}
+            <span className="font-script normal-case text-[#2040FF] font-normal tracking-normal ml-1 inline-block">
+              Spirit Being
+            </span>
+          </h1>
+
+          <p className="text-sm md:text-base text-[#666666] font-sans mt-3 max-w-2xl leading-relaxed">
+            Explore our heavy-weight oversized Unisex Tees, premium caps, and everyday streetwear canvas totes designed with faith and purpose.
+          </p>
+        </div>
+
       {/* Main Category Sections */}
-      <div className="w-full px-6 md:px-12 pt-10 space-y-20">
+      <div className="w-full px-6 md:px-12 pt-4 md:pt-10 space-y-20">
         {/* Section 1: Oversized T-Shirts */}
         <section
           ref={tshirtsSectionRef}
@@ -192,7 +216,7 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="sb-product-grid">
             {tshirtProducts.map(renderProductCard)}
           </div>
         </section>
@@ -212,7 +236,7 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="sb-product-grid">
             {capProducts.map(renderProductCard)}
           </div>
         </section>
@@ -232,10 +256,11 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="sb-product-grid">
             {toteProducts.map(renderProductCard)}
           </div>
         </section>
+      </div>
       </div>
     </div>
   );

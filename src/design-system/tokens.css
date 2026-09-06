@@ -1,0 +1,221 @@
+/**
+ * Spirit Being Design System — Tokens
+ * Canonical source of truth for colors, type, spacing, motion, and layout.
+ * Legacy aliases (--paper, --electric, etc.) map here for existing components.
+ */
+
+:root {
+  /* ─── Color: surfaces ─── */
+  --sb-color-paper: #fbf9f9;
+  --sb-color-paper-warm: #f2f0ea;
+  --sb-color-paper-light: #f6f4f1;
+  --sb-color-white: #ffffff;
+  --sb-color-tile: #ffffff;
+  --sb-color-tile-muted: #f0f0f0;
+  --sb-color-void: #000000;
+  --sb-color-void-soft: #0a0a0a;
+  --sb-color-void-panel: #080808;
+  --sb-color-void-card: #151515;
+
+  /* ─── Color: ink / text ─── */
+  --sb-color-ink: #1b1c1c;
+  --sb-color-ink-deep: #16141c;
+  --sb-color-ink-black: #000000;
+  --sb-color-muted: #737373;
+  --sb-color-muted-soft: #8a8a8a;
+  --sb-color-ash: #666666;
+  --sb-color-steel: #888888;
+  --sb-color-placeholder: #a6a2ac;
+  --sb-color-on-dark: rgba(255, 255, 255, 0.92);
+  --sb-color-on-dark-muted: rgba(255, 255, 255, 0.55);
+
+  /* ─── Color: accent blues (canonical → variants) ─── */
+  --sb-color-accent: #0b3dff;
+  --sb-color-accent-bright: #2040ff;
+  --sb-color-accent-mega: #1e44ff;
+  --sb-color-accent-story: #074dff;
+  --sb-color-accent-deep: #0b195c;
+  --sb-color-accent-glow: #89a5ff;
+  --sb-color-accent-tint: rgba(11, 61, 255, 0.08);
+  --sb-color-accent-border: rgba(11, 61, 255, 0.14);
+
+  /* ─── Color: semantic ─── */
+  --sb-color-success: #34a853;
+  --sb-color-warning: #fbbc05;
+  --sb-color-error: #ea4335;
+  --sb-color-live: #ff3e3e;
+  --sb-color-wishlist: #f43f5e;
+  --sb-color-discord: #5865f2;
+
+  /* ─── Color: borders & lines ─── */
+  --sb-color-line: rgba(0, 0, 0, 0.1);
+  --sb-color-line-soft: rgba(0, 0, 0, 0.06);
+  --sb-color-line-strong: rgba(0, 0, 0, 0.18);
+  --sb-color-line-on-dark: rgba(255, 255, 255, 0.1);
+  --sb-color-divider: #e8e8e8;
+  --sb-color-field-line: #e4e0da;
+
+  /* ─── Color: overlays ─── */
+  --sb-color-scrim: rgba(0, 0, 0, 0.62);
+  --sb-color-scrim-light: rgba(0, 0, 0, 0.35);
+  --sb-color-glass: rgba(255, 255, 255, 0.88);
+  --sb-color-glass-panel: rgba(255, 255, 255, 0.7);
+
+  /* ─── Typography: families ─── */
+  --sb-font-display: 'Anton', sans-serif;
+  --sb-font-body: 'Archivo', sans-serif;
+  --sb-font-script: 'Pinyon Script', cursive;
+  --sb-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --sb-font-sans: 'Inter', sans-serif;
+
+  /* ─── Typography: scale ─── */
+  --sb-text-2xs: 8px;
+  --sb-text-xs: 9px;
+  --sb-text-sm: 10px;
+  --sb-text-md: 11px;
+  --sb-text-base: 12px;
+  --sb-text-lg: 13px;
+  --sb-text-xl: 14px;
+  --sb-text-2xl: 15px;
+  --sb-text-3xl: clamp(13px, 0.95vw, 17px);
+  --sb-text-display-sm: clamp(32px, 5vw, 48px);
+  --sb-text-display-md: clamp(48px, 8vw, 72px);
+  --sb-text-display-lg: clamp(72px, 12vw, 140px);
+
+  /* ─── Typography: weights ─── */
+  --sb-weight-regular: 400;
+  --sb-weight-medium: 500;
+  --sb-weight-semibold: 600;
+  --sb-weight-bold: 700;
+  --sb-weight-black: 800;
+
+  /* ─── Typography: tracking ─── */
+  --sb-tracking-tight: -0.01em;
+  --sb-tracking-normal: 0;
+  --sb-tracking-wide: 0.08em;
+  --sb-tracking-wider: 0.12em;
+  --sb-tracking-widest: 0.2em;
+  --sb-tracking-mega: 0.26em;
+
+  /* ─── Typography: leading ─── */
+  --sb-leading-tight: 1.08;
+  --sb-leading-snug: 1.35;
+  --sb-leading-normal: 1.45;
+  --sb-leading-relaxed: 1.55;
+  --sb-leading-loose: 1.65;
+
+  /* ─── Spacing scale (4px base) ─── */
+  --sb-space-0: 0;
+  --sb-space-1: 4px;
+  --sb-space-2: 8px;
+  --sb-space-3: 12px;
+  --sb-space-4: 16px;
+  --sb-space-5: 20px;
+  --sb-space-6: 24px;
+  --sb-space-8: 32px;
+  --sb-space-10: 40px;
+  --sb-space-12: 48px;
+  --sb-space-16: 64px;
+
+  /* ─── Layout: containers ─── */
+  --sb-container-sm: 1280px;
+  --sb-container-md: 1600px;
+  --sb-container-lg: 1680px;
+  --sb-container-xl: 1720px;
+  --sb-gutter: clamp(16px, 3vw, 48px);
+  --sb-gutter-compact: clamp(12px, 2vw, 32px);
+
+  /* ─── Layout: header & sticky ─── */
+  --sb-header-height: 64px;
+  --sb-header-height-sm: 58px;
+  --sb-sticky-tabs-top: 56px;
+  --sb-sticky-faq-top: 52px;
+  --sb-scroll-margin-section: 130px;
+
+  /* ─── Radius ─── */
+  --sb-radius-xs: 6px;
+  --sb-radius-sm: 10px;
+  --sb-radius-md: 12px;
+  --sb-radius-lg: 14px;
+  --sb-radius-xl: 16px;
+  --sb-radius-2xl: 20px;
+  --sb-radius-3xl: 28px;
+  --sb-radius-pill: 999px;
+  --sb-radius-fluid: clamp(14px, 2.5vw, 22px);
+
+  /* ─── Shadows ─── */
+  --sb-shadow-xs: 0 4px 14px rgba(27, 28, 28, 0.08);
+  --sb-shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --sb-shadow-md: 0 18px 48px -16px rgba(0, 0, 0, 0.22);
+  --sb-shadow-lg: 0 24px 64px -22px rgba(0, 0, 0, 0.14);
+  --sb-shadow-xl: 0 36px 90px -24px rgba(0, 0, 0, 0.18);
+  --sb-shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.35);
+  --sb-shadow-focus: 0 0 0 3px rgba(27, 28, 28, 0.08);
+  --sb-shadow-focus-accent: 0 0 0 4px rgba(11, 61, 255, 0.14);
+  --sb-shadow-glow-accent: 0 0 12px var(--sb-color-accent);
+  --sb-shadow-glow-discord: 0 16px 38px rgba(88, 101, 242, 0.32);
+
+  /* ─── Motion: duration ─── */
+  --sb-duration-fast: 0.2s;
+  --sb-duration-base: 0.25s;
+  --sb-duration-slow: 0.32s;
+  --sb-duration-panel: 0.46s;
+  --sb-duration-unfold: 760ms;
+
+  /* ─── Motion: easing ─── */
+  --sb-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --sb-ease-liquid: cubic-bezier(0.22, 1.15, 0.36, 1);
+  --sb-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --sb-ease-bounce: cubic-bezier(0.22, 1.06, 0.36, 1);
+  --sb-ease-close: cubic-bezier(0.55, 0, 0.85, 0.35);
+
+  /* ─── Z-index scale ─── */
+  --sb-z-base: 1;
+  --sb-z-dropdown: 40;
+  --sb-z-sticky: 50;
+  --sb-z-scrim: 60;
+  --sb-z-mega: 70;
+  --sb-z-drawer: 80;
+  --sb-z-modal: 90;
+  --sb-z-toast: 100;
+
+  /* ─── Component sizes ─── */
+  --sb-control-height: 40px;
+  --sb-control-height-sm: 36px;
+  --sb-control-height-lg: 48px;
+  --sb-icon-btn: 36px;
+
+  /* ─── Legacy aliases (existing CSS files) ─── */
+  --font-display: var(--sb-font-display);
+  --font-body: var(--sb-font-body);
+  --font-script: var(--sb-font-script);
+  --paper: var(--sb-color-paper);
+  --void: var(--sb-color-paper);
+  --tile: var(--sb-color-tile);
+  --tile-2: var(--sb-color-tile-muted);
+  --line: var(--sb-color-line);
+  --chrome: var(--sb-color-ink-black);
+  --ash: var(--sb-color-ash);
+  --steel: var(--sb-color-steel);
+  --electric: var(--sb-color-accent-mega);
+  --ink: var(--sb-color-ink-black);
+  --r: var(--sb-radius-lg);
+  --ease: var(--sb-ease-standard);
+  --liquid-ease: var(--sb-ease-liquid);
+  --hdr: var(--sb-header-height);
+  --blue: var(--sb-color-accent);
+  --muted: var(--sb-color-muted);
+  --muted-light: var(--sb-color-muted-soft);
+  --display: var(--sb-font-display);
+  --script: var(--sb-font-script);
+  --body: var(--sb-font-body);
+  --unfold: var(--sb-duration-unfold);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --sb-header-height: var(--sb-header-height-sm);
+    --hdr: var(--sb-header-height-sm);
+    --r: 12px;
+  }
+}

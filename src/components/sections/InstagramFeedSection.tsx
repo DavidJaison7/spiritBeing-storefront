@@ -1,148 +1,246 @@
-import React from 'react';
-import { Instagram, ExternalLink, Heart, MessageCircle } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { INSTAGRAM_FEED_IMAGES } from '../../data/instagramFeedImages';
+import './InstagramFeedSection.css';
 
 interface InstagramPost {
   id: string;
   image: string;
-  likes: string;
-  comments: string;
   caption: string;
   link: string;
 }
 
+const INSTAGRAM_HANDLE = 'https://instagram.com/spiritbeinggen';
+
 const INSTAGRAM_POSTS: InstagramPost[] = [
   {
     id: 'ig_1',
-    image: '/products/product-sec2.png',
-    likes: '2.4K',
-    comments: '142',
-    caption: 'Chosen One Drop Shoulder Tee — Heavyweight 280 GSM combed cotton archive release. #SpiritBeing',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[0],
+    caption: 'Studio drop day — behind the scenes from Chennai.',
+    link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_2',
-    image: '/products/product-main.jpg',
-    likes: '1.9K',
-    comments: '98',
-    caption: 'Oversized streetwear cuts designed for the chosen ones. Est. 2026 India. #ChristianStreetwear',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[1],
+    caption: 'Archive fit check — oversized boxy blocks on rotation.',
+    link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_3',
-    image: '/products/product-sec1.jpg',
-    likes: '3.1K',
-    comments: '215',
-    caption: 'Back typography preview & reverse wash details. Available in limited quantities online.',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[2],
+    caption: 'Electric blue details from the latest Spirit Being run.',
+    link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_4',
-    image: '/products/product-sec3.png',
-    likes: '1.6K',
-    comments: '84',
-    caption: 'Faith. Identity. Purpose. The uniform for the generation. #SpiritBeingStudio',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[3],
+    caption: 'Faith. Identity. Purpose. — from the community feed.',
+    link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_5',
-    image: '/archive/image 1328.png',
-    likes: '2.8K',
-    comments: '176',
-    caption: 'Faith Over Fear drop sleeve collection live on spiritbeing.studio',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[4],
+    caption: 'Chosen ones uniform — heavyweight cotton in frame.',
+    link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_6',
-    image: '/archive/image 1330.png',
-    likes: '2.1K',
-    comments: '110',
-    caption: 'Kingdom Heritage boxy fit tee with cobalt print details. #StreetwearArchive',
-    link: 'https://instagram.com',
+    image: INSTAGRAM_FEED_IMAGES[5],
+    caption: 'Street frames from the @spiritbeinggen archive.',
+    link: INSTAGRAM_HANDLE,
+  },
+  {
+    id: 'ig_7',
+    image: INSTAGRAM_FEED_IMAGES[6],
+    caption: 'Community repost — tag us to get featured.',
+    link: INSTAGRAM_HANDLE,
+  },
+  {
+    id: 'ig_8',
+    image: INSTAGRAM_FEED_IMAGES[7],
+    caption: 'Essentials collection mood — more on the feed.',
+    link: INSTAGRAM_HANDLE,
   },
 ];
 
 export const InstagramFeedSection: React.FC = () => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+  const [activePage, setActivePage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
+
+  const updateCarouselState = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const card = track.querySelector<HTMLElement>('.ig-feed-card');
+    if (!card) return;
+
+    const gap = parseFloat(getComputedStyle(track.querySelector('.ig-feed-row')!).gap) || 8;
+    const step = card.offsetWidth + gap;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const scrollLeft = track.scrollLeft;
+
+    setCanPrev(scrollLeft > 4);
+    setCanNext(scrollLeft < maxScroll - 4);
+
+    const visibleCards = Math.max(1, Math.round((track.clientWidth + gap) / step));
+    const pages = Math.max(1, INSTAGRAM_POSTS.length - visibleCards + 1);
+    setPageCount(pages);
+
+    const page = Math.min(pages - 1, Math.max(0, Math.round(scrollLeft / step)));
+    setActivePage(page);
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    updateCarouselState();
+
+    track.addEventListener('scroll', updateCarouselState, { passive: true });
+    window.addEventListener('resize', updateCarouselState);
+
+    return () => {
+      track.removeEventListener('scroll', updateCarouselState);
+      window.removeEventListener('resize', updateCarouselState);
+    };
+  }, [updateCarouselState]);
+
+  const scrollByCard = (direction: 'prev' | 'next') => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const card = track.querySelector<HTMLElement>('.ig-feed-card');
+    if (!card) return;
+
+    const gap = parseFloat(getComputedStyle(track.querySelector('.ig-feed-row')!).gap) || 8;
+    const delta = (card.offsetWidth + gap) * (direction === 'next' ? 1 : -1);
+
+    track.scrollBy({ left: delta, behavior: 'smooth' });
+  };
+
+  const scrollToPage = (page: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const card = track.querySelector<HTMLElement>('.ig-feed-card');
+    if (!card) return;
+
+    const gap = parseFloat(getComputedStyle(track.querySelector('.ig-feed-row')!).gap) || 8;
+    const step = card.offsetWidth + gap;
+
+    track.scrollTo({ left: page * step, behavior: 'smooth' });
+  };
+
   return (
-    <section className="w-full bg-black pt-8 md:pt-10 relative z-10 font-sans">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 text-center md:text-left">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[2px] shadow-sm">
-              <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
-                <Instagram className="w-5 h-5 text-black" />
-              </div>
-            </div>
+    <section className="ig-feed-section" aria-label="Instagram feed">
+      <div className="ig-feed-inner">
+        <div className="ig-feed-head">
+          <div className="ig-feed-brand">
+            <img
+              src="/instagram-icon.png"
+              alt=""
+              className="ig-feed-brand-icon"
+              width={28}
+              height={28}
+              decoding="async"
+            />
             <div>
-              <h3 className="font-anton text-xl md:text-2xl text-white uppercase tracking-normal flex items-center gap-2 justify-center md:justify-start">
-                <span>@SPIRITBEING.STUDIO</span>
-              </h3>
-              <p className="text-xs text-gray-400 font-sans tracking-wide">
-                INSTAGRAM ADVERTISING & ARCHIVE COMMUNITY
-              </p>
+              <p className="ig-feed-handle">@spiritbeinggen</p>
+              <p className="ig-feed-sub">Instagram · studio archive</p>
             </div>
           </div>
 
           <a
-            href="https://instagram.com"
+            href={INSTAGRAM_HANDLE}
             target="_blank"
             rel="noopener noreferrer"
-            className="border border-white bg-white text-black px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+            className="sb-drawer-auth-cta ig-feed-follow"
           >
-            <span>FOLLOW ON INSTAGRAM</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            Follow on Instagram
           </a>
         </div>
-      </div>
 
-      {/* Instagram Posts Horizontal Feed Strip — full width, no clipping */}
-      <div className="w-full overflow-x-auto scrollbar-none pb-4">
-        <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
-          {INSTAGRAM_POSTS.map((post) => {
-            const isPng = post.image.endsWith('.png');
-            return (
-              <a
-                key={post.id}
-                href={post.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-56 sm:w-64 md:w-72 shrink-0 aspect-square rounded-[20px] bg-[#e8e5de] relative group overflow-hidden border border-black/10 shadow-xs cursor-pointer block"
-              >
-                <img
-                  src={post.image}
-                  alt={post.caption}
-                  className={`w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out ${
-                    isPng ? 'object-contain p-4' : 'object-cover object-center'
-                  }`}
-                />
 
-                {/* Hover Instagram Overlay */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-5 text-white">
-                  <div className="flex justify-end">
-                    <Instagram className="w-5 h-5 text-white/80" />
+        <div className="ig-feed-carousel">
+          <button
+            type="button"
+            className="ig-feed-nav ig-feed-nav--prev"
+            onClick={() => scrollByCard('prev')}
+            disabled={!canPrev}
+            aria-label="Previous Instagram posts"
+          >
+            <ChevronLeft aria-hidden="true" />
+          </button>
+
+          <div
+            className="ig-feed-track"
+            ref={trackRef}
+            aria-roledescription="carousel"
+            aria-label="Instagram post previews"
+          >
+            <div className="ig-feed-row">
+              {INSTAGRAM_POSTS.map((post) => (
+                <a
+                  key={post.id}
+                  href={post.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ig-feed-card"
+                  aria-label={`View Instagram post: ${post.caption}`}
+                >
+                  <div className="ig-feed-card-media">
+                    <span className="ig-feed-card-badge">
+                      <img src="/instagram-icon.png" alt="" width={12} height={12} />
+                      Instagram
+                    </span>
+
+                    <img
+                      src={post.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="ig-feed-card-img"
+                    />
                   </div>
 
-                  <div className="space-y-2">
-                    <p className="text-xs font-sans line-clamp-2 text-white/90 leading-snug">
-                      {post.caption}
-                    </p>
-
-                    <div className="flex items-center gap-4 text-xs font-bold pt-1 border-t border-white/20">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-4 h-4 fill-white" />
-                        <span>{post.likes}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="w-4 h-4 fill-white" />
-                        <span>{post.comments}</span>
-                      </div>
-                    </div>
+                  <div className="ig-feed-card-foot">
+                    <p className="ig-feed-card-caption">{post.caption}</p>
                   </div>
-                </div>
-              </a>
-            );
-          })}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="ig-feed-nav ig-feed-nav--next"
+            onClick={() => scrollByCard('next')}
+            disabled={!canNext}
+            aria-label="Next Instagram posts"
+          >
+            <ChevronRight aria-hidden="true" />
+          </button>
         </div>
+
+        {pageCount > 1 && (
+          <div className="ig-feed-dots" role="tablist" aria-label="Instagram feed pages">
+            {Array.from({ length: pageCount }, (_, index) => (
+              <button
+                key={index}
+                type="button"
+                role="tab"
+                className={`ig-feed-dot${index === activePage ? ' is-active' : ''}`}
+                aria-label={`Go to feed page ${index + 1}`}
+                aria-selected={index === activePage}
+                onClick={() => scrollToPage(index)}
+              />
+            ))}
+          </div>
+        )}
+
       </div>
     </section>
   );

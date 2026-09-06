@@ -92,7 +92,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {items.length === 0 ? (
             <div className="h-full flex flex-col justify-between pt-4 pb-2">
               <div className="text-left space-y-2">
-                <h2 className="text-3xl sm:text-4xl font-headline font-bold text-black tracking-tight leading-none">
+                <h2 className="text-2xl sm:text-3xl font-headline font-normal text-black tracking-normal leading-snug">
                   Your bag is empty!
                 </h2>
                 <p className="text-sm font-sans text-gray-600 font-medium">

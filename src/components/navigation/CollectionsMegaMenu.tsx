@@ -4,34 +4,44 @@ import { MEGA_MENU_IMAGES } from './megaMenuImages';
 
 interface CollectionsMegaMenuProps {
   isOpen: boolean;
+  isHeroContext?: boolean;
   onClose: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  onNavigateCollection?: (collectionId: string) => void;
 }
 
 export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({ 
-  isOpen, 
+  isOpen,
+  isHeroContext = false,
   onClose, 
   onMouseEnter, 
-  onMouseLeave 
+  onMouseLeave,
+  onNavigateCollection,
 }) => {
+  const handleCollectionClick = (collectionId: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClose();
+    onNavigateCollection?.(collectionId);
+  };
+
   return (
     <>
       <div 
-        className={`sb-scrim ${isOpen ? 'is-open' : ''}`} 
+        className={`sb-scrim ${isHeroContext ? 'sb-scrim--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
         hidden={!isOpen} 
         onMouseEnter={onClose} 
         onClick={onClose}
       ></div>
       
       <div 
-        className={`sb-mega ${isOpen ? 'is-open' : ''}`} 
+        className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
         role="region" 
         aria-label="Collections"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <div className="sb-mega-inner">
+        <div className="sb-mega-inner" data-lenis-prevent>
           <div className="sb-mega-top">
             <p>Five distinct worlds · one shared design language</p>
           </div>
@@ -40,7 +50,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo t-essentials" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('essentials')}
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -54,7 +64,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo t-bible" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('bible')}
               style={{"--d": ".09s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -68,7 +78,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo t-little" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('little')}
               style={{"--d": ".14s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -82,7 +92,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo t-nomad" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('nomad')}
               style={{"--d": ".19s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -96,7 +106,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo t-armoured" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('armoured')}
               style={{"--d": ".24s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -110,7 +120,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
             <a 
               className="sb-tile has-photo is-blue t-books" 
               href="#" 
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCollectionClick('books')}
               style={{"--d": ".29s"} as React.CSSProperties}
             >
               <div className="sb-photo">

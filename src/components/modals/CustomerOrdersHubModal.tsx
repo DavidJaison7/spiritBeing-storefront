@@ -444,7 +444,7 @@ export const CustomerOrdersHubModal: React.FC<CustomerOrdersHubModalProps> = ({
                 <h3 className="font-display text-base tracking-wider uppercase text-black">
                   SPIRIT BEING
                 </h3>
-                <span className="font-serif italic text-xs text-neutral-400">
+                <span className="font-script text-xs text-neutral-400 normal-case">
                   not of this world.
                 </span>
                 <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-mono font-bold bg-[#2040FF]/10 text-[#2040FF] px-2 py-0.5 rounded-full border border-[#2040FF]/20 uppercase ml-1">
@@ -545,7 +545,7 @@ export const CustomerOrdersHubModal: React.FC<CustomerOrdersHubModalProps> = ({
                     <h1 className="font-display text-3xl uppercase tracking-wider text-black">
                       SPIRIT BEING
                     </h1>
-                    <p className="font-serif italic text-xs text-neutral-400 mt-0.5">not of this world.</p>
+                    <p className="font-script text-xs text-neutral-400 mt-0.5 normal-case">not of this world.</p>
                     <div className="text-[11px] text-neutral-600 mt-3 space-y-0.5">
                       <p className="font-bold text-black">Spirit Being Apparels Private Limited</p>
                       <p>GSTIN: 29AABCU9603R1ZX • CIN: U18101KA2026PTC089421</p>

@@ -1,0 +1,133 @@
+/**
+ * Spirit Being Design System — Typography
+ */
+
+.sb-type-display-xl {
+  font-family: var(--sb-font-display);
+  font-size: var(--sb-text-display-lg);
+  font-weight: var(--sb-weight-regular);
+  line-height: 0.82;
+  letter-spacing: var(--sb-tracking-tight);
+  text-transform: uppercase;
+  color: var(--sb-color-ink);
+}
+
+.sb-type-display-lg {
+  font-family: var(--sb-font-display);
+  font-size: var(--sb-text-display-md);
+  font-weight: var(--sb-weight-regular);
+  line-height: 1;
+  letter-spacing: var(--sb-tracking-tight);
+  text-transform: uppercase;
+  color: var(--sb-color-ink);
+}
+
+.sb-type-display-sm {
+  font-family: var(--sb-font-display);
+  font-size: var(--sb-text-display-sm);
+  font-weight: var(--sb-weight-regular);
+  line-height: 1.05;
+  letter-spacing: var(--sb-tracking-tight);
+  text-transform: uppercase;
+  color: var(--sb-color-ink);
+}
+
+.sb-type-headline {
+  font-family: var(--sb-font-display);
+  font-size: var(--sb-text-3xl);
+  font-weight: var(--sb-weight-black);
+  line-height: var(--sb-leading-tight);
+  letter-spacing: var(--sb-tracking-tight);
+  text-transform: uppercase;
+  color: var(--sb-color-ink);
+}
+
+.sb-type-title {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-xl);
+  font-weight: var(--sb-weight-bold);
+  line-height: var(--sb-leading-snug);
+  color: var(--sb-color-ink);
+}
+
+.sb-type-body {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-2xl);
+  font-weight: var(--sb-weight-regular);
+  line-height: var(--sb-leading-loose);
+  color: var(--sb-color-ink);
+}
+
+.sb-type-body-sm {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-lg);
+  font-weight: var(--sb-weight-medium);
+  line-height: var(--sb-leading-relaxed);
+  color: var(--sb-color-ash);
+}
+
+.sb-type-caption {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-base);
+  font-weight: var(--sb-weight-medium);
+  line-height: var(--sb-leading-normal);
+  color: var(--sb-color-muted);
+}
+
+.sb-type-label {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-sm);
+  font-weight: var(--sb-weight-semibold);
+  letter-spacing: var(--sb-tracking-widest);
+  text-transform: uppercase;
+  color: var(--sb-color-steel);
+}
+
+.sb-type-eyebrow {
+  font-family: var(--sb-font-body);
+  font-size: var(--sb-text-sm);
+  font-weight: var(--sb-weight-semibold);
+  letter-spacing: var(--sb-tracking-mega);
+  text-transform: uppercase;
+  color: var(--sb-color-accent-mega);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sb-type-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--sb-radius-pill);
+  background: var(--sb-color-accent-mega);
+  flex-shrink: 0;
+}
+
+.sb-type-script {
+  font-family: var(--sb-font-script);
+  font-size: var(--sb-text-display-sm);
+  font-weight: var(--sb-weight-regular);
+  line-height: 1;
+  color: var(--sb-color-accent);
+}
+
+.sb-type-mono {
+  font-family: var(--sb-font-mono);
+  font-size: var(--sb-text-base);
+  font-weight: var(--sb-weight-bold);
+  letter-spacing: var(--sb-tracking-widest);
+  text-transform: uppercase;
+}
+
+.sb-type-on-dark {
+  color: var(--sb-color-on-dark);
+}
+
+.sb-type-muted {
+  color: var(--sb-color-muted);
+}
+
+.sb-type-accent {
+  color: var(--sb-color-accent-bright);
+}

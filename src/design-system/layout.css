@@ -1,0 +1,172 @@
+/**
+ * Spirit Being Design System — Layout
+ */
+
+.sb-container {
+  width: 100%;
+  max-width: var(--sb-container-md);
+  margin-inline: auto;
+  padding-inline: var(--sb-gutter);
+}
+
+.sb-container--sm {
+  max-width: var(--sb-container-sm);
+}
+
+.sb-container--lg {
+  max-width: var(--sb-container-lg);
+}
+
+.sb-container--xl {
+  max-width: var(--sb-container-xl);
+}
+
+.sb-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sb-space-4);
+}
+
+.sb-stack--sm {
+  gap: var(--sb-space-2);
+}
+
+.sb-stack--lg {
+  gap: var(--sb-space-6);
+}
+
+.sb-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sb-space-2);
+}
+
+.sb-cluster--lg {
+  gap: var(--sb-space-4);
+}
+
+.sb-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sb-space-4);
+}
+
+.sb-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sb-space-4);
+}
+
+.sb-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sb-space-4);
+}
+
+/* Product cards — 2 columns on mobile everywhere */
+.sb-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.5rem;
+  row-gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .sb-product-grid {
+    column-gap: 0.75rem;
+    row-gap: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sb-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 3.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sb-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.sb-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sb-space-4);
+}
+
+.sb-grid-bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: clamp(108px, 9.8vw, 148px);
+  gap: var(--sb-space-2);
+}
+
+.sb-grid-shop {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: clamp(260px, 21vw, 300px);
+  gap: var(--sb-space-2);
+}
+
+.sb-split {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr);
+  gap: var(--sb-space-8);
+}
+
+.sb-split-faq {
+  display: grid;
+  grid-template-columns: 0.78fr 1.22fr;
+  gap: var(--sb-space-8);
+}
+
+@media (max-width: 1024px) {
+  .sb-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sb-split,
+  .sb-split-faq {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .sb-grid-2,
+  .sb-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .sb-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.5rem;
+    row-gap: 1.5rem;
+  }
+}
+
+.sb-section {
+  padding-block: var(--sb-space-10);
+}
+
+.sb-section--compact {
+  padding-block: var(--sb-space-6);
+}
+
+.sb-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--sb-color-divider);
+  border: 0;
+}
+
+.sb-rule--soft {
+  background: var(--sb-color-line);
+}
+
+.sb-scroll-section {
+  scroll-margin-top: var(--sb-scroll-margin-section);
+}
