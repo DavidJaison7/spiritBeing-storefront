@@ -19,8 +19,9 @@ interface HeaderProps {
   onOpenLogin: () => void;
   onNavigateOurStory: () => void;
   shopifyConfig: ShopifyConfig;
-  currentView: 'home' | 'product_detail' | 'our_story' | 'blog' | 'shop_category';
+  currentView: 'home' | 'product_detail' | 'our_story' | 'blog' | 'faq' | 'shop_category';
   onOpenBlog: () => void;
+  onOpenFaq: () => void;
   onNavigateShopCategory?: (sectionTarget?: string) => void;
   currentUser?: UserProfile | null;
   onLogout?: () => void;
@@ -38,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   shopifyConfig,
   currentView,
   onOpenBlog,
+  onOpenFaq,
   onNavigateShopCategory,
   currentUser,
   onLogout,
@@ -56,6 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const shopOpenTimer = useRef<NodeJS.Timeout | null>(null);
   const shopCloseTimer = useRef<NodeJS.Timeout | null>(null);
+  const [isNavigatingHome, setIsNavigatingHome] = useState(false);
 
   const handleMegaMenuEnter = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -69,6 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleMegaMenuLeave = () => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     if (openTimer.current) clearTimeout(openTimer.current);
     if (!isMegaMenuOpen) return;
     closeTimer.current = setTimeout(() => setIsMegaMenuOpen(false), 260);
@@ -86,6 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleShopMenuLeave = () => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     if (shopOpenTimer.current) clearTimeout(shopOpenTimer.current);
     if (!isShopMenuOpen) return;
     shopCloseTimer.current = setTimeout(() => setIsShopMenuOpen(false), 260);
@@ -93,9 +98,12 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > window.innerHeight - 50) {
+      const enterThreshold = window.innerHeight - 60;
+      const exitThreshold = window.innerHeight - 160;
+
+      if (window.scrollY > enterThreshold) {
         setIsScrolledPastHero(true);
-      } else {
+      } else if (window.scrollY < exitThreshold) {
         setIsScrolledPastHero(false);
       }
     };
@@ -122,39 +130,161 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const lenis = (window as any).lenis;
-    if (isDropdownOpen) {
+    const mobileMegaOpen = isMegaMenuOpen || isShopMenuOpen;
+    const shouldLockScroll = isDropdownOpen || (mobileMegaOpen && window.innerWidth < 768);
+
+    if (shouldLockScroll) {
       document.body.classList.add('menu-open');
       if (lenis) lenis.stop();
     } else {
       document.body.classList.remove('menu-open');
       if (lenis) lenis.start();
     }
+
     return () => {
       document.body.classList.remove('menu-open');
       if (lenis) lenis.start();
     };
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isMegaMenuOpen, isShopMenuOpen]);
+
+  useEffect(() => {
+    if (!isNavigatingHome) return;
+
+    const finishIfAtTop = () => {
+      if (window.scrollY < 96) {
+        setIsNavigatingHome(false);
+      }
+    };
+
+    finishIfAtTop();
+    window.addEventListener('scroll', finishIfAtTop, { passive: true });
+    const timeout = window.setTimeout(() => setIsNavigatingHome(false), 1800);
+
+    return () => {
+      window.removeEventListener('scroll', finishIfAtTop);
+      window.clearTimeout(timeout);
+    };
+  }, [isNavigatingHome]);
 
   const isOurStoryView = currentView === 'our_story';
   const isBlogView = currentView === 'blog';
+  const isFaqView = currentView === 'faq';
+  const isOnHeroSection =
+    currentView === 'home' &&
+    !isScrolledPastHero &&
+    !isOurStoryView &&
+    !isBlogView &&
+    !isFaqView &&
+    !isNavigatingHome;
+  const isMegaOpen = isMegaMenuOpen || isShopMenuOpen;
   
-  // Force white header if either mega menu is open
-  const showHeaderStyle = isMegaMenuOpen || isShopMenuOpen || ((currentView === 'product_detail' || currentView === 'shop_category' || isScrolledPastHero) && !isOurStoryView && !isBlogView);
-  const showLogo = showHeaderStyle || isOurStoryView || isBlogView;
+  // Force white header if either mega menu is open (except on hero — glass overlay)
+  const showHeaderStyle = isMegaOpen || isNavigatingHome || ((currentView === 'product_detail' || currentView === 'shop_category' || isScrolledPastHero) && !isOurStoryView && !isBlogView && !isFaqView);
+  const showCenterLogo =
+    isOurStoryView ||
+    isBlogView ||
+    isFaqView ||
+    (showHeaderStyle && !(isOnHeroSection && isMegaOpen));
+
+  const handleNavigateHomeClick = () => {
+    setIsMegaMenuOpen(false);
+    setIsShopMenuOpen(false);
+    setIsDropdownOpen(false);
+    setIsNavigatingHome(true);
+    onNavigateHome();
+  };
+
+  const closeMegaMenus = () => {
+    setIsMegaMenuOpen(false);
+    setIsShopMenuOpen(false);
+  };
+
+  const toggleShopMenu = () => {
+    if (shopOpenTimer.current) clearTimeout(shopOpenTimer.current);
+    if (shopCloseTimer.current) clearTimeout(shopCloseTimer.current);
+    if (openTimer.current) clearTimeout(openTimer.current);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setIsDropdownOpen(false);
+    setIsMegaMenuOpen(false);
+    setIsShopMenuOpen((open) => !open);
+  };
+
+  const toggleCollectionsMenu = () => {
+    if (openTimer.current) clearTimeout(openTimer.current);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (shopOpenTimer.current) clearTimeout(shopOpenTimer.current);
+    if (shopCloseTimer.current) clearTimeout(shopCloseTimer.current);
+    setIsDropdownOpen(false);
+    setIsShopMenuOpen(false);
+    setIsMegaMenuOpen((open) => !open);
+  };
+
+  const scrollToCollectionSlide = (slideIndex: number) => {
+    window.dispatchEvent(
+      new CustomEvent('sb-go-to-collection-slide', { detail: { slideIndex } })
+    );
+
+    const section = document.getElementById('collections-carousel-section');
+    if (!section) return;
+
+    if ((window as any).lenis) {
+      (window as any).lenis.scrollTo(section);
+    } else {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleNavigateCollection = (collectionId: string) => {
+    closeMegaMenus();
+
+    const liveShopMap: Record<string, string> = {
+      essentials: 'tshirts',
+      bible: 'tshirts',
+    };
+
+    if (liveShopMap[collectionId] && onNavigateShopCategory) {
+      onNavigateShopCategory(liveShopMap[collectionId]);
+      return;
+    }
+
+    const slideMap: Record<string, number> = {
+      essentials: 1,
+      bible: 0,
+      little: 2,
+      nomad: 3,
+      armoured: 4,
+      books: 5,
+    };
+
+    const slideIndex = slideMap[collectionId] ?? 0;
+
+    if (currentView !== 'home') {
+      onNavigateHome();
+      window.setTimeout(() => scrollToCollectionSlide(slideIndex), 150);
+      return;
+    }
+
+    scrollToCollectionSlide(slideIndex);
+  };
   
   const headerBg = isDropdownOpen
     ? 'bg-transparent border-transparent shadow-none'
-    : (isMegaMenuOpen || isShopMenuOpen)
-    ? 'bg-[#fbf9f9]' // Remove drop shadow so it blends perfectly with the mega menu
+    : isMegaOpen && isOnHeroSection
+    ? 'bg-black/20 backdrop-blur-md border-b border-white/[0.08]'
+    : isMegaOpen
+    ? 'bg-[#fbf9f9]'
     : (isOurStoryView || isBlogView)
     ? 'bg-[#080808]/90 backdrop-blur-md border-b border-white/10 shadow-md'
-    : showHeaderStyle
+    : showHeaderStyle || isFaqView
     ? 'bg-[#fbf9f9] drop-shadow-sm'
     : 'bg-transparent';
     
-  const textColor = (isMegaMenuOpen || isShopMenuOpen)
+  const textColor =
+    isMegaOpen && isOnHeroSection
+    ? 'text-white'
+    : isMegaOpen
     ? 'text-black'
-    : (isOurStoryView || isBlogView) ? 'text-white' : showHeaderStyle ? 'text-black' : 'text-white';
+    : (isOurStoryView || isBlogView) ? 'text-white' : (showHeaderStyle || isFaqView) ? 'text-black' : 'text-white';
 
   const cornerColor = isDropdownOpen
     ? 'text-transparent'
@@ -162,16 +292,47 @@ export const Header: React.FC<HeaderProps> = ({
     ? 'text-transparent' // Hide inverted corners when mega menu drops down to prevent them cutting into the panel
     : (isOurStoryView || isBlogView)
     ? 'text-[#080808]/90'
-    : showHeaderStyle
+    : showHeaderStyle || isFaqView
     ? 'text-[#fbf9f9]'
     : 'text-transparent';
 
+  const getDrawerGreeting = () => {
+    if (!currentUser?.name?.trim()) return 'Hey Spirit Being';
+    const firstName = currentUser.name.trim().split(/\s+/)[0];
+    return `Hey ${firstName}`;
+  };
+
+  const isMenuPanelOpen = isMegaOpen;
+
   return (
     <>
-    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-6 md:px-12 py-1.5 md:py-2 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${headerBg} ${textColor}`}>
-      {/* Left nav - SHOP and COLLECTIONS */}
-      <div className="flex items-center gap-6 w-1/3">
-        <div className={`flex items-center gap-2 md:gap-4 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
+    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-5 md:px-12 py-2 md:py-2 ${isOnHeroSection ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'transition-[background-color,color,box-shadow,border-color] duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)]' : ''} ${headerBg} ${textColor}`}>
+      {/* Left nav — mobile plain links + desktop mega menus */}
+      <div className="flex items-center gap-4 md:gap-6 md:w-1/3">
+        <div className={`flex md:hidden items-center gap-3 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
+          <button
+            type="button"
+            className={`sb-nav-trigger sb-nav-trigger--mobile ${isShopMenuOpen ? 'is-active' : ''}`}
+            aria-expanded={isShopMenuOpen}
+            aria-haspopup="true"
+            onClick={toggleShopMenu}
+          >
+            Shop
+            <span className="sb-chevron">▼</span>
+          </button>
+          <button
+            type="button"
+            className={`sb-nav-trigger sb-nav-trigger--mobile ${isMegaMenuOpen ? 'is-active' : ''}`}
+            aria-expanded={isMegaMenuOpen}
+            aria-haspopup="true"
+            onClick={toggleCollectionsMenu}
+          >
+            Collections
+            <span className="sb-chevron">▼</span>
+          </button>
+        </div>
+
+        <div className={`hidden md:flex items-center gap-2 md:gap-4 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
           <div
             className="sb-nav-item hidden md:block"
             onMouseEnter={handleShopMenuEnter}
@@ -215,14 +376,15 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Center Logo */}
-      <div className="w-1/3 flex justify-center text-center items-center">
+      {/* Center Logo — desktop / scrolled only */}
+      <div className="hidden md:flex w-1/3 justify-center text-center items-center">
         <button
-          onClick={onNavigateHome}
-          className={`transition-all duration-300 cursor-pointer hover:opacity-70 ${
-            showLogo
-              ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
-              : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
+          type="button"
+          onClick={handleNavigateHomeClick}
+          className={`transition-opacity duration-300 cursor-pointer hover:opacity-70 ${
+            showCenterLogo
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
           }`}
         >
           <img 
@@ -233,8 +395,8 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </div>
 
-      {/* Right nav - OUR STORY, BLOG, CART, MENU */}
-      <div className="w-1/3 flex justify-end items-center gap-4 md:gap-6 relative">
+      {/* Right nav — tablet/desktop: text links · mobile: cart icon + burger */}
+      <div className="flex justify-end items-center gap-1 md:gap-6 md:w-1/3 relative">
         <button
           onClick={onNavigateOurStory}
           className={`hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
@@ -243,19 +405,35 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         <button
           onClick={onOpenCart}
-          className={`text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
+          className={`hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
         >
           CART ({cartCount})
         </button>
-        
-        {/* Toggle Dropdown Menu (Animated Burger) */}
+
+        <button
+          type="button"
+          onClick={onOpenCart}
+          className={`sb-mobile-cart md:hidden ${isDropdownOpen ? 'is-menu-open' : ''}`}
+          aria-label={cartCount > 0 ? `Open cart, ${cartCount} items` : 'Open cart'}
+        >
+          <ShoppingBag size={18} strokeWidth={1.65} aria-hidden="true" />
+          {cartCount > 0 && (
+            <span className="sb-mobile-cart-badge" aria-hidden="true">
+              {cartCount > 9 ? '9+' : cartCount}
+            </span>
+          )}
+        </button>
+
         <button 
-          className="sb-burger" 
+          className="sb-burger md:ml-0" 
           type="button"
           aria-label={isDropdownOpen ? 'Close menu' : 'Open menu'} 
           aria-expanded={isDropdownOpen}
           aria-controls="sbDrawer"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          onClick={() => {
+            closeMegaMenus();
+            setIsDropdownOpen(!isDropdownOpen);
+          }}
         >
           <span className="bars"><i></i><i></i></span>
         </button>
@@ -263,7 +441,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Inverted Corner - Left */}
       <svg 
-        className={`absolute top-full left-0 w-6 h-6 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${cornerColor}`} 
+        className={`absolute top-full left-0 w-6 h-6 ${isMenuPanelOpen ? '' : 'transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)]'} ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >
@@ -272,7 +450,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Inverted Corner - Right */}
       <svg 
-        className={`absolute top-full right-0 w-6 h-6 transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${cornerColor}`} 
+        className={`absolute top-full right-0 w-6 h-6 ${isMenuPanelOpen ? '' : 'transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)]'} ${cornerColor}`} 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >
@@ -282,12 +460,15 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mega Menu */}
       <CollectionsMegaMenu 
         isOpen={isMegaMenuOpen} 
+        isHeroContext={isOnHeroSection}
         onClose={() => setIsMegaMenuOpen(false)}
         onMouseEnter={handleMegaMenuEnter}
         onMouseLeave={handleMegaMenuLeave}
+        onNavigateCollection={handleNavigateCollection}
       />
       <ShopMegaMenu
         isOpen={isShopMenuOpen}
+        isHeroContext={isOnHeroSection}
         onClose={() => setIsShopMenuOpen(false)}
         onMouseEnter={handleShopMenuEnter}
         onMouseLeave={handleShopMenuLeave}
@@ -313,85 +494,95 @@ export const Header: React.FC<HeaderProps> = ({
     />
     
     {/* Menu Drawer */}
-    <aside 
+    <aside
+      id="sbDrawer"
       ref={dropdownRef}
-      className={`sb-menu-drawer ${isDropdownOpen ? 'is-open' : ''}`} 
-      role="dialog" 
-      aria-modal="true" 
+      className={`sb-menu-drawer ${isDropdownOpen ? 'is-open' : ''}`}
+      role="dialog"
+      aria-modal="true"
       aria-label="Menu"
     >
-      <div className={`sb-account ${currentUser ? 'sb-account--signed-in' : ''}`}>
-        {currentUser ? (
-          <>
-            <div className="sb-account-main">
-              <div className="sb-account-avatar" aria-hidden="true">
-                {currentUser.name
-                  ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                  : 'SB'}
-              </div>
-              <div className="sb-account-meta">
-                <span className="sb-account-name">{currentUser.name}</span>
-                <span className="sb-account-email">{currentUser.email}</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="sb-account-logout"
-              onClick={() => {
-                onLogout?.();
-              }}
-            >
-              Sign out
-            </button>
-          </>
-        ) : (
-          <>
-            <p>To access account and manage orders</p>
-            <button 
-              className="sb-cta cursor-pointer" 
-              onClick={() => {
-                setIsDropdownOpen(false);
-                onOpenLogin();
-              }}
-            >
-              Login / Signup
-            </button>
-          </>
+      <div className="sb-drawer-head">
+        <p className="sb-drawer-greeting">{getDrawerGreeting()}</p>
+        {!currentUser && (
+          <p className="sb-drawer-subline">Track orders, saves, and your Spirit Being profile.</p>
         )}
       </div>
+
+      {!currentUser ? (
+        <button
+          type="button"
+          className="sb-drawer-auth-cta"
+          onClick={() => {
+            setIsDropdownOpen(false);
+            onOpenLogin();
+          }}
+        >
+          Login / Signup
+        </button>
+      ) : (
+        <div className="sb-drawer-user">
+          <div className="sb-drawer-user-main">
+            <div className="sb-drawer-avatar" aria-hidden="true">
+              {currentUser.name
+                ? currentUser.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+                : 'SB'}
+            </div>
+            <div className="sb-drawer-user-meta">
+              <span className="sb-drawer-user-name">{currentUser.name}</span>
+              <span className="sb-drawer-user-email">{currentUser.email}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="sb-drawer-signout"
+            onClick={() => onLogout?.()}
+          >
+            Sign out
+          </button>
+        </div>
+      )}
 
       <hr className="sb-rule" />
 
       <ul className="sb-links">
         {currentUser && (
-          <li className="bg-[#0B3DFF]/5 rounded-xl p-3 mb-3 border border-[#0B3DFF]/15 hover:bg-[#0B3DFF]/10 transition-colors">
-            <a 
-              href="#" 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setIsDropdownOpen(false); 
+          <li className="sb-drawer-order-pill">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDropdownOpen(false);
                 if (onOpenOrdersHub) {
                   onOpenOrdersHub('active');
                 } else {
                   onOpenOrderTracking?.();
                 }
               }}
-              className="flex items-center justify-between"
             >
-              <div>
-                <span className="text-[10px] font-mono text-[#0B3DFF] font-bold uppercase tracking-wider block">Active Order #SB-10492</span>
-                <span className="text-xs font-mono text-[#1b1c1c] font-semibold">Spirit Gives Life Tee • Out for Delivery</span>
-              </div>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0 ml-2"></span>
+              <span className="sb-drawer-order-label">Active order · #SB-10492</span>
+              <span className="sb-drawer-order-detail">Spirit Gives Life Tee · Out for delivery</span>
             </a>
           </li>
         )}
+        <li className="md:hidden">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsDropdownOpen(false);
+              onNavigateOurStory();
+            }}
+          >
+            <span className="txt">Our Story</span>
+          </a>
+        </li>
         <li>
-          <a 
-            href="#" 
-            onClick={(e) => { 
-              e.preventDefault(); 
-              setIsDropdownOpen(false); 
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsDropdownOpen(false);
               if (currentUser) {
                 if (onOpenOrdersHub) {
                   onOpenOrdersHub('history');
@@ -403,12 +594,12 @@ export const Header: React.FC<HeaderProps> = ({
               }
             }}
           >
-            <span className="txt">{currentUser ? 'My Orders & Receipts' : 'Track your order'}</span>
+            <span className="txt">{currentUser ? 'My orders & receipts' : 'Track your order'}</span>
           </a>
         </li>
         <li>
           <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
-            <span className="txt">Returns &amp; Exchanges</span>
+            <span className="txt">Returns &amp; exchanges</span>
           </a>
         </li>
         <li>
@@ -422,11 +613,13 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
         </li>
         <li>
-          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); onOpenFaq(); }}>
             <span className="txt">FAQ</span>
           </a>
         </li>
       </ul>
+
+      <hr className="sb-rule sb-rule--before-foot" />
 
       <div className="sb-foot">
         <div className="sb-touch">

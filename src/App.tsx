@@ -8,6 +8,7 @@ import {
   StatementParticlesSection, 
   OurStorySection, 
   BlogView, 
+  FaqView,
   ShopCategoryView,
   ProductGrid, 
   ProductDetailView, 
@@ -105,6 +106,7 @@ export default function App() {
   const [isLoginView, setIsLoginView] = useState(false);
   const [isOurStoryView, setIsOurStoryView] = useState(false);
   const [isBlogView, setIsBlogView] = useState(false);
+  const [isFaqView, setIsFaqView] = useState(false);
   const [isShopCategoryView, setIsShopCategoryView] = useState(false);
   const [targetCategorySection, setTargetCategorySection] = useState('tshirts');
 
@@ -112,36 +114,32 @@ export default function App() {
     setSelectedProduct(null);
     setIsOurStoryView(false);
     setIsBlogView(false);
+    setIsFaqView(false);
     setTargetCategorySection(sectionTarget);
     setIsShopCategoryView(true);
     window.scrollTo(0, 0);
   };
 
-  // Bottom strip visibility (Only in Hero and Collections Carousel till end of 6th slide)
-  const [showBottomStrip, setShowBottomStrip] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (selectedProduct || isOurStoryView || isBlogView) {
-        setShowBottomStrip(false);
-        return;
+  const handleNavigateHome = () => {
+    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isShopCategoryView;
+    if (isOnSubPage) {
+      window.scrollTo(0, 0);
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(0, { immediate: true });
       }
+      setSelectedProduct(null);
+      setSelectedProductColor(undefined);
+      setIsOurStoryView(false);
+      setIsBlogView(false);
+      setIsFaqView(false);
+      setIsShopCategoryView(false);
+    } else if ((window as any).lenis) {
+      (window as any).lenis.scrollTo(0, { duration: 1.1 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
-      const carouselElem = document.getElementById('collections-carousel-section');
-      if (carouselElem) {
-        const rect = carouselElem.getBoundingClientRect();
-        // Keep fixed bottom strip active while in Hero or anywhere in Collections Carousel till end of 6th slide
-        // Hides immediately as soon as StatementParticlesSection enters from bottom of window
-        setShowBottomStrip(rect.bottom > window.innerHeight + 20);
-      } else {
-        setShowBottomStrip(window.scrollY < window.innerHeight * 5.5);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [selectedProduct, isOurStoryView, isBlogView]);
 
   // Shopify configuration
   const [shopifyConfig, setShopifyConfig] = useState<ShopifyConfig>(() => {
@@ -205,7 +203,7 @@ export default function App() {
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [selectedProduct, isBlogView, isOurStoryView, products]);
+  }, [selectedProduct, isBlogView, isFaqView, isOurStoryView, products]);
 
   // Sync view states to URL hash for shareable links
   useEffect(() => {
@@ -215,12 +213,14 @@ export default function App() {
       window.location.hash = 'our-story';
     } else if (isBlogView) {
       window.location.hash = 'blog';
+    } else if (isFaqView) {
+      window.location.hash = 'faq';
     } else {
       if (window.location.hash) {
         window.history.pushState('', document.title, window.location.pathname + window.location.search);
       }
     }
-  }, [selectedProduct, isOurStoryView, isBlogView]);
+  }, [selectedProduct, isOurStoryView, isBlogView, isFaqView]);
 
   // Read URL hash on load/change to render correct view
   useEffect(() => {
@@ -233,6 +233,7 @@ export default function App() {
           setSelectedProduct(found);
           setIsOurStoryView(false);
           setIsBlogView(false);
+          setIsFaqView(false);
           window.scrollTo(0, 0);
           if ((window as any).lenis) {
             (window as any).lenis.scrollTo(0, { immediate: true });
@@ -242,16 +243,29 @@ export default function App() {
         setIsOurStoryView(true);
         setSelectedProduct(null);
         setIsBlogView(false);
+        setIsFaqView(false);
+        setIsShopCategoryView(false);
         window.scrollTo(0, 0);
       } else if (hash === '#blog') {
         setIsBlogView(true);
         setSelectedProduct(null);
         setIsOurStoryView(false);
+        setIsFaqView(false);
+        setIsShopCategoryView(false);
+        window.scrollTo(0, 0);
+      } else if (hash === '#faq') {
+        setIsFaqView(true);
+        setSelectedProduct(null);
+        setIsOurStoryView(false);
+        setIsBlogView(false);
+        setIsShopCategoryView(false);
         window.scrollTo(0, 0);
       } else if (!hash) {
         setSelectedProduct(null);
         setIsOurStoryView(false);
         setIsBlogView(false);
+        setIsFaqView(false);
+        setIsShopCategoryView(false);
       }
     };
 
@@ -375,32 +389,13 @@ export default function App() {
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenShopifySync={() => setIsShopifySyncOpen(true)}
-        onNavigateHome={() => {
-          const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isShopCategoryView;
-          if (isOnSubPage) {
-            // Coming from a sub-page: jump to top instantly BEFORE state change
-            window.scrollTo(0, 0);
-            if ((window as any).lenis) {
-              (window as any).lenis.scrollTo(0, { immediate: true });
-            }
-            setSelectedProduct(null);
-            setIsOurStoryView(false);
-            setIsBlogView(false);
-            setIsShopCategoryView(false);
-          } else {
-            // Already on home: smooth scroll to top
-            if ((window as any).lenis) {
-              (window as any).lenis.scrollTo(0, { duration: 1.2 });
-            } else {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }
-        }}
+        onNavigateHome={handleNavigateHome}
         onOpenLogin={() => setIsLoginView(true)}
         onNavigateOurStory={() => {
           setSelectedProduct(null);
           setIsOurStoryView(true);
           setIsBlogView(false);
+          setIsFaqView(false);
           setIsShopCategoryView(false);
           window.scrollTo(0, 0);
         }}
@@ -408,13 +403,32 @@ export default function App() {
           setSelectedProduct(null);
           setIsOurStoryView(false);
           setIsBlogView(true);
+          setIsFaqView(false);
+          setIsShopCategoryView(false);
+          window.scrollTo(0, 0);
+        }}
+        onOpenFaq={() => {
+          setSelectedProduct(null);
+          setIsOurStoryView(false);
+          setIsBlogView(false);
+          setIsFaqView(true);
           setIsShopCategoryView(false);
           window.scrollTo(0, 0);
         }}
         onNavigateShopCategory={handleNavigateShopCategory}
         shopifyConfig={shopifyConfig}
         currentView={
-          isBlogView ? 'blog' : isOurStoryView ? 'our_story' : isShopCategoryView ? 'shop_category' : selectedProduct ? 'product_detail' : 'home'
+          isFaqView
+            ? 'faq'
+            : isBlogView
+              ? 'blog'
+              : isOurStoryView
+                ? 'our_story'
+                : isShopCategoryView
+                  ? 'shop_category'
+                  : selectedProduct
+                    ? 'product_detail'
+                    : 'home'
         }
         currentUser={currentUser}
         onLogout={handleLogout}
@@ -450,6 +464,8 @@ export default function App() {
           />
         ) : isBlogView ? (
           <BlogView onClose={() => setIsBlogView(false)} />
+        ) : isFaqView ? (
+          <FaqView />
         ) : isOurStoryView ? (
           <OurStorySection />
         ) : isShopCategoryView ? (
@@ -473,11 +489,18 @@ export default function App() {
           <>
             {/* Cinematic Hero */}
             <HeroSection
-              products={products}
-              onSelectProduct={(p) => {
-                setSelectedProduct(p);
-                setSelectedProductColor(undefined);
-                window.scrollTo(0, 0);
+              onNavigateShopCategory={handleNavigateShopCategory}
+              onNavigateHome={handleNavigateHome}
+              onSelectProductByHandle={(handle) => {
+                const found = products.find((p) => p.handle === handle);
+                if (found) {
+                  setSelectedProduct(found);
+                  setSelectedProductColor(undefined);
+                  window.scrollTo(0, 0);
+                  if ((window as any).lenis) {
+                    (window as any).lenis.scrollTo(0, { immediate: true });
+                  }
+                }
               }}
             />
 
@@ -532,6 +555,7 @@ export default function App() {
           setSelectedProduct(null);
           setIsOurStoryView(false);
           setIsBlogView(false);
+    setIsFaqView(false);
           setIsCartOpen(false);
           setTimeout(() => {
             const el = document.getElementById('products-grid') || document.getElementById('product-grid');
@@ -603,23 +627,17 @@ export default function App() {
 
       {/* Editorial Footer */}
       <InstagramFeedSection />
-      <Footer onScrollToTop={handleScrollToTopCurrentPage} />
-
-      {/* Global Transparent Fixed Bottom Strip (Only in Hero & Collections Carousel) */}
-      {!selectedProduct && !isOurStoryView && !isBlogView && !isShopCategoryView && showBottomStrip && (
-        <footer className="fixed-bottom-strip">
-          <span className="left">
-            <span className="ticks">
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-            </span>
-            Faith. Identity. Purpose.
-          </span>
-          <span>Only at spiritbeinggen.com</span>
-        </footer>
-      )}
+      <Footer
+        onScrollToTop={handleScrollToTopCurrentPage}
+        onOpenFaq={() => {
+          setSelectedProduct(null);
+          setIsOurStoryView(false);
+          setIsBlogView(false);
+          setIsFaqView(true);
+          setIsShopCategoryView(false);
+          window.scrollTo(0, 0);
+        }}
+      />
     </div>
   );
 }

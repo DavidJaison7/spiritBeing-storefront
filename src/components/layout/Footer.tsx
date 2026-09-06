@@ -3,9 +3,10 @@ import { Camera, Briefcase, Globe, ArrowUpRight } from 'lucide-react';
 
 interface FooterProps {
   onScrollToTop?: () => void;
+  onOpenFaq?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onScrollToTop }) => {
+export const Footer: React.FC<FooterProps> = ({ onScrollToTop, onOpenFaq }) => {
   const handleScrollToTop = () => {
     if (onScrollToTop) {
       onScrollToTop();
@@ -69,7 +70,13 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToTop }) => {
             <a href="#" className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5">Refund/Exchange policy</a>
             <a href="#" className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5">Track your order</a>
             <a href="#" className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5">Shipping policy</a>
-            <a href="#" className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5">FAQ's</a>
+            <button
+              type="button"
+              onClick={() => onOpenFaq?.()}
+              className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5 text-left"
+            >
+              FAQ&apos;s
+            </button>
             <a href="#" className="font-medium hover:text-black transition-all duration-300 inline-block origin-left transform hover:translate-x-1.5">Terms</a>
           </div>
         </div>

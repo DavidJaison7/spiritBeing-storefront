@@ -6,6 +6,7 @@ export { Footer } from './layout/Footer';
 export { CollectionsMegaMenu } from './navigation/CollectionsMegaMenu';
 export { ShopMegaMenu } from './navigation/ShopMegaMenu';
 export { BlogView } from './navigation/BlogView';
+export { FaqView } from './navigation/FaqView';
 export { LoginView } from './navigation/LoginView';
 export { OurStorySection } from './navigation/OurStorySection';
 
