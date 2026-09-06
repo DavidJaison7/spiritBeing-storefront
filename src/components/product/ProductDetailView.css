@@ -398,16 +398,6 @@
 }
 
 @media (min-width: 1024px) {
-  .sb-pdp-specs {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.625rem;
-  }
-
-  .sb-pdp-spec-card {
-    padding: 0.875rem 1rem;
-    border-radius: 0.875rem;
-  }
-
   .sb-pdp-desktop-gallery {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
   }
@@ -417,5 +407,27 @@
     height: calc(100vh - 5rem);
     max-height: calc(100vh - 5rem);
     object-fit: cover;
+  }
+
+  .sb-pdp-desktop-ctas {
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .sb-pdp-desktop-btn {
+    min-height: 2.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.75rem;
+    border-style: solid;
+    border-width: 1.5px;
+    font-family: inherit;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sb-pdp-desktop-btn-bless {
+    gap: 0.375rem;
   }
 }

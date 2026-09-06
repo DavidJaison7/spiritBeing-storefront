@@ -185,8 +185,61 @@
 }
 
 .collections-carousel-wrapper .num-badge {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 0.7rem 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  user-select: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+.collections-carousel-wrapper .num-badge-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: #0b3dff;
+  box-shadow: 0 0 10px rgba(11, 61, 255, 0.85);
+  flex-shrink: 0;
+  animation: sb-badge-pulse 2.4s ease-in-out infinite;
+}
+
+.collections-carousel-wrapper .num-badge-brand {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #6b8cff;
+  line-height: 1;
+}
+
+.collections-carousel-wrapper .num-badge-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@keyframes sb-badge-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: scale(0.88);
+  }
 }
 
 .collections-carousel-wrapper .num-badge:hover {
@@ -481,6 +534,20 @@
   }
   .collections-carousel-wrapper .txt {
     justify-content: flex-start;
+  }
+  .collections-carousel-wrapper .num-badge {
+    gap: 0.35rem;
+    padding: 0.28rem 0.55rem 0.28rem 0.45rem;
+    margin-bottom: 0.35rem;
+  }
+  .collections-carousel-wrapper .num-badge-dot {
+    width: 0.34rem;
+    height: 0.34rem;
+  }
+  .collections-carousel-wrapper .num-badge-brand,
+  .collections-carousel-wrapper .num-badge-label {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
   }
   .collections-carousel-wrapper h2 {
     font-size: clamp(34px, 9.5vw, 50px);

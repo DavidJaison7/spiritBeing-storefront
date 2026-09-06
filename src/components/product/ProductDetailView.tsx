@@ -883,21 +883,21 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             )}
 
             {/* Desktop: side-by-side CTAs (lg+ only) */}
-            <div className="hidden lg:flex w-full gap-3 mb-4 lg:mb-6 2xl:mb-8 px-0.5 py-0.5">
+            <div className="sb-pdp-desktop-ctas hidden lg:flex w-full mb-4 lg:mb-6 2xl:mb-8">
               <button
                 disabled={!product.inStock}
                 onClick={handleAddToCart}
                 style={{
                   overflow: 'visible',
-                  flex: isProductLiked ? '1.5 1 0%' : '1 1 0%',
+                  flex: '1 1 0%',
                   transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
-                className={`border-2 rounded-[16px] py-3.5 2xl:py-4 text-xs sm:text-sm font-sans font-bold uppercase tracking-widest relative ${
+                className={`sb-pdp-desktop-btn sb-pdp-desktop-btn-primary relative ${
                   !product.inStock
                     ? 'border-black/10 bg-black/5 text-black/40 cursor-not-allowed shadow-none'
                     : added
                     ? 'border-black bg-black text-white shadow-md'
-                    : 'border-black bg-transparent text-black hover:bg-black hover:text-white shadow-md'
+                    : 'border-black bg-transparent text-black hover:bg-black hover:text-white shadow-sm'
                 } ${isBouncing && product.inStock ? 'animate-bounce-click' : ''}`}
               >
                 {/* Confetti Particles */}
@@ -917,7 +917,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   />
                 ))}
                 {/* Text Slide transition container */}
-                <div className="relative h-6 overflow-hidden w-full flex justify-center items-center pointer-events-none">
+                <div className="relative h-5 overflow-hidden w-full flex justify-center items-center pointer-events-none">
                   {!product.inStock ? (
                     <span className="flex items-center justify-center gap-2 opacity-100 translate-y-0 text-black/40">
                       SOLD OUT
@@ -934,7 +934,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         className={`absolute flex items-center justify-center gap-2 transition-all duration-300 text-emerald-400 ${added ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                           }`}
                       >
-                        <Check className="w-5 h-5 stroke-[2.5]" />
+                        <Check className="w-4 h-4 stroke-[2.5]" />
                         <span className="text-white">ADDED TO BAG</span>
                       </span>
                     </>
@@ -946,7 +946,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               {onToggleWishlist && (
                 <div
                   style={{
-                    flex: isProductLiked ? '0.5 1 0%' : '1 1 0%',
+                    flex: '1 1 0%',
+                    minWidth: 0,
                     transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                   className="relative"
@@ -966,9 +967,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         setTimeout(() => setToastMessage(null), 2000);
                       }
                     }}
-                    className={`relative w-full py-3.5 2xl:py-4 rounded-[16px] border-2 font-sans text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer group overflow-hidden ${isProductLiked
-                        ? 'border-rose-500 text-white shadow-md scale-[1.02]'
-                        : 'border-black/15 bg-white text-black hover:border-rose-500 hover:text-rose-600 hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] hover:-translate-y-0.5 active:scale-95'
+                    className={`sb-pdp-desktop-btn sb-pdp-desktop-btn-bless relative w-full flex items-center justify-center cursor-pointer group overflow-hidden ${isProductLiked
+                        ? 'border-rose-500 text-white shadow-md'
+                        : 'border-black/15 bg-white text-black hover:border-rose-500 hover:text-rose-600 hover:shadow-[0_0_16px_rgba(244,63,94,0.12)] hover:-translate-y-0.5 active:scale-95'
                       }`}
                     title={isProductLiked ? 'Blessed by you!' : 'Bless this drop'}
                   >
@@ -978,15 +979,15 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         }`}
                     />
 
-                    <Heart className={`relative z-10 w-4 h-4 shrink-0 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-125' : 'text-black group-hover:scale-110 group-hover:text-rose-500 group-active:scale-90'}`} />
+                    <Heart className={`relative z-10 w-3.5 h-3.5 shrink-0 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-110' : 'text-black group-hover:scale-105 group-hover:text-rose-500 group-active:scale-90'}`} />
                     <span
                       className={`relative z-10 whitespace-nowrap transition-all duration-500 overflow-hidden ${
-                        isProductLiked ? 'max-w-0 opacity-0 ml-0 mr-0' : 'max-w-[150px] opacity-100 ml-1.5 mr-0.5'
+                        isProductLiked ? 'max-w-0 opacity-0 ml-0 mr-0' : 'max-w-[120px] opacity-100 ml-1 mr-0.5'
                       }`}
                     >
                       BLESS THIS DROP
                     </span>
-                    <span className={`relative z-10 px-2 py-0.5 rounded-full font-mono font-bold text-[11px] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
+                    <span className={`relative z-10 px-1.5 py-0.5 rounded-full font-mono font-bold text-[10px] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
                       {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
                     </span>
                   </button>
