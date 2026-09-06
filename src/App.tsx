@@ -10,6 +10,7 @@ import {
   BlogView, 
   FaqView,
   ShopCategoryView,
+  CollectionView,
   ProductGrid, 
   ProductDetailView, 
   LoginView, 
@@ -24,6 +25,7 @@ import {
 import { UserProfile } from './components/layout/Header';
 import { DesignSystemView } from './design-system/DesignSystemView';
 import { fetchProductsFromShopify, createShopifyCheckout } from './lib/shopify';
+import { getCollectionById } from './lib/collections';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -111,6 +113,8 @@ export default function App() {
   const [isDesignSystemView, setIsDesignSystemView] = useState(false);
   const [isShopCategoryView, setIsShopCategoryView] = useState(false);
   const [targetCategorySection, setTargetCategorySection] = useState('tshirts');
+  const [isCollectionView, setIsCollectionView] = useState(false);
+  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
 
   const handleNavigateShopCategory = (sectionTarget = 'tshirts') => {
     setSelectedProduct(null);
@@ -118,13 +122,34 @@ export default function App() {
     setIsBlogView(false);
     setIsFaqView(false);
     setIsDesignSystemView(false);
+    setIsCollectionView(false);
+    setActiveCollectionId(null);
     setTargetCategorySection(sectionTarget);
     setIsShopCategoryView(true);
     window.scrollTo(0, 0);
   };
 
+  const handleNavigateCollection = (collectionId: string) => {
+    if (!getCollectionById(collectionId)) return;
+    setSelectedProduct(null);
+    setSelectedProductColor(undefined);
+    setIsOurStoryView(false);
+    setIsBlogView(false);
+    setIsFaqView(false);
+    setIsDesignSystemView(false);
+    setIsShopCategoryView(false);
+    setActiveCollectionId(collectionId);
+    setIsCollectionView(true);
+    window.scrollTo(0, 0);
+    if ((window as any).lenis) {
+      (window as any).lenis.scrollTo(0, { immediate: true });
+    }
+  };
+
+  const activeCollection = activeCollectionId ? getCollectionById(activeCollectionId) : undefined;
+
   const handleNavigateHome = () => {
-    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isDesignSystemView || isShopCategoryView;
+    const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isDesignSystemView || isShopCategoryView || isCollectionView;
     if (isOnSubPage) {
       window.scrollTo(0, 0);
       if ((window as any).lenis) {
@@ -137,6 +162,8 @@ export default function App() {
       setIsFaqView(false);
       setIsDesignSystemView(false);
       setIsShopCategoryView(false);
+      setIsCollectionView(false);
+      setActiveCollectionId(null);
     } else if ((window as any).lenis) {
       (window as any).lenis.scrollTo(0, { duration: 1.1 });
     } else {
@@ -207,7 +234,7 @@ export default function App() {
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [selectedProduct, isBlogView, isFaqView, isDesignSystemView, isOurStoryView, products]);
+  }, [selectedProduct, isBlogView, isFaqView, isDesignSystemView, isOurStoryView, isCollectionView, products]);
 
   // Sync view states to URL hash for shareable links
   useEffect(() => {
@@ -434,6 +461,7 @@ export default function App() {
           window.scrollTo(0, 0);
         }}
         onNavigateShopCategory={handleNavigateShopCategory}
+        onNavigateCollection={handleNavigateCollection}
         shopifyConfig={shopifyConfig}
         currentView={
           isFaqView
@@ -442,11 +470,13 @@ export default function App() {
               ? 'blog'
               : isOurStoryView
                 ? 'our_story'
-                : isShopCategoryView
-                  ? 'shop_category'
-                  : selectedProduct
-                    ? 'product_detail'
-                    : 'home'
+                : isCollectionView
+                  ? 'collection'
+                  : isShopCategoryView
+                    ? 'shop_category'
+                    : selectedProduct
+                      ? 'product_detail'
+                      : 'home'
         }
         currentUser={currentUser}
         onLogout={handleLogout}
@@ -507,6 +537,21 @@ export default function App() {
               window.scrollTo(0, 0);
             }}
             initialSection={targetCategorySection}
+            wishlist={wishlist}
+            onToggleWishlist={handleToggleWishlist}
+            onAddToCart={handleAddToCart}
+          />
+        ) : isCollectionView && activeCollection ? (
+          <CollectionView
+            collection={activeCollection}
+            products={products}
+            onNavigateHome={handleNavigateHome}
+            onSelectProduct={(p, color) => {
+              setSelectedProduct(p);
+              setSelectedProductColor(color);
+              setIsCollectionView(false);
+              window.scrollTo(0, 0);
+            }}
             wishlist={wishlist}
             onToggleWishlist={handleToggleWishlist}
             onAddToCart={handleAddToCart}

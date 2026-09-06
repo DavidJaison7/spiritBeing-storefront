@@ -6,4 +6,5 @@ export const MEGA_MENU_IMAGES = {
   nomadBeings: '/assets/Collections/webp/nomad-beings.webp',
   armouredBeings: '/assets/Collections/webp/armoured-beings.webp',
   bookSeries: '/assets/Collections/webp/book-series.webp',
+  holyGround: '/assets/Collections/webp/holy-ground.png',
 } as const;

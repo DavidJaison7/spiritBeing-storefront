@@ -11,6 +11,7 @@ interface SlideData {
   price: string;
   bgImg: string;
   modelImg: string;
+  fillColor: string;
 }
 
 const SLIDES: SlideData[] = [
@@ -22,6 +23,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-bg-1.jpeg",
     modelImg: "/carousel-pngs/image 1886.png",
+    fillColor: '#0B3DFF',
   },
   {
     num: "02 — 06",
@@ -31,6 +33,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-bg-2.jpeg",
     modelImg: "/carousel-pngs/image 1998.png",
+    fillColor: '#1A2FA8',
   },
   {
     num: "03 — 06",
@@ -40,6 +43,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-pngs/new-creation-bg-acidwash.png",
     modelImg: "/carousel-pngs/new-creation-model-acidwash.png",
+    fillColor: '#2E2E2E',
   },
   {
     num: "04 — 06",
@@ -49,6 +53,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-bg-4.jpeg",
     modelImg: "/carousel-pngs/image 2003-1.png",
+    fillColor: '#E8E4DC',
   },
   {
     num: "05 — 06",
@@ -58,6 +63,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-bg-5.jpeg",
     modelImg: "/carousel-pngs/image 2003.png",
+    fillColor: '#1550E8',
   },
   {
     num: "06 — 06",
@@ -67,6 +73,7 @@ const SLIDES: SlideData[] = [
     price: "₹899.00",
     bgImg: "/carousel-bg-2.jpeg",
     modelImg: "/carousel-pngs/image 2126.png",
+    fillColor: '#0B3DFF',
   },
 ];
 
@@ -92,7 +99,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   const [wishlistActive, setWishlistActive] = useState<boolean[]>([false, false, false, false, false, false]);
 
   const curRef = useRef<number>(0);
-  const transitionRef = useRef<((next: number, dir: number) => void) | null>(null);
+  const transitionRef = useRef<((next: number) => void) | null>(null);
   const goToSlideRef = useRef<((next: number) => void) | null>(null);
 
   const toggleWishlist = (idx: number) => {
@@ -122,11 +129,14 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     const texts = Array.from(el.querySelectorAll('.txt')) as HTMLDivElement[];
     const steps = Array.from(el.querySelectorAll('.step')) as HTMLDivElement[];
     const railNum = el.querySelector<HTMLElement>('#railNum');
+    const liquidFill = el.querySelector<HTMLElement>('.liquid-fill');
     const frame = el.querySelector<HTMLDivElement>('#frame');
     const bobs = Array.from(el.querySelectorAll('.bob')) as HTMLDivElement[];
 
     curRef.current = 0;
     let tl: gsap.core.Timeline | null = null;
+    let mmListener: ((e: MouseEvent) => void) | null = null;
+    let bobAnimation: gsap.core.Tween[] = [];
     // Track when each slide was entered — prevents auto-snap on the same wheel event that arrived at slide 6
     let slideArrivedAt = Date.now();
 
@@ -136,79 +146,113 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
     setRail(0);
 
-    let mmListener: ((e: MouseEvent) => void) | null = null;
-    let bobAnimation: gsap.core.Tween[] = [];
+    const swapSlide = (next: number) => {
+      panels.forEach((panel, index) => {
+        panel.classList.toggle('active', index === next);
+        panel.style.zIndex = index === next ? '2' : '1';
+      });
+      texts.forEach((text, index) => {
+        text.classList.toggle('active', index === next);
+      });
+    };
 
-    if (!reduced) {
-      const DUR = 0.62; // slightly faster slide transition for swipe feel
-      const EASE = 'power2.out';
+    const instantTransition = (next: number) => {
+      if (next === curRef.current) return;
+      curRef.current = next;
+      slideArrivedAt = Date.now();
+      swapSlide(next);
+      if (liquidFill) gsap.set(liquidFill, { scaleY: 0 });
+      setRail(next);
+    };
 
-      const transition = (next: number, dir: number) => {
+    if (reduced) {
+      transitionRef.current = instantTransition;
+    } else {
+      const FILL_DUR = 0.36;
+      const DRAIN_DUR = 0.36;
+      const EASE = 'power2.inOut';
+
+      const transition = (next: number) => {
         if (next === curRef.current) return;
-        if (tl) tl.progress(1); // Finish running transition instantly
-        slideArrivedAt = Date.now(); // record when this slide was reached
+        if (tl) tl.progress(1);
+        slideArrivedAt = Date.now();
 
-        const inP = panels[next];
         const outP = panels[curRef.current];
-        const inT = texts[next];
+        const inP = panels[next];
         const outT = texts[curRef.current];
+        const inT = texts[next];
 
-        if (!inP || !outP || !inT || !outT) return;
+        if (!inP || !outP || !inT || !outT || !liquidFill) return;
 
-        const inPh = inP.querySelector('.ph');
-        const outPh = outP.querySelector('.ph');
-        const inFl = inP.querySelector('.fl');
-        const outFl = outP.querySelector('.fl');
-
+        const fillColor = SLIDES[next].fillColor;
         curRef.current = next;
 
-        inP.style.zIndex = '3';
-        outP.style.zIndex = '2';
-        inT.classList.add('active');
-
-        gsap.set(inP, { clipPath: dir > 0 ? 'inset(100% 0 0 0)' : 'inset(0 0 100% 0)' });
-        if (inPh) gsap.set(inPh, { yPercent: dir > 0 ? -10 : 10, scale: 1.14 });
-        if (inFl) gsap.set(inFl, { yPercent: dir > 0 ? -18 : 18, scale: 1.06 });
+        inP.style.zIndex = '2';
+        outP.style.zIndex = '1';
 
         tl = gsap.timeline({
           onComplete() {
-            outP.classList.remove('active');
-            inP.classList.add('active');
-            outT.classList.remove('active');
-            gsap.set(outP, { clipPath: 'inset(100% 0 0 0)', zIndex: 1 });
-            if (outPh) gsap.set(outPh, { yPercent: 0, scale: 1 });
-            if (outFl) gsap.set(outFl, { yPercent: 0, scale: 1 });
+            swapSlide(next);
+            gsap.set(liquidFill, { scaleY: 0, clearProps: 'transform,backgroundColor' });
             gsap.set(outT.children, { clearProps: 'all' });
             tl = null;
-          }
+          },
         });
 
-        tl.to(inP, { clipPath: 'inset(0% 0 0% 0)', duration: DUR, ease: EASE }, 0);
-        if (inPh) tl.to(inPh, { yPercent: 0, scale: 1, duration: DUR, ease: EASE }, 0);
-        if (inFl) tl.to(inFl, { yPercent: 0, scale: 1, duration: DUR, ease: EASE }, 0);
-        if (outPh) tl.to(outPh, { yPercent: dir > 0 ? 8 : -8, scale: 1.06, duration: DUR, ease: EASE }, 0);
-        if (outFl) tl.to(outFl, { yPercent: dir > 0 ? 16 : -16, duration: DUR, ease: EASE }, 0);
-
         tl.to(outT.children, {
-          y: dir > 0 ? -26 : 26,
           opacity: 0,
-          duration: 0.22,
-          stagger: 0.03,
-          ease: 'power2.in'
+          duration: 0.16,
+          stagger: 0.02,
+          ease: 'power2.in',
         }, 0);
 
-        tl.fromTo(inT.children,
-          { y: dir > 0 ? 40 : -40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.45, stagger: 0.045, ease: 'power2.out' },
-          0.22
+        gsap.set(liquidFill, {
+          scaleY: 0,
+          transformOrigin: 'bottom center',
+          backgroundColor: fillColor,
+        });
+
+        tl.to(liquidFill, { scaleY: 1, duration: FILL_DUR, ease: EASE }, 0);
+
+        tl.call(() => {
+          outP.classList.remove('active');
+          inP.classList.add('active');
+          outT.classList.remove('active');
+          inT.classList.add('active');
+        }, [], FILL_DUR);
+
+        tl.fromTo(
+          inT.children,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.28, stagger: 0.04, ease: 'power2.out' },
+          FILL_DUR + 0.04,
         );
+
+        tl.set(liquidFill, { transformOrigin: 'top center' }, FILL_DUR);
+        tl.to(liquidFill, { scaleY: 0, duration: DRAIN_DUR, ease: EASE }, FILL_DUR);
 
         setRail(next);
       };
 
       transitionRef.current = transition;
 
-      // Mouse Parallax Effect on frame container and models
+      if (panels[0] && liquidFill) {
+        gsap.set(liquidFill, {
+          scaleY: 1,
+          transformOrigin: 'top center',
+          backgroundColor: SLIDES[0].fillColor,
+        });
+        gsap.to(liquidFill, { scaleY: 0, duration: 0.95, ease: EASE, delay: 0.12 });
+      }
+
+      if (texts[0]) {
+        gsap.fromTo(
+          texts[0].children,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.55, stagger: 0.06, ease: 'power2.out', delay: 0.35 },
+        );
+      }
+
       if (frame) {
         const qx = gsap.quickTo(frame, 'x', { duration: 0.8, ease: 'power3.out' });
         const flElements = Array.from(el.querySelectorAll('.fl')) as HTMLDivElement[];
@@ -223,22 +267,9 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         window.addEventListener('mousemove', mmListener);
       }
 
-      // Initial Slide 0 Animations
-      if (panels[0]) {
-        gsap.set(panels[0], { clipPath: 'inset(100% 0 0 0)' });
-        const firstPh = panels[0].querySelector('.ph');
-        const firstFl = panels[0].querySelector('.fl');
-        if (firstPh) gsap.set(firstPh, { yPercent: -10, scale: 1.14 });
-        if (firstFl) gsap.set(firstFl, { yPercent: -18, scale: 1.06 });
-
-        gsap.to(panels[0], { clipPath: 'inset(0% 0 0% 0)', duration: 1.25, ease: EASE, delay: 0.15 });
-        if (firstPh) gsap.to(firstPh, { yPercent: 0, scale: 1, duration: 1.25, ease: EASE, delay: 0.15 });
-        if (firstFl) gsap.to(firstFl, { yPercent: 0, scale: 1, duration: 1.25, ease: EASE, delay: 0.15 });
-      }
-
-      // Live slow bobbing of models
       bobs.forEach((b, i) => {
-        const tween = gsap.fromTo(b,
+        const tween = gsap.fromTo(
+          b,
           { y: -12 },
           {
             y: 12,
@@ -246,18 +277,11 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
-            delay: i * 0.45
-          }
+            delay: i * 0.45,
+          },
         );
         bobAnimation.push(tween);
       });
-
-      if (texts[0]) {
-        gsap.fromTo(texts[0].children,
-          { y: 44, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.75, stagger: 0.075, ease: 'power3.out', delay: 0.5 }
-        );
-      }
     }
 
 
@@ -328,9 +352,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       if (!targetStep) return;
 
       snapCooldown = true;
-      const dir = next > curRef.current ? 1 : -1;
       if (transitionRef.current) {
-        transitionRef.current(next, dir);
+        transitionRef.current(next);
       } else {
         curRef.current = next;
         setRail(next);
@@ -487,9 +510,9 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchend', handleTouchEnd);
       if (mmListener) window.removeEventListener('mousemove', mmListener);
+      bobAnimation.forEach((tween) => tween.kill());
       transitionRef.current = null;
       goToSlideRef.current = null;
-      bobAnimation.forEach(tween => tween.kill());
       if (tl) tl.kill();
     };
   }, []);
@@ -567,6 +590,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               </div>
             </div>
           ))}
+
+          <div className="liquid-fill" aria-hidden="true" />
         </div>
 
         {/* Content Section containing details per slide */}
@@ -640,7 +665,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               onClick={() => handleDotClick(Math.max(0, curRef.current - 1))}
               aria-label="Previous piece"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="18 15 12 9 6 15" />
               </svg>
             </button>
@@ -650,7 +675,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               onClick={handleNextClick}
               aria-label="Next piece"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </button>

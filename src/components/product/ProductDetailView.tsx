@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Product } from '../../types';
 import { ArrowLeft, ArrowRight, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import { ProductReviewsSection } from './ProductReviewsSection';
-import { ProductCard } from './ProductGrid';
 import './ProductDetailView.css';
 
 interface ProductDetailViewProps {
@@ -518,8 +517,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
   const [isBlessing, setIsBlessing] = useState<boolean>(false);
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; scale: number; delay: number; color: string }[]>([]);
-  const [isTallViewport, setIsTallViewport] = useState<boolean>(false);
-
   const isProductLiked = wishlist.includes(product.id);
   const [copied, setCopied] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -529,22 +526,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  React.useEffect(() => {
-    const checkViewportHeight = () => {
-      // True fullscreen OR window height >= 800px (meaning no searchbars/toolbars shrinking height)
-      const isFullscreen = !!document.fullscreenElement;
-      setIsTallViewport(isFullscreen || window.innerHeight >= 800);
-    };
-
-    checkViewportHeight();
-    window.addEventListener('resize', checkViewportHeight);
-    document.addEventListener('fullscreenchange', checkViewportHeight);
-    return () => {
-      window.removeEventListener('resize', checkViewportHeight);
-      document.removeEventListener('fullscreenchange', checkViewportHeight);
-    };
-  }, []);
 
   const galleryImages = [
     product.image,
@@ -682,7 +663,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     <div className="w-full pt-14 md:pt-20 pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
       {/* Top Section: Main Product Details (White Background Container) */}
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-start">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-start">
           {/* MOBILE + TABLET: Compact gallery + meta in first viewport */}
           <div className="lg:hidden sb-pdp-mobile w-full">
             <div className="sb-pdp-mobile-hero">
@@ -784,28 +765,22 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
 
           {/* Product details — mobile/tablet stack below hero · desktop far-right column */}
-          <div className={`sb-pdp-details-panel lg:col-span-4 lg:col-start-9 flex flex-col items-start text-left w-full lg:max-w-none lg:mx-0 lg:sticky lg:self-start px-0 scrollbar-none transition-all duration-300 ${isTallViewport
-              ? 'lg:top-28 lg:pt-16 lg:max-h-none'
-              : 'lg:top-14 xl:top-16 lg:pt-0 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto'
-            }`}>
-            <div className="hidden lg:block mb-3 lg:mb-4 2xl:mb-4 text-left w-full">
+          <div className="sb-pdp-details-panel lg:col-span-4 lg:col-start-9 flex flex-col items-start text-left w-full lg:max-w-none lg:mx-0 lg:sticky lg:self-start lg:top-14 xl:top-16 lg:max-h-none px-0 transition-all duration-300">
+            <div className="hidden md:block lg:block mb-3 lg:mb-4 2xl:mb-4 text-left w-full">
               <h1 className="text-4xl sm:text-5xl 2xl:text-6xl font-sans font-medium text-black tracking-tight leading-[1.1] mb-3">
                 {product.title}
               </h1>
 
 
               {/* Price Row */}
-              <div className="flex items-center gap-3">
-                <p className="text-lg sm:text-xl 2xl:text-2xl font-sans font-normal text-[#1a1a1a] tracking-wide">
+              <div className="flex items-center gap-3 mt-1">
+                <p className="sb-pdp-desktop-price">
                   ₹{product.price.toFixed(2)}
                 </p>
               </div>
             </div>
 
-            <p className="sb-pdp-desc-clamp lg:hidden w-full mb-3 text-left">
-              {product.description}
-            </p>
-            <p className="hidden lg:block text-gray-800 font-sans text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base leading-relaxed mb-3 lg:mb-3.5 2xl:mb-4 text-justify w-full">
+            <p className="sb-pdp-desc w-full mb-3 lg:mb-3.5 2xl:mb-4 text-left md:text-justify">
               {product.description}
             </p>
 
@@ -847,7 +822,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
-              <div className="hidden lg:block space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
+              <div className="hidden md:block lg:block space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
                 <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2 2xl:mb-2.5">
                   COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
                 </span>
@@ -883,13 +858,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             )}
 
             {/* Desktop: side-by-side CTAs (lg+ only) */}
-            <div className="sb-pdp-desktop-ctas hidden lg:flex w-full mb-4 lg:mb-6 2xl:mb-8">
+            <div className="sb-pdp-desktop-ctas hidden md:flex w-full mb-4 lg:mb-6 2xl:mb-8">
               <button
                 disabled={!product.inStock}
                 onClick={handleAddToCart}
                 style={{
                   overflow: 'visible',
-                  flex: '1 1 0%',
                   transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
                 className={`sb-pdp-desktop-btn sb-pdp-desktop-btn-primary relative ${
@@ -945,12 +919,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               {/* Community Like Button Wrapper */}
               {onToggleWishlist && (
                 <div
+                  className="sb-pdp-desktop-bless-wrap relative"
                   style={{
-                    flex: '1 1 0%',
-                    minWidth: 0,
                     transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
-                  className="relative"
                 >
                   {toastMessage && (
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 bg-white/95 text-black border border-black/5 px-4.5 py-2.5 rounded-full text-xs font-sans font-bold tracking-widest uppercase shadow-[0_8px_30px_rgba(0,0,0,0.06)] z-30 flex items-center gap-1.5 animate-cloud-toast pointer-events-none whitespace-nowrap">
@@ -982,7 +954,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     <Heart className={`relative z-10 w-3.5 h-3.5 shrink-0 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-110' : 'text-black group-hover:scale-105 group-hover:text-rose-500 group-active:scale-90'}`} />
                     <span
                       className={`relative z-10 whitespace-nowrap transition-all duration-500 overflow-hidden ${
-                        isProductLiked ? 'max-w-0 opacity-0 ml-0 mr-0' : 'max-w-[120px] opacity-100 ml-1 mr-0.5'
+                        isProductLiked ? 'max-w-0 opacity-0 ml-0 mr-0' : 'max-w-[10rem] opacity-100 ml-1 mr-0.5'
                       }`}
                     >
                       BLESS THIS DROP
@@ -1036,7 +1008,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
 
             {/* Spec Meta */}
-            <div className="w-full pt-2 2xl:pt-4">
+            <div className="w-full pt-2 pb-6 2xl:pt-4 2xl:pb-8">
               <div className="sb-pdp-specs">
                 {product.material && (
                   <div className="sb-pdp-spec-card">
@@ -1075,7 +1047,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       <div ref={relatedSectionRef} className="w-full h-auto lg:h-[180vh] relative bg-[#fbf9f9]">
         <div className="lg:sticky lg:top-20 w-full pt-0 pb-4 lg:overflow-hidden bg-[#fbf9f9]">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
-            <div className="border-b border-gray-200 pb-4">
+            <div className="pb-4">
               {/* Eyebrow */}
               <div className="flex items-center gap-2.5 mb-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
@@ -1093,35 +1065,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   </span>
                 </h2>
                 <span className="text-xs font-sans text-gray-500 uppercase tracking-widest hidden sm:inline-block font-semibold">
-                  SCROLL DOWN TO EXPLORE →
+                  <span className="lg:hidden">Swipe to explore →</span>
+                  <span className="hidden lg:inline">Scroll down to explore →</span>
                 </span>
               </div>
             </div>
 
-            <div className="sb-product-grid lg:hidden pt-2 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))]">
-              {relatedProducts.map((rel) => (
-                <ProductCard
-                  key={rel.id}
-                  product={rel}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist || (() => {})}
-                  onSelect={(color) => {
-                    onSelectProduct(rel, color);
-                    window.scrollTo(0, 0);
-                    if ((window as any).lenis) {
-                      (window as any).lenis.scrollTo(0, { immediate: true });
-                    }
-                  }}
-                  onAddToCart={(e, size, color) => handleRelatedPlusClick(e, rel, size, color)}
-                  isAdded={justAddedId === rel.id}
-                />
-              ))}
-            </div>
-
-            <div className="hidden lg:block w-full overflow-hidden pt-2 pb-4">
+            <div className="sb-pdp-related-scroll w-full overflow-x-auto lg:overflow-hidden pt-2 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] lg:pb-4 snap-x snap-mandatory lg:snap-none">
               <div
                 ref={relatedTrackRef}
-                className="flex gap-3.5 transition-transform duration-75 ease-out will-change-transform"
+                className="flex gap-3.5 transition-transform duration-75 ease-out lg:will-change-transform"
               >
                 {relatedProducts.map((rel) => {
                   const isAdded = justAddedId === rel.id;
@@ -1129,7 +1082,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   return (
                     <div
                       key={rel.id}
-                      className="w-[78vw] sm:w-[44vw] md:w-[calc((100%-2.625rem)/4)] lg:w-[calc((100%-2.625rem)/4)] shrink-0"
+                      className="w-[72vw] sm:w-[44vw] md:w-[calc((100%-2.625rem)/3)] lg:w-[calc((100%-2.625rem)/4)] shrink-0 snap-start"
                     >
                       <RelatedProductCard
                         product={rel}
@@ -1200,7 +1153,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       )}
 
       {/* Mobile + tablet: fixed bottom CTAs */}
-      <div className="sb-pdp-fixed-ctas lg:hidden" role="region" aria-label="Product actions">
+      <div className="sb-pdp-fixed-ctas md:hidden" role="region" aria-label="Product actions">
         <div className="sb-pdp-fixed-ctas-inner">
           <div className="sb-pdp-mobile-ctas sb-pdp-mobile-ctas--fixed">
             {onToggleWishlist && (

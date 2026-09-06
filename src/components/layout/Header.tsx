@@ -19,10 +19,11 @@ interface HeaderProps {
   onOpenLogin: () => void;
   onNavigateOurStory: () => void;
   shopifyConfig: ShopifyConfig;
-  currentView: 'home' | 'product_detail' | 'our_story' | 'blog' | 'faq' | 'shop_category';
+  currentView: 'home' | 'product_detail' | 'our_story' | 'blog' | 'faq' | 'shop_category' | 'collection';
   onOpenBlog: () => void;
   onOpenFaq: () => void;
   onNavigateShopCategory?: (sectionTarget?: string) => void;
+  onNavigateCollection?: (collectionId: string) => void;
   currentUser?: UserProfile | null;
   onLogout?: () => void;
   onOpenOrderTracking?: () => void;
@@ -41,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBlog,
   onOpenFaq,
   onNavigateShopCategory,
+  onNavigateCollection,
   currentUser,
   onLogout,
   onOpenOrderTracking,
@@ -219,52 +221,9 @@ export const Header: React.FC<HeaderProps> = ({
     setIsMegaMenuOpen((open) => !open);
   };
 
-  const scrollToCollectionSlide = (slideIndex: number) => {
-    window.dispatchEvent(
-      new CustomEvent('sb-go-to-collection-slide', { detail: { slideIndex } })
-    );
-
-    const section = document.getElementById('collections-carousel-section');
-    if (!section) return;
-
-    if ((window as any).lenis) {
-      (window as any).lenis.scrollTo(section);
-    } else {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const handleNavigateCollection = (collectionId: string) => {
     closeMegaMenus();
-
-    const liveShopMap: Record<string, string> = {
-      essentials: 'tshirts',
-      bible: 'tshirts',
-    };
-
-    if (liveShopMap[collectionId] && onNavigateShopCategory) {
-      onNavigateShopCategory(liveShopMap[collectionId]);
-      return;
-    }
-
-    const slideMap: Record<string, number> = {
-      essentials: 1,
-      bible: 0,
-      little: 2,
-      nomad: 3,
-      armoured: 4,
-      books: 5,
-    };
-
-    const slideIndex = slideMap[collectionId] ?? 0;
-
-    if (currentView !== 'home') {
-      onNavigateHome();
-      window.setTimeout(() => scrollToCollectionSlide(slideIndex), 150);
-      return;
-    }
-
-    scrollToCollectionSlide(slideIndex);
+    onNavigateCollection?.(collectionId);
   };
   
   const headerBg = isDropdownOpen

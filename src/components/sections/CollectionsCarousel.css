@@ -15,9 +15,12 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 4vw;
-  padding: 0 7vw 52px;
+  justify-content: center;
+  gap: clamp(32px, 5vw, 72px);
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 32px clamp(24px, 5vw, 56px) calc(52px + 24px);
   box-sizing: border-box;
   overflow: hidden;
   --charcoal: #151515;
@@ -35,14 +38,16 @@
   pointer-events: none;
 }
 
-/* Image frame */
+/* Image frame — portrait on desktop */
 .collections-carousel-wrapper .frame {
   position: relative;
   border-radius: 30px;
   overflow: hidden;
   flex: 0 0 auto;
-  width: min(44%, 72vh);
-  aspect-ratio: 1/1;
+  width: min(40vw, 460px);
+  aspect-ratio: 4 / 5;
+  max-height: min(82vh, 720px);
+  height: auto;
   background: var(--charcoal);
   transform: translateZ(0);
 }
@@ -50,24 +55,50 @@
 .collections-carousel-wrapper .panel {
   position: absolute;
   inset: 0;
-  clip-path: inset(100% 0 0 0);
-  will-change: clip-path;
+  opacity: 0;
+  z-index: 1;
 }
 
 .collections-carousel-wrapper .panel.active {
-  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  z-index: 2;
+}
+
+.collections-carousel-wrapper .liquid-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+.collections-carousel-wrapper .liquid-fill::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: -10%;
+  width: 120%;
+  height: 28px;
+  background: inherit;
+  border-radius: 50%;
 }
 
 .collections-carousel-wrapper .panel .ph {
   position: absolute;
-  inset: -6% 0;
-  will-change: transform;
+  inset: 0;
 }
 
 .collections-carousel-wrapper .panel .ph img {
   width: 100%;
   height: 100%;
+  min-height: 100%;
   object-fit: cover;
+  object-position: center center;
   display: block;
 }
 
@@ -134,7 +165,7 @@
 
 .collections-carousel-wrapper .frame .findex {
   position: absolute;
-  bottom: 20px;
+  bottom: 24px;
   right: 24px;
   z-index: 20;
   pointer-events: none;
@@ -160,9 +191,10 @@
 /* Content column */
 .collections-carousel-wrapper .content {
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
+  width: min(100%, 34rem);
   max-width: 34rem;
-  height: 64vh;
+  height: min(64vh, 620px);
 }
 
 .collections-carousel-wrapper .txt {
@@ -386,9 +418,9 @@
 }
 
 .collections-carousel-wrapper .rail-count {
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.32);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   user-select: none;
@@ -396,35 +428,35 @@
 }
 
 .collections-carousel-wrapper .rail-count b {
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.98);
   font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.04em;
+  font-size: clamp(22px, 2.8vw, 32px);
+  letter-spacing: 0.06em;
 }
 
 .collections-carousel-wrapper .rail-count-total {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.1em;
+  font-size: clamp(13px, 1.6vw, 18px);
+  font-weight: 500;
+  letter-spacing: 0.12em;
 }
 
 .collections-carousel-wrapper .rail-arrows {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-left: auto;
 }
 
 .collections-carousel-wrapper .rail-arrow-btn {
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.78);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -446,8 +478,8 @@
 }
 
 .collections-carousel-wrapper .rail-arrow-btn svg {
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
 }
 
 .collections-carousel-wrapper .rail-arrow-btn:hover {
@@ -517,13 +549,17 @@
     align-items: stretch;
     justify-content: flex-start;
     gap: 0;
+    max-width: none;
+    margin: 0;
     padding: 8vh 5vw calc(48px + env(safe-area-inset-bottom, 0px));
   }
   .collections-carousel-wrapper .frame {
     width: 100%;
     max-width: none;
-    aspect-ratio: auto;
-    height: 42vh;
+    aspect-ratio: 4 / 5;
+    max-height: none;
+    height: auto;
+    min-height: 46vh;
     border-radius: 22px;
   }
   .collections-carousel-wrapper .content {
@@ -575,11 +611,27 @@
     padding: 0 4vw;
   }
   .collections-carousel-wrapper .rail-count b {
-    font-size: 16px;
+    font-size: clamp(24px, 6vw, 30px);
   }
+
+  .collections-carousel-wrapper .rail-count-total {
+    font-size: clamp(14px, 3.5vw, 17px);
+  }
+
   .collections-carousel-wrapper .rail-arrows {
-    gap: 8px;
+    gap: 10px;
   }
+
+  .collections-carousel-wrapper .rail-arrow-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .collections-carousel-wrapper .rail-arrow-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .collections-carousel-wrapper h2 .title-part {
     display: inline;
   }

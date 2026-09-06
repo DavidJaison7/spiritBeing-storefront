@@ -1,3 +1,24 @@
+export type CollectionStatus = 'live' | 'coming-soon';
+
+export interface Collection {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  status: CollectionStatus;
+  /** Full-bleed banner on collection page */
+  heroImage: string;
+  /** Mega menu tile image */
+  megaMenuImage: string;
+  /** CSS grid tile class in CollectionsMegaMenu.css */
+  megaMenuTileClass: string;
+  sortOrder: number;
+  /** Shopify Admin product tag, e.g. sb-collection:essentials */
+  shopifyTag: string;
+  isBlueTile?: boolean;
+  chips?: string[];
+}
+
 export interface Product {
   id: string;
   shopifyId: string;
@@ -7,6 +28,8 @@ export interface Product {
   price: number;
   compareAtPrice?: number;
   category: 'Apparel' | 'Accessories' | 'Home' | 'Goods';
+  /** Editorial collection (one per product). Set via Shopify tag sb-collection:{id} */
+  collectionId?: string;
   image: string;
   additionalImages?: string[];
   colorImageMap?: Record<string, string[]>;

@@ -60,16 +60,25 @@
 .sb-bento{
   display:grid;
   grid-template-columns:repeat(12,minmax(0,1fr));
-  grid-auto-rows:clamp(108px,9.8vw,148px);
+  grid-auto-rows:clamp(132px,12vw,178px);
   gap:8px;
 }
-/* two tall portraits on the left, four short tiles filling the right */
-.t-essentials { grid-column:span 3; grid-row:span 2 }
-.t-bible      { grid-column:span 3; grid-row:span 2 }
-.t-little     { grid-column:span 3; grid-row:span 1 }
-.t-nomad      { grid-column:span 3; grid-row:span 1 }
-.t-armoured   { grid-column:span 3; grid-row:span 1 }
-.t-books      { grid-column:span 3; grid-row:span 1 }
+/* Essentials tall on the left; Bible + Church Wear stacked as short tiles in column 2 */
+.t-essentials { grid-column: 1 / span 3; grid-row: 1 / span 2 }
+.t-bible      { grid-column: 4 / span 3; grid-row: 1 / span 1 }
+.t-church     { grid-column: 4 / span 3; grid-row: 2 / span 1 }
+.t-little     { grid-column: 7 / span 3; grid-row: 1 / span 1 }
+.t-nomad      { grid-column: 7 / span 3; grid-row: 2 / span 1 }
+.t-armoured   { grid-column: 10 / span 3; grid-row: 1 / span 1 }
+.t-books      { grid-column: 10 / span 3; grid-row: 2 / span 1 }
+
+.t-church .sb-photo img {
+  object-position:center 32%;
+}
+
+.t-bible .sb-photo img {
+  object-position:center 40%;
+}
 
 .sb-tile{
   position:relative;display:flex;flex-direction:column;justify-content:flex-end;
@@ -108,7 +117,7 @@
   background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0) 55%);
 }
 /* short image tiles need the ink slightly higher to stay legible, but still pushed down */
-.t-little .sb-photo::after, .t-nomad .sb-photo::after, .t-armoured .sb-photo::after {
+.t-little .sb-photo::after, .t-nomad .sb-photo::after, .t-armoured .sb-photo::after, .t-bible .sb-photo::after, .t-church .sb-photo::after {
   background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 65%);
 }
 .sb-tile.has-photo{background:var(--ink)}
@@ -247,46 +256,76 @@
 }
 
 /* ---------------- responsive ---------------- */
-@media (min-width: 768px) and (max-width: 1180px) {
+/* Tablet: same 12-col bento as desktop, taller rows so short tiles breathe */
+@media (min-width: 641px) and (max-width: 1180px) {
   .sb-bento {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-auto-rows: clamp(100px, 12vw, 132px);
-    gap: 7px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: clamp(78px, 8.6vw, 110px);
+    gap: 9px;
   }
 
-  .t-essentials,
+  .t-essentials {
+    grid-column: 1 / span 3;
+    grid-row: 1 / span 4;
+  }
+
   .t-bible {
-    grid-column: span 2;
-    grid-row: span 2;
+    grid-column: 4 / span 3;
+    grid-row: 1 / span 2;
   }
 
-  .t-little,
-  .t-nomad,
-  .t-armoured,
+  .t-church {
+    grid-column: 4 / span 3;
+    grid-row: 3 / span 2;
+  }
+
+  .t-little {
+    grid-column: 7 / span 3;
+    grid-row: 1 / span 2;
+  }
+
+  .t-nomad {
+    grid-column: 7 / span 3;
+    grid-row: 3 / span 2;
+  }
+
+  .t-armoured {
+    grid-column: 10 / span 3;
+    grid-row: 1 / span 2;
+  }
+
   .t-books {
-    grid-column: span 2;
-    grid-row: span 1;
-  }
-}
-
-@media (max-width: 1180px) and (min-width: 861px) {
-  .sb-bento {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-auto-rows: clamp(104px, 11vw, 140px);
+    grid-column: 10 / span 3;
+    grid-row: 3 / span 2;
   }
 
-  .t-essentials,
-  .t-bible {
-    grid-column: span 2;
-    grid-row: span 2;
+  .sb-tile {
+    padding: 14px 14px;
   }
 
-  .t-little,
-  .t-nomad,
-  .t-armoured,
-  .t-books {
-    grid-column: span 2;
-    grid-row: span 1;
+  .sb-tile h3 {
+    font-size: clamp(12px, 1.05vw, 16px);
+  }
+
+  .sb-tile p {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .sb-tile.has-photo .sb-pill {
+    top: 11px;
+    left: 11px;
+    padding: 5px 9px;
+    font-size: 8px;
+  }
+
+  .t-books .sb-chips {
+    margin-top: 10px;
+    gap: 6px;
+  }
+
+  .t-books.has-photo {
+    padding-bottom: 16px;
   }
 }
 
@@ -298,26 +337,6 @@
   .sb-nav-l,
   .sb-nav-r {
     gap: 16px;
-  }
-
-  .sb-bento {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-auto-rows: clamp(96px, 15vw, 124px);
-    gap: 7px;
-  }
-
-  .t-essentials,
-  .t-bible {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-
-  .t-little,
-  .t-nomad,
-  .t-armoured,
-  .t-books {
-    grid-column: span 2;
-    grid-row: span 1;
   }
 }
 
@@ -352,22 +371,43 @@
 
   .sb-bento {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: clamp(92px, 24vw, 118px);
+    grid-auto-rows: clamp(108px, 28vw, 138px);
     gap: 6px;
   }
 
-  .t-essentials,
-  .t-bible {
-    grid-column: span 1;
-    grid-row: span 2;
+  .t-essentials {
+    grid-column: 1;
+    grid-row: 1 / span 2;
   }
 
-  .t-little,
-  .t-nomad,
-  .t-armoured,
+  .t-bible {
+    grid-column: 2;
+    grid-row: 1 / span 1;
+  }
+
+  .t-church {
+    grid-column: 2;
+    grid-row: 2 / span 1;
+  }
+
+  .t-little {
+    grid-column: 1;
+    grid-row: 3 / span 1;
+  }
+
+  .t-nomad {
+    grid-column: 1;
+    grid-row: 4 / span 1;
+  }
+
+  .t-armoured {
+    grid-column: 2;
+    grid-row: 4 / span 1;
+  }
+
   .t-books {
-    grid-column: span 1;
-    grid-row: span 1;
+    grid-column: 1;
+    grid-row: 5 / span 1;
   }
 
   .sb-tile h3 {

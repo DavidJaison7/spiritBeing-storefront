@@ -19,6 +19,7 @@ export { InstagramFeedSection } from './sections/InstagramFeedSection';
 // Product Components
 export { ProductDetailView } from './product/ProductDetailView';
 export { ShopCategoryView } from './product/ShopCategoryView';
+export { CollectionView } from './product/CollectionView';
 export { ProductGrid, ProductCard } from './product/ProductGrid';
 export { ProductReviewsSection } from './product/ProductReviewsSection';
 

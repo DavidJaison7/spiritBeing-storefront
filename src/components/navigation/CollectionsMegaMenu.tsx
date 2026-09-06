@@ -1,6 +1,6 @@
 import React from 'react';
 import './CollectionsMegaMenu.css';
-import { MEGA_MENU_IMAGES } from './megaMenuImages';
+import { COLLECTIONS } from '../../data/collections';
 
 interface CollectionsMegaMenuProps {
   isOpen: boolean;
@@ -11,11 +11,11 @@ interface CollectionsMegaMenuProps {
   onNavigateCollection?: (collectionId: string) => void;
 }
 
-export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({ 
+export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
   isOpen,
   isHeroContext = false,
-  onClose, 
-  onMouseEnter, 
+  onClose,
+  onMouseEnter,
   onMouseLeave,
   onNavigateCollection,
 }) => {
@@ -25,116 +25,62 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
     onNavigateCollection?.(collectionId);
   };
 
+  const sorted = [...COLLECTIONS].sort((a, b) => a.sortOrder - b.sortOrder);
+
   return (
     <>
-      <div 
-        className={`sb-scrim ${isHeroContext ? 'sb-scrim--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
-        hidden={!isOpen} 
-        onMouseEnter={onClose} 
+      <div
+        className={`sb-scrim ${isHeroContext ? 'sb-scrim--hero' : ''} ${isOpen ? 'is-open' : ''}`}
+        hidden={!isOpen}
+        onMouseEnter={onClose}
         onClick={onClose}
-      ></div>
-      
-      <div 
-        className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
-        role="region" 
+      />
+
+      <div
+        className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`}
+        role="region"
         aria-label="Collections"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
         <div className="sb-mega-inner" data-lenis-prevent>
           <div className="sb-mega-top">
-            <p>Five distinct worlds · one shared design language</p>
+            <p>
+              {sorted.length} distinct worlds · one shared design language
+            </p>
           </div>
 
           <div className="sb-bento">
-            <a 
-              className="sb-tile has-photo t-essentials" 
-              href="#" 
-              onClick={handleCollectionClick('essentials')}
-              style={{"--d": "0s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.essentials} alt="Spiritbeing Essentials" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-live">LIVE</span>
-              <h3>Spiritbeing Essentials</h3>
-              <p>Core pieces for every day.<br/>Logo-centric, high comfort.</p>
-            </a>
-
-            <a 
-              className="sb-tile has-photo t-bible" 
-              href="#" 
-              onClick={handleCollectionClick('bible')}
-              style={{"--d": ".09s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.bibleBasics} alt="Bible Basics" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-live">LIVE</span>
-              <h3>Bible Basics</h3>
-              <p>Scripture as typography<br/>on plain garments.</p>
-            </a>
-
-            <a 
-              className="sb-tile has-photo t-little" 
-              href="#" 
-              onClick={handleCollectionClick('little')}
-              style={{"--d": ".14s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.littleBeings} alt="Little Beings" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-coming">COMING SOON</span>
-              <h3>Little Beings</h3>
-              <p>Kids. Nurturing little spirit beings.</p>
-            </a>
-
-            <a 
-              className="sb-tile has-photo t-nomad" 
-              href="#" 
-              onClick={handleCollectionClick('nomad')}
-              style={{"--d": ".19s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.nomadBeings} alt="Nomad Beings" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-coming">COMING SOON</span>
-              <h3>Nomad Beings</h3>
-              <p>Travel. &ldquo;spiritual nomad&rdquo;.</p>
-            </a>
-
-            <a 
-              className="sb-tile has-photo t-armoured" 
-              href="#" 
-              onClick={handleCollectionClick('armoured')}
-              style={{"--d": ".24s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.armouredBeings} alt="Armoured Beings" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-coming">COMING SOON</span>
-              <h3>Armoured Beings</h3>
-              <p>Gym &amp; performance.<br/>Armour of God.</p>
-            </a>
-
-            <a 
-              className="sb-tile has-photo is-blue t-books" 
-              href="#" 
-              onClick={handleCollectionClick('books')}
-              style={{"--d": ".29s"} as React.CSSProperties}
-            >
-              <div className="sb-photo">
-                <img src={MEGA_MENU_IMAGES.bookSeries} alt="The Book Series" loading="lazy" decoding="async" />
-              </div>
-              <span className="sb-pill is-coming">COMING SOON</span>
-              <h3>The Book Series</h3>
-              <p>A design style featured across all five collections.</p>
-              <div className="sb-chips" style={{ marginTop: '14px' }}>
-                <span>Psalms</span>
-                <span>Proverbs</span>
-                <span>Isaiah</span>
-              </div>
-            </a>
+            {sorted.map((collection, index) => (
+              <a
+                key={collection.id}
+                className={`sb-tile has-photo ${collection.megaMenuTileClass}${collection.isBlueTile ? ' is-blue' : ''}`}
+                href="#"
+                onClick={handleCollectionClick(collection.id)}
+                style={{ '--d': `${(index * 0.05).toFixed(2)}s` } as React.CSSProperties}
+              >
+                <div className="sb-photo">
+                  <img
+                    src={collection.megaMenuImage}
+                    alt={collection.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <span className={`sb-pill ${collection.status === 'live' ? 'is-live' : 'is-coming'}`}>
+                  {collection.status === 'live' ? 'LIVE' : 'COMING SOON'}
+                </span>
+                <h3>{collection.title}</h3>
+                <p>{collection.tagline}</p>
+                {collection.chips && collection.chips.length > 0 && (
+                  <div className="sb-chips" style={{ marginTop: '14px' }}>
+                    {collection.chips.map((chip) => (
+                      <span key={chip}>{chip}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            ))}
           </div>
 
           <div className="sb-mega-foot">

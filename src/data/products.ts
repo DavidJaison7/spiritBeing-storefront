@@ -41,7 +41,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: true,
     isFeatured: true,
-    likesCount: 348
+    likesCount: 348,
+    collectionId: 'bible',
   },
   {
     id: 'prod_2',
@@ -64,7 +65,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: true,
     isFeatured: true,
-    likesCount: 284
+    likesCount: 284,
+    collectionId: 'essentials',
   },
   {
     id: 'prod_3',
@@ -88,7 +90,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: true,
     isFeatured: true,
-    likesCount: 412
+    likesCount: 412,
+    collectionId: 'essentials',
   },
   {
     id: 'prod_4',
@@ -111,7 +114,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: false,
     isFeatured: true,
-    likesCount: 196
+    likesCount: 196,
+    collectionId: 'bible',
   },
   {
     id: 'prod_5',
@@ -134,7 +138,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: true,
     isFeatured: true,
-    likesCount: 310
+    likesCount: 310,
+    collectionId: 'bible',
   },
   {
     id: 'prod_6',
@@ -157,7 +162,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     origin: 'MADE IN INDIA',
     inStock: true,
     isFeatured: true,
-    likesCount: 524
+    likesCount: 524,
+    collectionId: 'essentials',
   },
   {
     id: 'prod_7',

@@ -1,4 +1,5 @@
 import { Product, CartItem } from '../types';
+import { parseCollectionIdFromShopifyTags } from './collections';
 
 interface ShopifyGraphQLResponse<T> {
   data: T;
@@ -131,6 +132,7 @@ export async function fetchProductsFromShopify(
 
       const colors = Array.from(colorsSet);
       const isAvailable = variants.some((v: any) => v.availableForSale);
+      const collectionId = parseCollectionIdFromShopifyTags(node.tags || []);
 
       return {
         id: node.id,
@@ -139,6 +141,7 @@ export async function fetchProductsFromShopify(
         title: node.title,
         price: price,
         category: node.productType || 'Apparel',
+        collectionId,
         image: mainImage,
         additionalImages: images.slice(1),
         colorImageMap: Object.keys(colorImageMap).length > 0 ? colorImageMap : undefined,

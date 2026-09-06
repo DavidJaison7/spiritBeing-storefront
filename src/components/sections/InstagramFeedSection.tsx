@@ -16,19 +16,19 @@ const INSTAGRAM_POSTS: InstagramPost[] = [
   {
     id: 'ig_1',
     image: INSTAGRAM_FEED_IMAGES[0],
-    caption: 'Studio drop day — behind the scenes from Chennai.',
+    caption: 'Studio drop day — Spirit Being in motion.',
     link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_2',
     image: INSTAGRAM_FEED_IMAGES[1],
-    caption: 'Archive fit check — oversized boxy blocks on rotation.',
+    caption: 'Holy Spirit tee — archive fit on rotation.',
     link: INSTAGRAM_HANDLE,
   },
   {
     id: 'ig_3',
     image: INSTAGRAM_FEED_IMAGES[2],
-    caption: 'Electric blue details from the latest Spirit Being run.',
+    caption: 'New Creation acid wash — from the latest run.',
     link: INSTAGRAM_HANDLE,
   },
   {
