@@ -78,28 +78,6 @@
   padding: clamp(88px, 12vh, 120px) clamp(20px, 3vw, 48px) clamp(28px, 5vh, 48px);
 }
 
-.sb-collection-view__pill {
-  display: inline-block;
-  font-family: var(--sb-font-body, 'Archivo', sans-serif);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 6px;
-  margin-bottom: 14px;
-}
-
-.sb-collection-view__pill.is-live {
-  background: var(--sb-color-accent, #0b3dff);
-  color: #fff;
-}
-
-.sb-collection-view__pill.is-coming {
-  background: #000;
-  color: #fff;
-}
-
 .sb-collection-view__title {
   margin: 0;
   font-family: var(--sb-font-display, 'Anton', sans-serif);

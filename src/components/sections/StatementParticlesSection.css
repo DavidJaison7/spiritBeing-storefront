@@ -57,7 +57,7 @@
   font-family: 'Anton', Impact, sans-serif;
   font-weight: 400;
   text-transform: uppercase;
-  font-size: clamp(30px, 5.4vw, 74px);
+  font-size: clamp(34px, 6vw, 82px);
   line-height: 1;
   letter-spacing: .005em;
   white-space: nowrap;
@@ -67,10 +67,14 @@
   display: block;
 }
 
+.sb-copy h2 .row:not(.script) {
+  white-space: nowrap;
+}
+
 .sb-copy h2 .row.script {
   font-family: var(--font-script);
   text-transform: none;
-  font-size: 1.22em;
+  font-size: 1.28em;
   line-height: .9;
   letter-spacing: 0;
   margin-top: -.06em;
@@ -112,6 +116,10 @@
   transform: none;
 }
 
+.sb-context-line {
+  display: block;
+}
+
 .sb-refs {
   margin: 10px 0 0;
   font-size: 11px;
@@ -132,10 +140,6 @@
   font-style: normal;
   color: var(--steel);
   padding: 0 .55em;
-}
-
-.sb-context .mb {
-  display: none;
 }
 
 /* ---- community + CTA ---- */
@@ -303,13 +307,12 @@
   }
 
   .sb-copy h2 {
-    white-space: normal;
-    font-size: clamp(26px, 5.8vw, 52px);
+    font-size: clamp(28px, 6.4vw, 56px);
     line-height: 1.02;
   }
 
   .sb-copy h2 .row.script {
-    font-size: 1.18em;
+    font-size: 1.24em;
     margin-top: 0.02em;
   }
 
@@ -325,11 +328,11 @@
 
 @media (max-width: 900px) {
   .sb-copy h2 {
-    font-size: clamp(24px, 6.2vw, 42px);
+    font-size: clamp(26px, 6.8vw, 46px);
   }
 
   .sb-copy h2 .row.script {
-    font-size: 1.22em;
+    font-size: 1.26em;
   }
 }
 
@@ -356,12 +359,13 @@
   }
 
   .sb-copy h2 {
-    font-size: clamp(22px, 7.2vw, 34px);
+    font-size: clamp(19px, 5.6vw, 34px);
     line-height: 1.04;
+    letter-spacing: -0.008em;
   }
 
   .sb-copy h2 .row.script {
-    font-size: 1.15em;
+    font-size: 1.26em;
     line-height: 0.95;
   }
 
@@ -371,10 +375,6 @@
     font-size: 11px;
     letter-spacing: .08em;
     line-height: 1.75;
-  }
-
-  .sb-context .mb {
-    display: inline;
   }
 
   .sb-refs {
@@ -434,7 +434,7 @@
   }
 
   .sb-copy h2 {
-    font-size: clamp(20px, 6.5vw, 30px);
+    font-size: clamp(18px, 5.2vw, 30px);
   }
 }
 

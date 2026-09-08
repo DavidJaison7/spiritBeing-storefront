@@ -9,27 +9,27 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Heavyweight Oversized Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/ Spirit Gives Life Tee.png',
+    image: '/products/bestsellers/ Spirit Gives Life Tee.webp',
     additionalImages: [
-      '/products/the-spirit-gives-life/blue/1.png',
-      '/products/the-spirit-gives-life/blue/2.png',
-      '/products/the-spirit-gives-life/blue/3.png',
-      '/products/the-spirit-gives-life/blue/4.png'
+      '/products/the-spirit-gives-life/blue/1.webp',
+      '/products/the-spirit-gives-life/blue/2.webp',
+      '/products/the-spirit-gives-life/blue/3.webp',
+      '/products/the-spirit-gives-life/blue/4.webp'
     ],
     colorImageMap: {
       'Blue': [
-        '/products/the-spirit-gives-life/blue/main-fixedslide.png',
-        '/products/the-spirit-gives-life/blue/1.png',
-        '/products/the-spirit-gives-life/blue/2.png',
-        '/products/the-spirit-gives-life/blue/3.png',
-        '/products/the-spirit-gives-life/blue/4.png'
+        '/products/the-spirit-gives-life/blue/main-fixedslide.webp',
+        '/products/the-spirit-gives-life/blue/1.webp',
+        '/products/the-spirit-gives-life/blue/2.webp',
+        '/products/the-spirit-gives-life/blue/3.webp',
+        '/products/the-spirit-gives-life/blue/4.webp'
       ],
       'Black': [
-        '/products/the-spirit-gives-life/black/main.png',
-        '/products/the-spirit-gives-life/black/1.png',
-        '/products/the-spirit-gives-life/black/2.png',
-        '/products/the-spirit-gives-life/black/3.png',
-        '/products/the-spirit-gives-life/black/4.png'
+        '/products/the-spirit-gives-life/black/main.webp',
+        '/products/the-spirit-gives-life/black/1.webp',
+        '/products/the-spirit-gives-life/black/2.webp',
+        '/products/the-spirit-gives-life/black/3.webp',
+        '/products/the-spirit-gives-life/black/4.webp'
       ]
     },
     description: 'Heavyweight combed cotton drop-shoulder boxy tee with high-density Christian streetwear back typography: "The Spirit Gives Life. The written law cannot give life, but the Spirit brings life." (2 Corinthians 3:6). Pre-shrunk premium oversized cut designed for daily presence.',
@@ -52,9 +52,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Drop Shoulder Bubble Print Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/SpiritBeing Graffiti Tee.png',
+    image: '/products/bestsellers/SpiritBeing Graffiti Tee.webp',
     additionalImages: [
-      '/products/bestsellers/SpiritBeing Graffiti Tee.png'
+      '/products/bestsellers/SpiritBeing Graffiti Tee.webp'
     ],
     description: 'Relaxed drop-shoulder silhouette featuring a heavy puff bubble text graphic: "Spirit Being". Premium organic cotton streetwear fit representing our true identity as new creations.',
     tagline: 'SPIRIT BEING',
@@ -76,10 +76,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Acid Wash Heavyweight Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/New Creation.png',
+    image: '/products/bestsellers/New Creation.webp',
     additionalImages: [
-      '/products/new-creation-2.png',
-      '/products/new-creation-3.jpeg'
+      '/products/new-creation-2.webp',
+      '/products/new-creation-3.webp'
     ],
     description: 'Vintaged acid wash drop-shoulder streetwear tee featuring a detailed frame graphic on the back: "New Creation. The old has passed away; behold, the new has come." (2 Corinthians 5:17). Engineered with an ultra-soft acid wash finish and reinforced ribbed collar.',
     tagline: 'NEW CREATION',
@@ -101,9 +101,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Oversized Streetwear Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/Fear Not Gold Lion Tee.png',
+    image: '/products/bestsellers/Fear Not Gold Lion Tee.webp',
     additionalImages: [
-      '/products/bestsellers/Fear Not Gold Lion Tee.png'
+      '/products/bestsellers/Fear Not Gold Lion Tee.webp'
     ],
     description: 'Deep black heavyweight tee featuring a high-density gold print of a lion and lamb: "Fear Not, for I am with you; be not dismayed, for I am your God; I will strengthen you." (Isaiah 41:10). Premium boxy drop-shoulder cut.',
     tagline: 'FEAR NOT',
@@ -125,9 +125,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Signature Drop Shoulder Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/HolySpirit dOVE Tee.png',
+    image: '/products/bestsellers/HolySpirit dOVE Tee.webp',
     additionalImages: [
-      '/products/bestsellers/HolySpirit dOVE Tee.png'
+      '/products/bestsellers/HolySpirit dOVE Tee.webp'
     ],
     description: 'Electric blue drop-shoulder tee with a majestic dove print: "Holy Spirit. The same Spirit who raised Christ from the dead lives in you." (Romans 8:11). Soft premium ringspun cotton.',
     tagline: 'HOLY SPIRIT',
@@ -149,9 +149,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Boxy Fit Heavyweight Tee',
     price: 899,
     category: 'Apparel',
-    image: '/products/bestsellers/Christ Generations 01.png',
+    image: '/products/bestsellers/Christ Generations 01.webp',
     additionalImages: [
-      '/products/bestsellers/Christ Generations 02.png'
+      '/products/bestsellers/Christ Generations 02.webp'
     ],
     description: 'Signature matte black drop-shoulder streetwear tee featuring blue back wing graphics: "Spirit Being + Christ Generations. For as many as are led by the Spirit of God, these are sons of God." (Romans 8:14). designed for presence and purpose.',
     tagline: 'CHRIST GENERATIONS',
@@ -173,9 +173,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Premium Headwear',
     price: 499,
     category: 'Caps',
-    image: '/products/bestsellers/SpiritBeing cap.png',
+    image: '/products/bestsellers/SpiritBeing cap.webp',
     additionalImages: [
-      '/products/bestsellers/SpiritBeing cap.png'
+      '/products/bestsellers/SpiritBeing cap.webp'
     ],
     description: 'High-quality cotton twill cap featuring Spirit Being branding. Designed for everyday comfort and style.',
     tagline: 'SPIRIT BEING',
@@ -196,9 +196,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Premium Headwear',
     price: 499,
     category: 'Caps',
-    image: '/products/bestsellers/SpiritLED cap.png',
+    image: '/products/bestsellers/SpiritLED cap.webp',
     additionalImages: [
-      '/products/bestsellers/SpiritLED cap.png'
+      '/products/bestsellers/SpiritLED cap.webp'
     ],
     description: 'Classic dad hat silhouette with embroidered "Spirit Led" design. Perfect for completing any streetwear look.',
     tagline: 'SPIRIT LED',
@@ -219,9 +219,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Heavyweight Canvas Carry',
     price: 399,
     category: 'Tote Bags',
-    image: '/assets/Collections/Rectangle 255730.png',
+    image: '/assets/Collections/Rectangle 255730.webp',
     additionalImages: [
-      '/assets/Collections/Rectangle 255730.png'
+      '/assets/Collections/Rectangle 255730.webp'
     ],
     description: 'Heavyweight 340 GSM organic canvas tote featuring high-density Christian streetwear typography: "Grace & Truth". Reinforced handles engineered for daily carry.',
     tagline: 'GRACE & TRUTH',
@@ -242,9 +242,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Minimalist Canvas Carry',
     price: 399,
     category: 'Tote Bags',
-    image: '/assets/Collections/Rectangle 255730.png',
+    image: '/assets/Collections/Rectangle 255730.webp',
     additionalImages: [
-      '/assets/Collections/Rectangle 255730.png'
+      '/assets/Collections/Rectangle 255730.webp'
     ],
     description: 'Sleek black organic cotton canvas tote bag with crisp white branding: "Faith. Identity. Purpose." Large main compartment for books and essentials.',
     tagline: 'FAITH IDENTITY PURPOSE',
@@ -265,9 +265,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Streetwear Utility Tote',
     price: 399,
     category: 'Tote Bags',
-    image: '/assets/Collections/Rectangle 255730.png',
+    image: '/assets/Collections/Rectangle 255730.webp',
     additionalImages: [
-      '/assets/Collections/Rectangle 255730.png'
+      '/assets/Collections/Rectangle 255730.webp'
     ],
     description: 'Heavy-duty utility tote bag with internal pocket and magnetic closure. High-density screenprint: "Designed for the Chosen Ones".',
     tagline: 'CHOSEN ONES',
@@ -288,9 +288,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     subtitle: 'Everyday Streetwear Tote',
     price: 399,
     category: 'Tote Bags',
-    image: '/assets/Collections/Rectangle 255730.png',
+    image: '/assets/Collections/Rectangle 255730.webp',
     additionalImages: [
-      '/assets/Collections/Rectangle 255730.png'
+      '/assets/Collections/Rectangle 255730.webp'
     ],
     description: 'Vintage washed canvas tote bag featuring back script graphics: "Kingdom Citizen. Est. 2026 India". Durable and spacious design.',
     tagline: 'KINGDOM CITIZEN',

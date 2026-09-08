@@ -5,6 +5,9 @@
   --warm: #F2F0EA;
   --white: #FFFFFF;
   --blue: #074DFF;
+  --story-script-slant: -2deg;
+  --story-script-nudge-y: 0.36em;
+  --story-script-nudge-x: 0.48em;
   background: var(--black);
   color: var(--warm);
   font-family: 'Archivo', sans-serif;
@@ -43,8 +46,10 @@
   text-transform: none;
   color: var(--blue);
   font-size: .42em;
-  line-height: .9;
-  margin: 0.15em 0 0 0.08em;
+  line-height: 0.9;
+  margin: var(--story-script-nudge-y) 0 0 var(--story-script-nudge-x);
+  transform: rotate(var(--story-script-slant));
+  transform-origin: left center;
   will-change: transform;
   transition: transform 0.08s ease-out;
 }
@@ -247,6 +252,10 @@
 @media (max-width: 860px) {
   .sb-our-story .title-wrap {
     padding: 14vh 6vw 4vh;
+  }
+
+  .sb-our-story .title .script {
+    margin-left: 0.36em;
   }
 
   .sb-our-story .story-grid {

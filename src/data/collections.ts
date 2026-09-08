@@ -91,8 +91,8 @@ export const COLLECTIONS: Collection[] = [
     description:
       'Church-ready hoodies and pieces for worship, fellowship, and everyday faith — sacred spaces meet streetwear.',
     status: 'coming-soon',
-    heroImage: '/assets/Collections/webp/holy-ground.png',
-    megaMenuImage: '/assets/Collections/webp/holy-ground.png',
+    heroImage: '/assets/Collections/webp/holy-ground.webp',
+    megaMenuImage: '/assets/Collections/webp/holy-ground.webp',
     megaMenuTileClass: 't-church',
     sortOrder: 7,
     shopifyTag: 'sb-collection:church-wear',

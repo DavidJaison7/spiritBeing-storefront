@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../../types';
-import { ArrowLeft, ArrowRight, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
+import { ArrowLeft, Check, Plus, ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import { ProductReviewsSection } from './ProductReviewsSection';
 import './ProductDetailView.css';
 
@@ -13,6 +13,7 @@ interface ProductDetailViewProps {
   onBackToShop: () => void;
   onSelectProduct: (product: Product, selectedColor?: string) => void;
   onAddToCart: (product: Product, size: string, color?: string) => void;
+  suppressFixedCtas?: boolean;
 }
 const getColorHex = (colorName: string) => {
   const normalized = colorName.toLowerCase();
@@ -323,15 +324,19 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            className="rail-arrow-btn rail-arrow-btn--prev sb-card-rail-arrow absolute left-1.5 sm:left-2.5 md:left-3 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              setActiveIndex((prev) => Math.max(prev - 1, 0));
+              setActiveIndex((prev) => (prev > 0 ? prev - 1 : productImages.length - 1));
             }}
             onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
             aria-label="Previous image"
           >
-            <ArrowRight className="w-4 h-4 rotate-180" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
         )}
 
@@ -339,15 +344,19 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            className="rail-arrow-btn rail-arrow-btn--next sb-card-rail-arrow absolute right-1.5 sm:right-2.5 md:right-3 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+              setActiveIndex((prev) => (prev + 1) % productImages.length);
             }}
             onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
             aria-label="Next image"
           >
-            <ArrowRight className="w-4 h-4" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 6 15 12 9 18" />
+            </svg>
           </button>
         )}
 
@@ -496,6 +505,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onBackToShop,
   onSelectProduct,
   onAddToCart,
+  suppressFixedCtas = false,
 }) => {
   const availableSizes = React.useMemo(() => {
     const standard = ['S', 'M', 'L', 'XL'];
@@ -532,9 +542,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     ...(product.additionalImages && product.additionalImages.length > 0
       ? product.additionalImages
       : [
-        '/products/product-sec1.jpg',
-        '/products/product-sec2.png',
-        '/products/product-sec3.png'
+        '/products/product-sec1.webp',
+        '/products/product-sec2.webp',
+        '/products/product-sec3.webp'
       ])
   ];
 
@@ -596,34 +606,63 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   React.useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth < 1024) return;
-
       const section = relatedSectionRef.current;
       const track = relatedTrackRef.current;
       if (!section || !track) return;
 
       const rect = section.getBoundingClientRect();
       const windowHeight = window.innerHeight;
+      
+      // Determine sticky top offset (mobile: 56px, tablet: 64px, desktop: 80px)
+      const stickyOffset = window.innerWidth >= 1024 ? 80 : (window.innerWidth >= 640 ? 64 : 56);
       const totalScrollableDistance = section.clientHeight - windowHeight;
 
       if (totalScrollableDistance <= 0) return;
 
-      // Calculate how far we've scrolled vertically inside this sticky section wrapper
-      const currentScroll = -rect.top;
-      const progress = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
+      // Calculate how far we've scrolled vertically into this sticky section
+      const scrolled = stickyOffset - rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / totalScrollableDistance));
 
-      const maxTranslateX = track.scrollWidth - (track.parentElement?.clientWidth || window.innerWidth);
+      const parentWidth = track.parentElement?.clientWidth || window.innerWidth;
+      const maxTranslateX = track.scrollWidth - parentWidth;
+      
       if (maxTranslateX > 0) {
         track.style.transform = `translate3d(-${progress * maxTranslateX}px, 0, 0)`;
+      } else {
+        track.style.transform = 'translate3d(0, 0, 0)';
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
+
+    // Synchronize with global Lenis smooth scroll if present
+    const lenis = (window as any).lenis;
+    if (lenis) {
+      lenis.on('scroll', handleScroll);
+    }
+
+    // Recalculate on layout/image size changes
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        handleScroll();
+      });
+      if (relatedSectionRef.current) ro.observe(relatedSectionRef.current);
+      if (relatedTrackRef.current) ro.observe(relatedTrackRef.current);
+    }
+
     handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
+      if (lenis) {
+        lenis.off('scroll', handleScroll);
+      }
+      if (ro) {
+        ro.disconnect();
+      }
     };
   }, []);
 
@@ -858,14 +897,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             )}
 
             {/* Desktop: side-by-side CTAs (lg+ only) */}
-            <div className="sb-pdp-desktop-ctas hidden md:flex w-full mb-4 lg:mb-6 2xl:mb-8">
+            <div
+              className={`sb-pdp-desktop-ctas hidden md:flex w-full mb-4 lg:mb-6 2xl:mb-8${
+                isProductLiked ? ' sb-pdp-desktop-ctas--blessed' : ''
+              }`}
+            >
               <button
                 disabled={!product.inStock}
                 onClick={handleAddToCart}
-                style={{
-                  overflow: 'visible',
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
                 className={`sb-pdp-desktop-btn sb-pdp-desktop-btn-primary relative ${
                   !product.inStock
                     ? 'border-black/10 bg-black/5 text-black/40 cursor-not-allowed shadow-none'
@@ -918,12 +957,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               {/* Community Like Button Wrapper */}
               {onToggleWishlist && (
-                <div
-                  className="sb-pdp-desktop-bless-wrap relative"
-                  style={{
-                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }}
-                >
+                <div className="sb-pdp-desktop-bless-wrap relative">
                   {toastMessage && (
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 bg-white/95 text-black border border-black/5 px-4.5 py-2.5 rounded-full text-xs font-sans font-bold tracking-widest uppercase shadow-[0_8px_30px_rgba(0,0,0,0.06)] z-30 flex items-center gap-1.5 animate-cloud-toast pointer-events-none whitespace-nowrap">
                       <span>{toastMessage}</span>
@@ -976,18 +1010,25 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="sb-pdp-share-btn cursor-pointer hover:bg-black hover:text-white"
+                  className={`sb-pdp-share-copy${copied ? ' is-copied' : ''}`}
                   title="Copy link to clipboard"
+                  aria-label={copied ? 'Link copied' : 'Copy link'}
                 >
-                  <LinkIcon className="w-3.5 h-3.5" />
-                  <span>{copied ? 'Copied' : 'Copy Link'}</span>
+                  {copied ? (
+                    <Check className="w-4 h-4 stroke-[2.5]" />
+                  ) : (
+                    <LinkIcon className="w-4 h-4" />
+                  )}
+                  <span>{copied ? 'Copied' : 'Copy link'}</span>
                 </button>
+
+                <span className="sb-pdp-share-divider" aria-hidden="true" />
 
                 <a
                   href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out the ' + product.title + ' on Spirit Being: ' + window.location.href)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="sb-pdp-share-icon hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
+                  className="sb-pdp-share-action sb-pdp-share-action--whatsapp"
                   title="Share on WhatsApp"
                   aria-label="Share on WhatsApp"
                 >
@@ -998,7 +1039,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   href={`https://www.instagram.com/spiritbeinggen`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="sb-pdp-share-icon hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200"
+                  className="sb-pdp-share-action sb-pdp-share-action--instagram"
                   title="Share on Instagram"
                   aria-label="Share on Instagram"
                 >
@@ -1044,10 +1085,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       </div>
 
       {/* Bottom Section: Curated Drops */}
-      <div ref={relatedSectionRef} className="w-full h-auto lg:h-[180vh] relative bg-[#fbf9f9]">
-        <div className="lg:sticky lg:top-20 w-full pt-0 pb-4 lg:overflow-hidden bg-[#fbf9f9]">
+      <div ref={relatedSectionRef} className="w-full h-[250vh] sm:h-[230vh] lg:h-[200vh] relative bg-[#fbf9f9]">
+        <div className="sticky top-14 sm:top-16 lg:top-20 w-full pt-1 sm:pt-2 pb-4 overflow-hidden bg-[#fbf9f9]">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
-            <div className="pb-4">
+            <div className="pb-3 sm:pb-4">
               {/* Eyebrow */}
               <div className="flex items-center gap-2.5 mb-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
@@ -1056,25 +1097,24 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </span>
               </div>
 
-              {/* Main Headline — two lines: Chosen for / Spirit Beings */}
+              {/* Main Headline — stacked mobile · inline on desktop */}
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
-                <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex flex-col items-start leading-[0.92]">
+                <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex flex-col items-start leading-[0.92] lg:flex-row lg:items-baseline lg:gap-x-3 xl:gap-x-4">
                   <span>Chosen for</span>
                   <span className="text-[#0B3DFF] font-script text-5xl sm:text-7xl capitalize font-normal normal-case">
                     Spirit Beings
                   </span>
                 </h2>
                 <span className="text-xs font-sans text-gray-500 uppercase tracking-widest hidden sm:inline-block font-semibold">
-                  <span className="lg:hidden">Swipe to explore →</span>
-                  <span className="hidden lg:inline">Scroll down to explore →</span>
+                  <span>Scroll to explore →</span>
                 </span>
               </div>
             </div>
 
-            <div className="sb-pdp-related-scroll w-full overflow-x-auto lg:overflow-hidden pt-2 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] lg:pb-4 snap-x snap-mandatory lg:snap-none">
+            <div className="sb-pdp-related-scroll w-full overflow-hidden pt-2 pb-4">
               <div
                 ref={relatedTrackRef}
-                className="flex gap-3.5 transition-transform duration-75 ease-out lg:will-change-transform"
+                className="flex gap-3.5 sm:gap-4 md:gap-5 transition-transform duration-75 ease-out will-change-transform"
               >
                 {relatedProducts.map((rel) => {
                   const isAdded = justAddedId === rel.id;
@@ -1082,7 +1122,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   return (
                     <div
                       key={rel.id}
-                      className="w-[72vw] sm:w-[44vw] md:w-[calc((100%-2.625rem)/3)] lg:w-[calc((100%-2.625rem)/4)] shrink-0 snap-start"
+                      className="w-[72vw] sm:w-[46vw] md:w-[35vw] lg:w-[calc((100%-2.625rem)/4)] shrink-0"
                     >
                       <RelatedProductCard
                         product={rel}
@@ -1152,7 +1192,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         </div>
       )}
 
-      {/* Mobile + tablet: fixed bottom CTAs */}
+      {/* Mobile + tablet: fixed bottom CTAs (hidden when cart/checkout overlays are open) */}
+      {!suppressFixedCtas && (
       <div className="sb-pdp-fixed-ctas md:hidden" role="region" aria-label="Product actions">
         <div className="sb-pdp-fixed-ctas-inner">
           <div className="sb-pdp-mobile-ctas sb-pdp-mobile-ctas--fixed">
@@ -1216,6 +1257,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </div>
       </div>
+      )}
 
       <style>{`
         @keyframes cloud-fade-up {

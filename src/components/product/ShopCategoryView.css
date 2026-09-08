@@ -5,125 +5,104 @@
   min-height: 100vh;
   background-color: #fbf9f9;
   color: #1b1c1c;
-  --sb-shop-tabs-height: 44px;
+}
+
+.sb-shop-view__hero {
+  position: relative;
+  min-height: clamp(320px, 52vh, 520px);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.sb-shop-view__hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 36%;
+}
+
+.sb-shop-view__hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.45) 42%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+.sb-shop-view__back {
+  position: absolute;
+  top: calc(64px + 16px);
+  left: clamp(16px, 3vw, 40px);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1b1c1c;
+  font-family: var(--sb-font-body, 'Archivo', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sb-shop-view__back:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.25);
+}
+
+.sb-shop-view__hero-copy {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: clamp(88px, 12vh, 120px) clamp(20px, 3vw, 48px) clamp(28px, 5vh, 48px);
+}
+
+.sb-shop-view__title {
+  margin: 0;
+  font-family: var(--sb-font-display, 'Anton', sans-serif);
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.sb-shop-view__desc {
+  margin: 10px 0 0;
+  max-width: 48ch;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .sb-shop-scroll {
-  padding-top: calc(var(--sb-shop-header-offset, var(--sb-header-height, 64px)) + var(--sb-shop-tabs-height));
+  padding-top: 0;
 }
 
-/* Fixed category tabs — flush under site header */
-.sb-tabs-bar {
-  position: fixed;
-  top: var(--sb-shop-header-offset, var(--sb-header-height, 64px));
-  left: 0;
-  right: 0;
-  z-index: 50;
-  margin: 0;
-  border-radius: 0;
-  background: #fbf9f9;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.sb-tabs-inner {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
-  width: 100%;
-  height: var(--sb-shop-tabs-height);
-  padding: 0 1rem;
-  overflow: hidden;
-}
-
-.sb-tab-btn {
-  font-family: 'Archivo', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #666666;
-  padding: 0 12px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  transition: color 0.25s ease, border-color 0.25s ease;
-  white-space: nowrap;
-  text-align: center;
-  min-width: 0;
-  height: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sb-tab-label--mobile {
-  display: none;
-}
-
-.sb-tab-label--desktop {
-  display: inline;
-}
-
-.sb-tab-btn:hover {
-  color: #1b1c1c;
-}
-
-.sb-tab-btn.active {
-  color: #2040FF;
-  border-bottom-color: #2040FF;
-}
-
-.sb-shop-hero {
-  display: none;
-}
-
-/* Section Anchor Spacing */
 .sb-category-section {
-  scroll-margin-top: calc(var(--sb-shop-header-offset, var(--sb-header-height, 64px)) + var(--sb-shop-tabs-height) + 8px);
+  scroll-margin-top: calc(var(--sb-shop-header-offset, var(--sb-header-height, 64px)) + 8px);
 }
 
 @media (max-width: 860px) {
-  .sb-shop-view-container {
-    --sb-shop-tabs-height: 42px;
-  }
-
-  .sb-tab-btn {
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    padding: 0 6px;
-  }
-
-  .sb-tab-label--mobile {
-    display: inline;
-  }
-
-  .sb-tab-label--desktop {
-    display: none;
-  }
-}
-
-@media (min-width: 861px) {
-  .sb-shop-hero {
-    display: block;
-  }
-
-  .sb-tabs-inner {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: var(--sb-shop-tabs-height);
-    padding: 0 3rem;
-  }
-
-  .sb-tab-btn {
-    flex: 0 1 auto;
-    height: 100%;
-    padding: 0 20px;
-    text-align: left;
-    justify-content: flex-start;
-  }
-
-  .sb-tab-btn:first-child {
-    padding-left: 0;
+  .sb-shop-view__back {
+    top: calc(58px + 12px);
+    left: 12px;
+    padding: 8px 12px;
   }
 }

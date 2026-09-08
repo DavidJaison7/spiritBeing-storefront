@@ -29,7 +29,6 @@ function getCachedImages(): Promise<HTMLImageElement[]> {
 export const StatementParticlesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const hintRef = useRef<HTMLParagraphElement>(null);
   const contextRef = useRef<HTMLParagraphElement>(null);
   const refsRef = useRef<HTMLParagraphElement>(null);
   const communityRef = useRef<HTMLDivElement>(null);
@@ -38,12 +37,11 @@ export const StatementParticlesSection: React.FC = () => {
     let isMounted = true;
     const section = sectionRef.current;
     const canvas = canvasRef.current;
-    const hint = hintRef.current;
     const context = contextRef.current;
     const refs = refsRef.current;
     const community = communityRef.current;
 
-    if (!section || !canvas || !hint || !context || !refs || !community) return;
+    if (!section || !canvas || !context || !refs || !community) return;
 
     const words = [...section.querySelectorAll('.word')];
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -70,6 +68,12 @@ export const StatementParticlesSection: React.FC = () => {
       } else {
         const update = () => {
           const r = section.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0 && runner && !runner.enabled) {
+            runner.enabled = true;
+            Runner.run(runner, engine);
+            if (!raf) draw();
+          }
+
           const a = window.innerHeight * 0.85;
           const b = window.innerHeight * 0.28;
           let p = (a - r.top) / (a - b);
@@ -84,11 +88,15 @@ export const StatementParticlesSection: React.FC = () => {
         resizeListener = update;
         window.addEventListener('scroll', update, { passive: true });
         window.addEventListener('resize', update);
+        const lenis = (window as any).lenis;
+        if (lenis) {
+          lenis.on('scroll', update);
+        }
         update();
       }
     }
 
-    /* ---- Matter.js Setup ---- */
+    /* ---- Matter.js Setup (V3 Physics) ---- */
     const { Engine, Runner, Bodies, Composite, Body, Sleeping, Mouse, MouseConstraint, Events } = Matter;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -101,16 +109,9 @@ export const StatementParticlesSection: React.FC = () => {
     let walls: any[] = [];
     let raf: number | null = null;
     let zone = { x0: 0, y0: 0, x1: 0, y1: 0 };
-    let hasPlayedInitialDrop = false;
 
     const pointer = { x: -9999, y: -9999, vx: 0, vy: 0, active: false, life: 0 };
     const taps: any[] = [];
-
-    hint.innerHTML = coarse
-      ? '<span class="key">Tap the drop</span> the packets scatter'
-      : '<span class="key">Move your cursor through the drop</span> drag a packet if you want';
-
-    const hintTimeout = setTimeout(() => hint.classList.add('is-hidden'), 5200);
 
     let images: HTMLImageElement[] = [];
 
@@ -149,7 +150,7 @@ export const StatementParticlesSection: React.FC = () => {
 
       const rect = section!.getBoundingClientRect();
       W = Math.max(320, rect.width);
-      H = Math.max(480, Math.round(rect.height));
+      H = Math.max(520, rect.height);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas!.width = Math.round(W * dpr);
       canvas!.height = Math.round(H * dpr);
@@ -171,9 +172,9 @@ export const StatementParticlesSection: React.FC = () => {
       ];
       Composite.add(engine.world, walls);
 
-      const base = clamp(W * 0.052, 44, 88);
-      const bigBase = clamp(W * 0.088, 80, 156);
-      const count = Math.round(clamp(W / 38, 28, 68));
+      const base = clamp(W * 0.056, 50, 92);
+      const bigBase = clamp(W * 0.095, 88, 168);
+      const count = Math.round(clamp(W / 56, 20, 44));
 
       packets = [];
       for (let i = 0; i < count; i++) {
@@ -189,16 +190,7 @@ export const StatementParticlesSection: React.FC = () => {
           ? W * (Math.random() < 0.5 ? Math.random() * 0.2 : 0.8 + Math.random() * 0.2)
           : 24 + Math.random() * (W - 48);
         const x = clamp(raw, w / 2 + 6, W - w / 2 - 6);
-
-        let y: number;
-        if (reduced) {
-          y = H - 70 - Math.random() * 150;
-        } else if (!hasPlayedInitialDrop) {
-          y = -h - Math.random() * H * 1.1;
-        } else {
-          const lowerBand = Math.max(zone.y1 + h * 0.35, H * 0.42);
-          y = lowerBand + Math.random() * Math.max(H - lowerBand - h * 0.4, h);
-        }
+        const y = reduced ? H - 70 - Math.random() * 150 : -h - Math.random() * H * 1.1;
 
         const body = Bodies.rectangle(x, y, w * 0.9, h * 0.9, {
           chamfer: { radius: Math.min(w, h) * 0.16 },
@@ -212,10 +204,6 @@ export const StatementParticlesSection: React.FC = () => {
         (body as any).render = { img, w, h };
         Composite.add(engine.world, body);
         packets.push(body);
-      }
-
-      if (!reduced) {
-        hasPlayedInitialDrop = true;
       }
 
       if (!coarse) {
@@ -233,8 +221,16 @@ export const StatementParticlesSection: React.FC = () => {
 
       Events.on(engine, 'beforeUpdate', step);
       runner = Runner.create();
-      Runner.run(runner, engine);
-      draw();
+
+      const r = section!.getBoundingClientRect();
+      const inView = r.top < window.innerHeight && r.bottom > 0;
+      if (inView) {
+        runner.enabled = true;
+        Runner.run(runner, engine);
+        draw();
+      } else {
+        runner.enabled = false;
+      }
     }
 
     function teardown() {
@@ -388,7 +384,6 @@ export const StatementParticlesSection: React.FC = () => {
       pointer.y = p.y;
       pointer.active = true;
       pointer.life = 1;
-      hint.classList.add('is-hidden');
     };
 
     const onMouseLeave = () => {
@@ -403,7 +398,6 @@ export const StatementParticlesSection: React.FC = () => {
       const p = local(touch.clientX, touch.clientY);
       taps.push({ x: p.x, y: p.y, life: 1 });
       if (taps.length > 4) taps.shift();
-      hint.classList.add('is-hidden');
     };
 
     if (!coarse) {
@@ -414,7 +408,6 @@ export const StatementParticlesSection: React.FC = () => {
     }
 
     let resizeTimeout: any = null;
-    let resizeObserver: ResizeObserver | null = null;
     const onResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
@@ -422,11 +415,6 @@ export const StatementParticlesSection: React.FC = () => {
       }, 220);
     };
     window.addEventListener('resize', onResize);
-
-    if ('ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(() => onResize());
-      resizeObserver.observe(section);
-    }
 
     let observer: IntersectionObserver | null = null;
     if ('IntersectionObserver' in window) {
@@ -459,15 +447,17 @@ export const StatementParticlesSection: React.FC = () => {
     // Cleanup
     return () => {
       isMounted = false;
-      clearTimeout(hintTimeout);
       clearTimeout(resizeTimeout);
       if (scrollListener) window.removeEventListener('scroll', scrollListener);
       if (resizeListener) window.removeEventListener('resize', resizeListener);
+      const lenis = (window as any).lenis;
+      if (lenis && scrollListener) {
+        lenis.off('scroll', scrollListener);
+      }
       section.removeEventListener('mousemove', onMouseMove);
       section.removeEventListener('mouseleave', onMouseLeave);
       section.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('resize', onResize);
-      if (resizeObserver) resizeObserver.disconnect();
       if (observer) observer.disconnect();
       teardown();
     };
@@ -515,8 +505,6 @@ export const StatementParticlesSection: React.FC = () => {
           </a>
         </div>
       </div>
-
-      <p className="hint" ref={hintRef}></p>
     </section>
   );
 };

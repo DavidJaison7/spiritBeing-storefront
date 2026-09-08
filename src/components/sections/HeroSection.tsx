@@ -1,15 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { INITIAL_PRODUCTS } from '../../data/products';
 import './HeroSection.css';
+
+const HERO_VIDEO_SRC = '/can_u_change_the_background_202609081726_processed.webm';
+const FOMO_ROTATE_MS = 7000;
+const HERO_VOLUME = 0.72;
 
 interface HeroSectionProps {
   onNavigateShopCategory?: (sectionTarget?: string) => void;
   onNavigateHome?: () => void;
   onSelectProductByHandle?: (handle: string) => void;
 }
-
-const FOMO_ROTATE_MS = 7000;
 
 const HERO_FOMO_DROPS = INITIAL_PRODUCTS.filter((product) => product.inStock).map((product) => ({
   handle: product.handle,
@@ -25,24 +27,91 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const userWantsSoundRef = useRef(false);
+  const heroVisibleRef = useRef(true);
+
+  const [soundOn, setSoundOn] = useState(false);
   const [activeFomoIndex, setActiveFomoIndex] = useState(0);
   const [isFomoPaused, setIsFomoPaused] = useState(false);
-  const userWantsSoundRef = useRef(false);
 
   const activeFomoDrop = HERO_FOMO_DROPS[activeFomoIndex] ?? HERO_FOMO_DROPS[0];
+
+  const syncVideoAudio = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const shouldPlayAudible = userWantsSoundRef.current && heroVisibleRef.current;
+    video.volume = HERO_VOLUME;
+    video.muted = !shouldPlayAudible;
+  }, []);
+
+  const startHeroPlayback = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.loop = true;
+    video.playsInline = true;
+    syncVideoAudio();
+
+    try {
+      await video.play();
+    } catch {
+      // Browser autoplay policy requires muted playback without user gesture
+      video.muted = true;
+      try {
+        await video.play();
+      } catch {
+        // Silently catch
+      }
+    }
+  }, [syncVideoAudio]);
+
+  useLayoutEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.loop = true;
+    video.playsInline = true;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = HERO_VOLUME;
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    userWantsSoundRef.current = false;
-    video.muted = true;
-    video.volume = 0;
-    setIsMuted(true);
-    video.play().catch(() => {});
-  }, []);
 
-  /* Logo parallax while scrolling through hero */
+    void startHeroPlayback();
+
+    // Guard against video pausing at loop boundary
+    const handleEnded = () => {
+      video.currentTime = 0;
+      void video.play().catch(() => {});
+    };
+
+    const retryOnReady = () => {
+      syncVideoAudio();
+      void video.play().catch(() => {});
+    };
+
+    const handleVisibility = () => {
+      if (!document.hidden && heroVisibleRef.current) {
+        void video.play().catch(() => {});
+      }
+    };
+
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('loadeddata', retryOnReady, { once: true });
+    video.addEventListener('canplay', retryOnReady, { once: true });
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('loadeddata', retryOnReady);
+      video.removeEventListener('canplay', retryOnReady);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [startHeroPlayback, syncVideoAudio]);
+
   useEffect(() => {
     const section = sectionRef.current;
     const logo = logoRef.current;
@@ -63,42 +132,34 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Mute when leaving hero; only restore if user explicitly enabled sound */
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    const video = videoRef.current;
+    if (!section || !video) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         const inHero = entry.isIntersecting && entry.intersectionRatio > 0.25;
-
-        const video = videoRef.current;
-        if (!video) return;
+        heroVisibleRef.current = inHero;
 
         if (!inHero) {
-          video.muted = true;
-          setIsMuted(true);
+          video.pause();
+          syncVideoAudio();
           return;
         }
 
-        if (userWantsSoundRef.current) {
-          video.muted = false;
-          video.volume = 0.72;
-          video.play().catch(() => {});
-          setIsMuted(false);
-        }
+        syncVideoAudio();
+        void video.play().catch(() => {});
       },
-      { threshold: [0, 0.25, 0.5] }
+      { threshold: [0, 0.25, 0.5] },
     );
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, []);
+  }, [syncVideoAudio]);
 
-  /* Rotate FOMO card through in-stock drops every 7s */
   useEffect(() => {
     if (HERO_FOMO_DROPS.length <= 1 || isFomoPaused) return;
-
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
@@ -113,22 +174,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
-    const enableSound = !userWantsSoundRef.current;
-    userWantsSoundRef.current = enableSound;
-
-    if (enableSound) {
-      video.muted = false;
-      video.volume = 0.72;
-      video.play().catch(() => {
-        video.muted = true;
-        userWantsSoundRef.current = false;
-        setIsMuted(true);
-      });
-      setIsMuted(false);
-    } else {
-      video.muted = true;
-      setIsMuted(true);
-    }
+    const next = !userWantsSoundRef.current;
+    userWantsSoundRef.current = next;
+    setSoundOn(next);
+    syncVideoAudio();
+    void video.play().catch(() => {});
   };
 
   const scrollToShop = () => {
@@ -146,24 +196,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       onSelectProductByHandle(activeFomoDrop.handle);
       return;
     }
-
     onNavigateShopCategory?.('tshirts');
   };
 
   return (
     <section ref={sectionRef} id="hero-section" className="hero-video-section">
-      <video
-        ref={videoRef}
-        className="hero-video"
-        autoPlay
-        muted
-        defaultMuted
-        loop
-        playsInline
-        preload="auto"
-      >
-        <source src="/hero-bg-video.mp4" type="video/mp4" />
-      </video>
+      <div className="hero-video-stack" aria-hidden="true">
+        <video
+          ref={videoRef}
+          className="hero-video-layer is-active"
+          src={HERO_VIDEO_SRC}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          loop
+        />
+      </div>
 
       <div className="hero-vignette-top" aria-hidden="true" />
       <div className="hero-vignette-radial" aria-hidden="true" />
@@ -176,7 +225,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           aria-label="Go to home"
         >
           <img
-            src="/updated_main_logo.png"
+            src="/updated_main_logo.webp"
             alt="Spirit Being"
             className="hero-logo"
             draggable={false}
@@ -190,22 +239,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={toggleSound}
-              className="hero-sound-btn"
-              aria-label={isMuted ? 'Turn sound on' : 'Turn sound off'}
-              aria-pressed={!isMuted}
+              className={`hero-sound-btn${soundOn ? ' is-on' : ''}`}
+              aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}
+              aria-pressed={soundOn}
             >
-              {isMuted ? <VolumeX size={16} strokeWidth={1.75} /> : <Volume2 size={16} strokeWidth={1.75} />}
+              {soundOn ? <Volume2 size={16} strokeWidth={1.75} /> : <VolumeX size={16} strokeWidth={1.75} />}
             </button>
 
-            <p className="hero-dock-tagline">
-              <span className="hero-dock-ticks" aria-hidden="true">
-                <i></i>
-                <i></i>
-                <i></i>
-                <i></i>
-              </span>
-              Faith. Identity. Purpose.
-            </p>
+            <p className="hero-dock-tagline">Faith. Identity. Purpose.</p>
           </div>
 
           <button type="button" onClick={scrollToShop} className="hero-shop-cta">

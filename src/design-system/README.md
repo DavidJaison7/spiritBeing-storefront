@@ -2,7 +2,7 @@
 
 Canonical UI library for the SpiritBeing storefront. All shared patterns live under the `sb-` prefix.
 
-**Live reference:** open `#design-system` in the app (e.g. `http://localhost:5173/#design-system`).
+**Live reference:** with the storefront running (`npm run dev`, port **3000**), open `#design-system` (e.g. `http://localhost:3000/#design-system`).
 
 ---
 

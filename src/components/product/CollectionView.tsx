@@ -55,9 +55,6 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
         </button>
 
         <div className="sb-collection-view__hero-copy">
-          <span className={`sb-collection-view__pill ${isLive ? 'is-live' : 'is-coming'}`}>
-            {isLive ? 'LIVE' : 'COMING SOON'}
-          </span>
           <h1 className="sb-collection-view__title">{collection.title}</h1>
           <p className="sb-collection-view__tagline">{collection.tagline}</p>
           {isLive && <p className="sb-collection-view__desc">{collection.description}</p>}

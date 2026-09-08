@@ -32,6 +32,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
         className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`} 
         role="region" 
         aria-label="Shop Categories"
+        data-lenis-prevent
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
@@ -42,9 +43,9 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
 
           <div className="sb-bento sb-bento-shop">
             <a 
-              className="sb-tile has-photo sb-shop-tile" 
+              className="sb-tile has-photo sb-shop-tile sb-shop-tile--oversized" 
               href="#" 
-              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('tshirts'); }}
+              onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('top'); }}
               style={{"--d": "0s"} as React.CSSProperties}
             >
               <div className="sb-photo">
@@ -56,7 +57,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
             </a>
 
             <a 
-              className="sb-tile has-photo sb-shop-tile" 
+              className="sb-tile has-photo sb-shop-tile sb-shop-tile--caps" 
               href="#" 
               onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('caps'); }}
               style={{"--d": ".09s"} as React.CSSProperties}
@@ -70,7 +71,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
             </a>
 
             <a 
-              className="sb-tile has-photo sb-shop-tile" 
+              className="sb-tile has-photo sb-shop-tile sb-shop-tile--totebags" 
               href="#" 
               onClick={(e) => { e.preventDefault(); onClose(); onNavigateShop('totebags'); }}
               style={{"--d": ".14s"} as React.CSSProperties}
@@ -88,7 +89,7 @@ export const ShopMegaMenu: React.FC<ShopMegaMenuProps> = ({
             <button
               type="button"
               className="sb-mega-link"
-              onClick={() => { onClose(); onNavigateShop('tshirts'); }}
+              onClick={() => { onClose(); onNavigateShop('top'); }}
             >
               View all products <span>→</span>
             </button>

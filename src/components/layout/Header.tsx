@@ -49,6 +49,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenOrdersHub,
 }) => {
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [isPastCollectionProducts, setIsPastCollectionProducts] = useState(false);
+  const [isPastShopHero, setIsPastShopHero] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -116,6 +118,59 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   useEffect(() => {
+    if (currentView !== 'collection' && currentView !== 'shop_category') {
+      setIsPastCollectionProducts(false);
+      setIsPastShopHero(false);
+      return;
+    }
+
+    const headerOffset = 64;
+    const enterThreshold = headerOffset + 116;
+    const exitThreshold = headerOffset + 176;
+
+    const updateScrollState = (prev: boolean, markerTop: number) => {
+      if (!prev && markerTop <= enterThreshold) return true;
+      if (prev && markerTop > exitThreshold) return false;
+      return prev;
+    };
+
+    const handleSubpageScroll = () => {
+      if (currentView === 'collection') {
+        const hero = document.querySelector('.sb-collection-view__hero');
+        const productsSection = document.querySelector('.sb-collection-view__products');
+        if (!hero && !productsSection) {
+          setIsPastCollectionProducts(false);
+          return;
+        }
+
+        const markerTop = productsSection
+          ? productsSection.getBoundingClientRect().top
+          : hero!.getBoundingClientRect().bottom;
+
+        setIsPastCollectionProducts((prev) => updateScrollState(prev, markerTop));
+        return;
+      }
+
+      const hero = document.querySelector('.sb-shop-view__hero');
+      const shopScroll = document.querySelector('.sb-shop-scroll');
+      if (!hero && !shopScroll) {
+        setIsPastShopHero(false);
+        return;
+      }
+
+      const markerTop = shopScroll
+        ? shopScroll.getBoundingClientRect().top
+        : hero!.getBoundingClientRect().bottom;
+
+      setIsPastShopHero((prev) => updateScrollState(prev, markerTop));
+    };
+
+    handleSubpageScroll();
+    window.addEventListener('scroll', handleSubpageScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleSubpageScroll);
+  }, [currentView]);
+
+  useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (
         isDropdownOpen && 
@@ -171,6 +226,8 @@ export const Header: React.FC<HeaderProps> = ({
   const isOurStoryView = currentView === 'our_story';
   const isBlogView = currentView === 'blog';
   const isFaqView = currentView === 'faq';
+  const isCollectionView = currentView === 'collection';
+  const isShopCategoryView = currentView === 'shop_category';
   const isOnHeroSection =
     currentView === 'home' &&
     !isScrolledPastHero &&
@@ -178,15 +235,26 @@ export const Header: React.FC<HeaderProps> = ({
     !isBlogView &&
     !isFaqView &&
     !isNavigatingHome;
+  const isOnCollectionHero = isCollectionView && !isPastCollectionProducts;
+  const isOnShopHero = isShopCategoryView && !isPastShopHero;
   const isMegaOpen = isMegaMenuOpen || isShopMenuOpen;
   
   // Force white header if either mega menu is open (except on hero — glass overlay)
-  const showHeaderStyle = isMegaOpen || isNavigatingHome || ((currentView === 'product_detail' || currentView === 'shop_category' || isScrolledPastHero) && !isOurStoryView && !isBlogView && !isFaqView);
+  const showHeaderStyle =
+    isMegaOpen ||
+    isNavigatingHome ||
+    ((currentView === 'product_detail' ||
+      isPastShopHero ||
+      isPastCollectionProducts ||
+      isScrolledPastHero) &&
+      !isOurStoryView &&
+      !isBlogView &&
+      !isFaqView);
   const showCenterLogo =
     isOurStoryView ||
     isBlogView ||
     isFaqView ||
-    (showHeaderStyle && !(isOnHeroSection && isMegaOpen));
+    (showHeaderStyle && !((isOnHeroSection || isOnCollectionHero || isOnShopHero) && isMegaOpen));
 
   const handleNavigateHomeClick = () => {
     setIsMegaMenuOpen(false);
@@ -228,7 +296,7 @@ export const Header: React.FC<HeaderProps> = ({
   
   const headerBg = isDropdownOpen
     ? 'bg-transparent border-transparent shadow-none'
-    : isMegaOpen && isOnHeroSection
+    : isMegaOpen && (isOnHeroSection || isOnCollectionHero || isOnShopHero)
     ? 'bg-black/20 backdrop-blur-md border-b border-white/[0.08]'
     : isMegaOpen
     ? 'bg-[#fbf9f9]'
@@ -239,7 +307,7 @@ export const Header: React.FC<HeaderProps> = ({
     : 'bg-transparent';
     
   const textColor =
-    isMegaOpen && isOnHeroSection
+    isMegaOpen && (isOnHeroSection || isOnCollectionHero || isOnShopHero)
     ? 'text-white'
     : isMegaOpen
     ? 'text-black'
@@ -261,27 +329,29 @@ export const Header: React.FC<HeaderProps> = ({
     return `Hey ${firstName}`;
   };
 
-  const cornerLogoSrc =
-    isOurStoryView || isBlogView || (isOnHeroSection && !showHeaderStyle)
-      ? '/img_logo_white.png'
-      : '/sb-blue-header.png';
+  const headerHasLightBackground =
+    !isOurStoryView &&
+    !isBlogView &&
+    (isFaqView ||
+      (isMegaOpen && !isOnHeroSection && !isOnCollectionHero && !isOnShopHero) ||
+      (showHeaderStyle && !((isOnHeroSection || isOnCollectionHero || isOnShopHero) && isMegaOpen)));
 
-  const centerLogoSrc =
-    isOurStoryView || isBlogView
-      ? '/img_logo_white.png'
-      : showHeaderStyle || isFaqView || (isMegaOpen && !isOnHeroSection)
-      ? '/sb-blue-header.png'
-      : isOnHeroSection
-      ? '/img_logo_white.png'
-      : '/sb-blue-header.png';
+  const cornerLogoSrc = headerHasLightBackground
+    ? '/sb-blue-header.webp'
+    : '/img_logo_white.webp';
 
+  const centerLogoSrc = headerHasLightBackground
+    ? '/sb-blue-header.webp'
+    : '/img_logo_white.webp';
+
+  const isHeroHeaderContext = isOnHeroSection || isOnCollectionHero || isOnShopHero;
   const isMenuPanelOpen = isMegaOpen;
 
   return (
     <>
-    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-5 md:px-12 py-2 md:py-2 ${isOnHeroSection ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'transition-[background-color,color,box-shadow,border-color] duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)]' : ''} ${headerBg} ${textColor}`}>
+    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-5 md:px-12 py-2 md:py-2 ${isHeroHeaderContext ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'sb-header-chrome-transition' : ''} ${headerBg} ${textColor}`}>
       {/* Left nav — mobile/tablet logo + plain links + desktop mega menus */}
-      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 md:w-1/3 min-w-0">
+      <div className="relative z-[80] flex items-center gap-2 sm:gap-3 md:gap-4 md:w-1/3 min-w-0">
         <button
           type="button"
           onClick={handleNavigateHomeClick}
@@ -363,7 +433,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Center Logo — desktop (lg+) only */}
-      <div className="hidden lg:flex w-1/3 justify-center text-center items-center">
+      <div className="relative z-[80] hidden lg:flex w-1/3 justify-center text-center items-center">
         <button
           type="button"
           onClick={handleNavigateHomeClick}
@@ -373,7 +443,6 @@ export const Header: React.FC<HeaderProps> = ({
           aria-label="Go to home"
         >
           <span className="sb-header-logo-wrap">
-            <span className="sb-header-logo-aura" aria-hidden="true" />
             <img
               src={centerLogoSrc}
               alt="Spirit Being Logo"
@@ -384,7 +453,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right nav — tablet/desktop: text links · mobile: cart icon + burger */}
-      <div className="flex justify-end items-center gap-1 md:gap-6 md:w-1/3 relative">
+      <div className="relative z-[80] flex justify-end items-center gap-1 md:gap-6 md:w-1/3">
         <button
           onClick={onNavigateOurStory}
           className={`hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}
@@ -448,7 +517,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mega Menu */}
       <CollectionsMegaMenu 
         isOpen={isMegaMenuOpen} 
-        isHeroContext={isOnHeroSection}
+        isHeroContext={isHeroHeaderContext}
         onClose={() => setIsMegaMenuOpen(false)}
         onMouseEnter={handleMegaMenuEnter}
         onMouseLeave={handleMegaMenuLeave}
@@ -456,7 +525,7 @@ export const Header: React.FC<HeaderProps> = ({
       />
       <ShopMegaMenu
         isOpen={isShopMenuOpen}
-        isHeroContext={isOnHeroSection}
+        isHeroContext={isHeroHeaderContext}
         onClose={() => setIsShopMenuOpen(false)}
         onMouseEnter={handleShopMenuEnter}
         onMouseLeave={handleShopMenuLeave}
@@ -530,8 +599,6 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       )}
-
-      <hr className="sb-rule" />
 
       <ul className="sb-links">
         {currentUser && (

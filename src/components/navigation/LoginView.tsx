@@ -409,9 +409,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigateHome, onLoginSuc
             </div>
 
             <div className="gif-slot-filled">
-              <img
-                src="/login-ambient.gif"
-                alt="SpiritBeing ambient loop"
+              <video
+                src="/login-ambient.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                aria-label="SpiritBeing ambient loop"
                 className="w-full h-full object-cover rounded-[20px]"
               />
             </div>

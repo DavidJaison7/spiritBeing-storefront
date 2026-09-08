@@ -50,7 +50,7 @@ const DEFAULT_MOCK_ORDER: OrderDetails = {
       size: 'XL',
       price: 1499,
       quantity: 1,
-      image: '/products/bestsellers/ Spirit Gives Life Tee.png',
+      image: '/products/bestsellers/ Spirit Gives Life Tee.webp',
     },
   ],
   shippingAddress: {

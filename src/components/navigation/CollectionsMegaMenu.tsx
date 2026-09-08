@@ -40,6 +40,7 @@ export const CollectionsMegaMenu: React.FC<CollectionsMegaMenuProps> = ({
         className={`sb-mega ${isHeroContext ? 'sb-mega--hero' : ''} ${isOpen ? 'is-open' : ''}`}
         role="region"
         aria-label="Collections"
+        data-lenis-prevent
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >

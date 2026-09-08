@@ -140,7 +140,7 @@ export const InstagramFeedSection: React.FC = () => {
         <div className="ig-feed-head">
           <div className="ig-feed-brand">
             <img
-              src="/instagram-icon.png"
+              src="/instagram-icon.webp"
               alt=""
               className="ig-feed-brand-icon"
               width={28}
@@ -149,7 +149,7 @@ export const InstagramFeedSection: React.FC = () => {
             />
             <div>
               <p className="ig-feed-handle">@spiritbeinggen</p>
-              <p className="ig-feed-sub">Instagram · studio archive</p>
+              <p className="ig-feed-sub">instagram • studio archive</p>
             </div>
           </div>
 
@@ -193,7 +193,7 @@ export const InstagramFeedSection: React.FC = () => {
                 >
                   <div className="ig-feed-card-media">
                     <span className="ig-feed-card-badge">
-                      <img src="/instagram-icon.png" alt="" width={12} height={12} />
+                      <img src="/instagram-icon.webp" alt="" width={12} height={12} />
                       Instagram
                     </span>
 

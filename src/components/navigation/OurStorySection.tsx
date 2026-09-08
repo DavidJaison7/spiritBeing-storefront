@@ -10,6 +10,9 @@ export const OurStorySection: React.FC = () => {
     const el = containerRef.current;
     if (!el) return;
 
+    const scriptSlant =
+      getComputedStyle(el).getPropertyValue('--story-script-slant').trim() || '-2deg';
+
     // Smooth Dual Parallax Scroll Listener starting from 0px at scrollY=0
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset || 0;
@@ -22,7 +25,7 @@ export const OurStorySection: React.FC = () => {
         titleMainRef.current.style.transform = `translate3d(0, ${y1.toFixed(2)}px, 0)`;
       }
       if (scriptTextRef.current) {
-        scriptTextRef.current.style.transform = `translate3d(0, ${y2.toFixed(2)}px, 0)`;
+        scriptTextRef.current.style.transform = `translate3d(0, ${y2.toFixed(2)}px, 0) rotate(${scriptSlant})`;
       }
     };
 
@@ -78,7 +81,7 @@ export const OurStorySection: React.FC = () => {
         {/* Right Side: Copy Text */}
         <article className="copy">
           <h2 className="lede rv-up">
-            I'm not a company.
+            I'm not just a brand.
             <br />
             I'm a <em>spirit being.</em>
           </h2>

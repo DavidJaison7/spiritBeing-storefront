@@ -10,7 +10,7 @@ const BLOG_POSTS = [
   {
     id: '01',
     tag: 'story',
-    image: '/images/blog-01-official-merch.png',
+    image: '/images/blog-01-official-merch.webp',
     title: 'The Spirit Gives Life: The Story Behind The Drop',
     excerpt: 'Two figures, one body. The grey one lying still, the blue one rising out of it. This is the graphic that started Spirit Being, and 2 Corinthians 3:6 is the line that wouldn\'t leave us alone.',
     date: 'Aug 18, 2026',
@@ -19,7 +19,7 @@ const BLOG_POSTS = [
   {
     id: '02',
     tag: 'faith',
-    image: '/images/blog-02-scripture-streetwear.png',
+    image: '/images/blog-02-scripture-streetwear.webp',
     title: 'Why We Put Scripture On Streetwear',
     excerpt: 'A verse on a hoodie isn\'t decoration. It\'s a sentence someone reads on a train, in a queue, on a crosswalk. We talk about carrying the word into places a pulpit never reaches.',
     date: 'Aug 11, 2026',
@@ -28,7 +28,7 @@ const BLOG_POSTS = [
   {
     id: '03',
     tag: 'design',
-    image: 'images/03.jpg',
+    image: '/images/03.webp',
     title: 'Blue, Flame And Light: Our Colour Language',
     excerpt: 'Every brand picks a colour. Ours picked us. Electric blue reads as spirit, as fire that doesn\'t burn, as the coldest flame in the picture. Here\'s how we use it and where we refuse to.',
     date: 'Aug 04, 2026',
@@ -37,7 +37,7 @@ const BLOG_POSTS = [
   {
     id: '04',
     tag: 'style',
-    image: 'images/04.jpg',
+    image: '/images/04.webp',
     title: 'How To Style The Spirit Gives Life Tee',
     excerpt: 'Boxy drop-shoulder on top, volume at the bottom. Three ways to wear the blue tee without letting the graphic do all the talking, from washed baggies to a clean denim break.',
     date: 'Jul 28, 2026',
@@ -46,7 +46,7 @@ const BLOG_POSTS = [
   {
     id: '05',
     tag: 'story',
-    image: 'images/05.jpg',
+    image: '/images/05.webp',
     title: 'Faith. Identity. Purpose. What The Three Words Mean',
     excerpt: 'They sit under every logo we print. Not a tagline we bought from an agency, but the actual order we believe things happen in. Faith comes first, identity follows, purpose is the outcome.',
     date: 'Jul 21, 2026',
@@ -55,7 +55,7 @@ const BLOG_POSTS = [
   {
     id: '06',
     tag: 'craft',
-    image: 'images/06.jpg',
+    image: '/images/06.webp',
     title: 'Inside The Fabric: Our Heavyweight Cotton',
     excerpt: '240 GSM, combed and bio-washed, cut oversized on a boxy block. What that actually means for how a tee sits on your shoulders after twenty washes, and why we stopped chasing thicker.',
     date: 'Jul 14, 2026',
@@ -64,7 +64,7 @@ const BLOG_POSTS = [
   {
     id: '07',
     tag: 'craft',
-    image: 'images/07.jpg',
+    image: '/images/07.webp',
     title: 'From Sketch To Screenprint: Making The Levitation Graphic',
     excerpt: 'Eleven passes of ink, one of them a soft-hand blue that had to glow without cracking. A walk through the plates, the misprints we kept, and the test that finally held.',
     date: 'Jul 07, 2026',
@@ -73,7 +73,7 @@ const BLOG_POSTS = [
   {
     id: '08',
     tag: 'faith',
-    image: 'images/08.jpg',
+    image: '/images/08.webp',
     title: 'Streetwear Was Always Spiritual',
     excerpt: 'Before the resale apps and the queue culture, the street had its own liturgy: uniforms, symbols, belonging. Spirit Being isn\'t putting faith into streetwear. It\'s naming what was already there.',
     date: 'Jun 30, 2026',
@@ -82,7 +82,7 @@ const BLOG_POSTS = [
   {
     id: '09',
     tag: 'design',
-    image: 'images/09.jpg',
+    image: '/images/09.webp',
     title: 'The Chrome Balloon Type, Explained',
     excerpt: 'Soft, inflated, impossible to take too seriously. Our display lettering is deliberately playful against heavy subject matter, because grace isn\'t grim. Notes on how we build it.',
     date: 'Jun 23, 2026',
@@ -91,7 +91,7 @@ const BLOG_POSTS = [
   {
     id: '10',
     tag: 'care',
-    image: 'images/10.jpg',
+    image: '/images/10.webp',
     title: 'Care Guide: Keep The Print Alive',
     excerpt: 'Inside out, cold water, no tumble, no iron on the graphic. Four rules that will keep a blue flame looking like a blue flame three years from now instead of a grey ghost.',
     date: 'Jun 16, 2026',

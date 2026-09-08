@@ -11,7 +11,6 @@ interface SlideData {
   price: string;
   bgImg: string;
   modelImg: string;
-  fillColor: string;
 }
 
 const SLIDES: SlideData[] = [
@@ -21,9 +20,8 @@ const SLIDES: SlideData[] = [
     desc: "The letter kills. The Spirit raises what was dead.",
     verse: "2 Corinthians 3:6",
     price: "₹899.00",
-    bgImg: "/carousel-bg-1.jpeg",
-    modelImg: "/carousel-pngs/image 1886.png",
-    fillColor: '#0B3DFF',
+    bgImg: "/carousel-bg-1.webp",
+    modelImg: "/carousel-pngs/image 1886.webp",
   },
   {
     num: "02 — 06",
@@ -31,9 +29,8 @@ const SLIDES: SlideData[] = [
     desc: "Faith, identity, and kingdom purpose defined.",
     verse: "Romans 8:16",
     price: "₹899.00",
-    bgImg: "/carousel-bg-2.jpeg",
-    modelImg: "/carousel-pngs/image 1998.png",
-    fillColor: '#1A2FA8',
+    bgImg: "/carousel-bg-2.webp",
+    modelImg: "/carousel-pngs/image 1998.webp",
   },
   {
     num: "03 — 06",
@@ -41,9 +38,8 @@ const SLIDES: SlideData[] = [
     desc: "The old has passed away; behold, the new has come.",
     verse: "2 Corinthians 5:17",
     price: "₹899.00",
-    bgImg: "/carousel-pngs/new-creation-bg-acidwash.png",
-    modelImg: "/carousel-pngs/new-creation-model-acidwash.png",
-    fillColor: '#2E2E2E',
+    bgImg: "/carousel-pngs/new-creation-bg-acidwash.webp",
+    modelImg: "/carousel-pngs/new-creation-model-acidwash.webp",
   },
   {
     num: "04 — 06",
@@ -51,9 +47,8 @@ const SLIDES: SlideData[] = [
     desc: "The Lion stands with the lamb. You are never alone.",
     verse: "Isaiah 41:10",
     price: "₹899.00",
-    bgImg: "/carousel-bg-4.jpeg",
-    modelImg: "/carousel-pngs/image 2003-1.png",
-    fillColor: '#E8E4DC',
+    bgImg: "/carousel-bg-4.webp",
+    modelImg: "/carousel-pngs/image 2003-1.webp",
   },
   {
     num: "05 — 06",
@@ -61,9 +56,8 @@ const SLIDES: SlideData[] = [
     desc: "The same Spirit who raised Christ lives in you.",
     verse: "Romans 8:11",
     price: "₹899.00",
-    bgImg: "/carousel-bg-5.jpeg",
-    modelImg: "/carousel-pngs/image 2003.png",
-    fillColor: '#1550E8',
+    bgImg: "/carousel-bg-5.webp",
+    modelImg: "/carousel-pngs/image 2003.webp",
   },
   {
     num: "06 — 06",
@@ -71,9 +65,8 @@ const SLIDES: SlideData[] = [
     desc: "Led by the Spirit. Becoming more like Christ.",
     verse: "Romans 8:14",
     price: "₹899.00",
-    bgImg: "/carousel-bg-2.jpeg",
-    modelImg: "/carousel-pngs/image 2126.png",
-    fillColor: '#0B3DFF',
+    bgImg: "/carousel-bg-2.webp",
+    modelImg: "/carousel-pngs/image 2126.webp",
   },
 ];
 
@@ -99,7 +92,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   const [wishlistActive, setWishlistActive] = useState<boolean[]>([false, false, false, false, false, false]);
 
   const curRef = useRef<number>(0);
-  const transitionRef = useRef<((next: number) => void) | null>(null);
+  const transitionRef = useRef<((next: number, dir: number) => void) | null>(null);
   const goToSlideRef = useRef<((next: number) => void) | null>(null);
 
   const toggleWishlist = (idx: number) => {
@@ -129,7 +122,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     const texts = Array.from(el.querySelectorAll('.txt')) as HTMLDivElement[];
     const steps = Array.from(el.querySelectorAll('.step')) as HTMLDivElement[];
     const railNum = el.querySelector<HTMLElement>('#railNum');
-    const liquidFill = el.querySelector<HTMLElement>('.liquid-fill');
+    const numBtns = Array.from(el.querySelectorAll('.rail-num-btn')) as HTMLButtonElement[];
     const frame = el.querySelector<HTMLDivElement>('#frame');
     const bobs = Array.from(el.querySelectorAll('.bob')) as HTMLDivElement[];
 
@@ -142,37 +135,52 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
 
     function setRail(i: number) {
       if (railNum) railNum.textContent = String(i + 1).padStart(2, '0');
+      numBtns.forEach((btn, idx) => {
+        const isActive = idx === i;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', String(isActive));
+      });
     }
 
     setRail(0);
 
     const swapSlide = (next: number) => {
       panels.forEach((panel, index) => {
-        panel.classList.toggle('active', index === next);
-        panel.style.zIndex = index === next ? '2' : '1';
+        const isActive = index === next;
+        panel.classList.toggle('active', isActive);
+        panel.style.zIndex = isActive ? '2' : '1';
+        if (isActive) {
+          gsap.set(panel, { clipPath: 'inset(0% 0 0% 0)', clearProps: 'opacity' });
+        } else {
+          gsap.set(panel, { clipPath: 'inset(100% 0 0 0)' });
+          const ph = panel.querySelector('.ph');
+          const fl = panel.querySelector('.fl');
+          if (ph) gsap.set(ph, { yPercent: 0, scale: 1, clearProps: 'transform' });
+          if (fl) gsap.set(fl, { yPercent: 0, scale: 1, clearProps: 'transform' });
+        }
       });
       texts.forEach((text, index) => {
         text.classList.toggle('active', index === next);
       });
     };
 
-    const instantTransition = (next: number) => {
+    const instantTransition = (next: number, _dir: number) => {
       if (next === curRef.current) return;
       curRef.current = next;
       slideArrivedAt = Date.now();
       swapSlide(next);
-      if (liquidFill) gsap.set(liquidFill, { scaleY: 0 });
       setRail(next);
     };
 
     if (reduced) {
       transitionRef.current = instantTransition;
     } else {
-      const FILL_DUR = 0.36;
-      const DRAIN_DUR = 0.36;
-      const EASE = 'power2.inOut';
+      const DUR = 0.62;
+      const EASE = 'power2.out';
 
-      const transition = (next: number) => {
+      const isMobileLayout = () => window.matchMedia('(max-width: 767px)').matches;
+
+      const transition = (next: number, dir: number) => {
         if (next === curRef.current) return;
         if (tl) tl.progress(1);
         slideArrivedAt = Date.now();
@@ -182,75 +190,114 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         const outT = texts[curRef.current];
         const inT = texts[next];
 
-        if (!inP || !outP || !inT || !outT || !liquidFill) return;
+        if (!inP || !outP || !inT || !outT) return;
 
-        const fillColor = SLIDES[next].fillColor;
+        const inPh = inP.querySelector('.ph');
+        const outPh = outP.querySelector('.ph');
+        const inFl = inP.querySelector('.fl');
+        const outFl = outP.querySelector('.fl');
+        const mobile = isMobileLayout();
+
+        const prev = curRef.current;
+        const diff = Math.abs(next - prev);
+        const animDur = Math.min(0.85, 0.58 + diff * 0.05);
+
         curRef.current = next;
 
-        inP.style.zIndex = '2';
-        outP.style.zIndex = '1';
+        inP.style.zIndex = '3';
+        outP.style.zIndex = '2';
+        inT.classList.add('active');
+
+        // Reset non-involved panels and texts to guarantee pristine state on direct multi-slide jumps
+        panels.forEach((p, idx) => {
+          if (idx !== prev && idx !== next) {
+            p.classList.remove('active');
+            p.style.zIndex = '1';
+            gsap.set(p, { clipPath: 'inset(100% 0 0 0)' });
+          }
+        });
+        texts.forEach((t, idx) => {
+          if (idx !== prev && idx !== next) {
+            t.classList.remove('active');
+          }
+        });
+
+        if (mobile) {
+          outT.classList.remove('active');
+          gsap.set(outT, { opacity: 1 });
+          gsap.set(outT.children, { y: 0, opacity: 1, clearProps: 'transform' });
+          gsap.set(inT, { opacity: 0 });
+          gsap.set(inT.children, { y: 0, opacity: 1, clearProps: 'transform' });
+        }
+
+        gsap.set(inP, { clipPath: dir > 0 ? 'inset(100% 0 0 0)' : 'inset(0 0 100% 0)' });
+        if (inPh) gsap.set(inPh, { yPercent: dir > 0 ? -10 : 10, scale: 1.14 });
+        if (inFl) gsap.set(inFl, { yPercent: dir > 0 ? -18 : 18, scale: 1.06 });
 
         tl = gsap.timeline({
           onComplete() {
-            swapSlide(next);
-            gsap.set(liquidFill, { scaleY: 0, clearProps: 'transform,backgroundColor' });
+            outP.classList.remove('active');
+            inP.classList.add('active');
+            outT.classList.remove('active');
+            gsap.set(outP, { clipPath: 'inset(100% 0 0 0)', zIndex: 1 });
+            gsap.set(inP, { clearProps: 'clipPath' });
+            if (outPh) gsap.set(outPh, { yPercent: 0, scale: 1 });
+            if (outFl) gsap.set(outFl, { yPercent: 0, scale: 1 });
+            if (inPh) gsap.set(inPh, { yPercent: 0, scale: 1 });
+            if (inFl) gsap.set(inFl, { yPercent: 0, scale: 1 });
+            gsap.set(outT, { opacity: 1, clearProps: 'opacity' });
+            gsap.set(inT, { clearProps: 'opacity' });
             gsap.set(outT.children, { clearProps: 'all' });
+            gsap.set(inT.children, { clearProps: 'all' });
             tl = null;
           },
         });
 
-        tl.to(outT.children, {
-          opacity: 0,
-          duration: 0.16,
-          stagger: 0.02,
-          ease: 'power2.in',
-        }, 0);
+        tl.to(inP, { clipPath: 'inset(0% 0 0% 0)', duration: animDur, ease: EASE }, 0);
+        if (inPh) tl.to(inPh, { yPercent: 0, scale: 1, duration: animDur, ease: EASE }, 0);
+        if (inFl) tl.to(inFl, { yPercent: 0, scale: 1, duration: animDur, ease: EASE }, 0);
+        if (outPh) tl.to(outPh, { yPercent: dir > 0 ? 8 : -8, scale: 1.06, duration: DUR, ease: EASE }, 0);
+        if (outFl) tl.to(outFl, { yPercent: dir > 0 ? 16 : -16, duration: DUR, ease: EASE }, 0);
 
-        gsap.set(liquidFill, {
-          scaleY: 0,
-          transformOrigin: 'bottom center',
-          backgroundColor: fillColor,
-        });
+        if (mobile) {
+          tl.to(outT, { opacity: 0, duration: 0.22, ease: 'power2.in' }, 0);
+          tl.to(inT, { opacity: 1, duration: 0.36, ease: 'power2.out' }, 0.1);
+        } else {
+          tl.to(outT.children, {
+            y: dir > 0 ? -26 : 26,
+            opacity: 0,
+            duration: 0.28,
+            stagger: 0.035,
+            ease: 'power2.in',
+          }, 0);
 
-        tl.to(liquidFill, { scaleY: 1, duration: FILL_DUR, ease: EASE }, 0);
-
-        tl.call(() => {
-          outP.classList.remove('active');
-          inP.classList.add('active');
-          outT.classList.remove('active');
-          inT.classList.add('active');
-        }, [], FILL_DUR);
-
-        tl.fromTo(
-          inT.children,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.28, stagger: 0.04, ease: 'power2.out' },
-          FILL_DUR + 0.04,
-        );
-
-        tl.set(liquidFill, { transformOrigin: 'top center' }, FILL_DUR);
-        tl.to(liquidFill, { scaleY: 0, duration: DRAIN_DUR, ease: EASE }, FILL_DUR);
+          tl.fromTo(
+            inT.children,
+            { y: dir > 0 ? 40 : -40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.58, stagger: 0.05, ease: 'power2.out' },
+            0.28,
+          );
+        }
 
         setRail(next);
       };
 
       transitionRef.current = transition;
 
-      if (panels[0] && liquidFill) {
-        gsap.set(liquidFill, {
-          scaleY: 1,
-          transformOrigin: 'top center',
-          backgroundColor: SLIDES[0].fillColor,
-        });
-        gsap.to(liquidFill, { scaleY: 0, duration: 0.95, ease: EASE, delay: 0.12 });
-      }
-
       if (texts[0]) {
-        gsap.fromTo(
-          texts[0].children,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.55, stagger: 0.06, ease: 'power2.out', delay: 0.35 },
-        );
+        if (isMobileLayout()) {
+          gsap.fromTo(
+            texts[0],
+            { opacity: 0 },
+            { opacity: 1, duration: 0.32, ease: 'power2.out', delay: 0.08 },
+          );
+        } else {
+          gsap.fromTo(
+            texts[0].children,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.55, stagger: 0.06, ease: 'power2.out', delay: 0.12 },
+          );
+        }
       }
 
       if (frame) {
@@ -288,9 +335,10 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
     // ──────────────────────────────────────────────────────────────
     // SNAP NAVIGATION — Lenis-based, behaves like scroll-snap-mandatory
     // Transitions:
-    //   A) Hero  →  Carousel Slide 1  (any scroll-down from Hero)
+    //   A) Hero  →  Carousel Slide 1  (single snap)
     //   B) Carousel Slide 1  →  Hero  (any scroll-up from Slide 1)
-    //   C) Carousel Slide 6  →  StatementParticles  (any scroll-down from Slide 6)
+    //   C) Carousel Slide 6  →  StatementParticles  (single snap)
+    //   D) StatementParticles  →  Carousel Slide 6  (single snap)
     // ──────────────────────────────────────────────────────────────
     let snapCooldown = false;
     let touchStartY = 0;
@@ -310,10 +358,82 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       return getScrollY() + rect.top;
     };
 
+    const getStatementSection = () => document.getElementById('sbStatement');
+
+    const lastSlideIndex = steps.length - 1;
+
+    const lastSlideScrollY = (vh: number) => carouselTop() + lastSlideIndex * vh;
+
+    // Statement is primary only while it fills the viewport — not when scrolled off into product grid
+    const isStatementPrimaryView = (vh: number): boolean => {
+      const stmt = getStatementSection();
+      if (!stmt) return false;
+      const rect = stmt.getBoundingClientRect();
+      return (
+        rect.top >= -vh * 0.1 &&
+        rect.top < vh * 0.38 &&
+        rect.bottom > vh * 0.55
+      );
+    };
+
+    // Past statement → free scroll (product grid, footer) — no carousel snap
+    const isBelowSnapCorridor = (scrollY: number, vh: number): boolean => {
+      const stmt = getStatementSection();
+      if (!stmt) return false;
+      const corridorEnd = stmt.offsetTop + stmt.offsetHeight - vh * 0.08;
+      return scrollY > corridorEnd;
+    };
+
     const isInCarouselZone = (scrollY: number, heroH: number, vh: number): boolean => {
+      if (isStatementPrimaryView(vh) || isBelowSnapCorridor(scrollY, vh)) return false;
+
       const top = carouselTop();
-      const bottom = top + el.offsetHeight - vh * 0.35;
-      return scrollY >= top - 40 && scrollY <= bottom && scrollY >= heroH * 0.45;
+      const maxY = lastSlideScrollY(vh) + vh * 0.55;
+      return scrollY >= top - 40 && scrollY <= maxY && scrollY >= heroH * 0.45;
+    };
+
+    let statementHandoffUntil = 0;
+    let heroHandoffUntil = 0;
+
+    const isStatementHandoffLocked = () => Date.now() < statementHandoffUntil;
+    const isHeroHandoffLocked = () => Date.now() < heroHandoffUntil;
+
+    const isInHeroZone = (scrollY: number, heroH: number) => scrollY < heroH * 0.92;
+
+    const isOnLastSlide = () => curRef.current === lastSlideIndex;
+
+    const isNearLastSlideScroll = (scrollY: number, vh: number) =>
+      scrollY >= lastSlideScrollY(vh) - vh * 0.35 &&
+      scrollY <= lastSlideScrollY(vh) + vh * 0.65;
+
+    const shouldSnapToLastSlideFromStatement = (scrollY: number, vh: number) =>
+      isStatementPrimaryView(vh) && !isBelowSnapCorridor(scrollY, vh);
+
+    const shouldSnapSlide6ToStatement = (scrollY: number, vh: number) =>
+      isOnLastSlide() &&
+      !isStatementPrimaryView(vh) &&
+      !isBelowSnapCorridor(scrollY, vh) &&
+      isNearLastSlideScroll(scrollY, vh);
+
+    const snapToFirstSlide = () => {
+      heroHandoffUntil = Date.now() + 1600;
+      statementHandoffUntil = 0;
+      goToSlide(0, { force: true });
+    };
+
+    const snapToStatement = () => {
+      const stmtSection = getStatementSection();
+      if (!stmtSection) return false;
+      statementHandoffUntil = 0;
+      heroHandoffUntil = 0;
+      snapTo(stmtSection);
+      return true;
+    };
+
+    const snapToLastSlide = () => {
+      statementHandoffUntil = Date.now() + 1200;
+      heroHandoffUntil = 0;
+      goToSlide(lastSlideIndex, { force: true });
     };
 
     const snapTo = (target: HTMLElement | number, onComplete?: () => void) => {
@@ -344,16 +464,29 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       return true;
     };
 
-    const goToSlide = (next: number) => {
-      if (next === curRef.current || snapCooldown) return;
+    const goToSlide = (next: number, options?: { force?: boolean }) => {
+      if (snapCooldown) return;
       if (next < 0 || next >= steps.length) return;
 
       const targetStep = steps[next];
       if (!targetStep) return;
 
+      const sameSlide = next === curRef.current;
+      if (sameSlide && !options?.force) return;
+
       snapCooldown = true;
-      if (transitionRef.current) {
-        transitionRef.current(next);
+
+      const diff = Math.abs(next - curRef.current);
+      const scrollDuration = Math.min(1.15, 0.75 + diff * 0.08);
+
+      if (!sameSlide) {
+        const dir = next > curRef.current ? 1 : -1;
+        if (transitionRef.current) {
+          transitionRef.current(next, dir);
+        } else {
+          curRef.current = next;
+          setRail(next);
+        }
       } else {
         curRef.current = next;
         setRail(next);
@@ -363,14 +496,14 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       const lenis = (window as any).lenis;
       if (lenis) {
         lenis.scrollTo(targetStep, {
-          duration: 0.82,
+          duration: scrollDuration,
           easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
           lock: true,
           onComplete: release,
         });
       } else {
         targetStep.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(release, 900);
+        setTimeout(release, Math.round(scrollDuration * 1000) + 80);
       }
     };
 
@@ -389,17 +522,34 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       const scrollingUp = e.deltaY < -4;
       if (!scrollingDown && !scrollingUp) return;
 
-      // A) Hero → Carousel Slide 1
-      if (scrollingDown && scrollY < heroH * 0.9) {
+      // Product grid and below — normal scroll, no snap interception
+      if (isBelowSnapCorridor(scrollY, vh)) return;
+
+      // A) Hero → Carousel Slide 1 (single snap)
+      if (scrollingDown && isInHeroZone(scrollY, heroH)) {
         e.preventDefault();
-        goToSlide(0);
+        snapToFirstSlide();
         return;
       }
 
       // B) Carousel Slide 1 → Hero
-      if (scrollingUp && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 80) {
+      if (scrollingUp && curRef.current === 0 && !isHeroHandoffLocked() && scrollY >= heroH * 0.35 && scrollY < heroH + vh * 0.15) {
         e.preventDefault();
         snapTo(0);
+        return;
+      }
+
+      // C) Slide 6 → Statement (only at carousel exit — not from product grid)
+      if (scrollingDown && shouldSnapSlide6ToStatement(scrollY, vh)) {
+        e.preventDefault();
+        snapToStatement();
+        return;
+      }
+
+      // D) Statement → Carousel Slide 6 (single snap)
+      if (scrollingUp && shouldSnapToLastSlideFromStatement(scrollY, vh)) {
+        e.preventDefault();
+        snapToLastSlide();
         return;
       }
 
@@ -408,22 +558,22 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         e.preventDefault();
 
         if (scrollingDown) {
-          if (curRef.current < steps.length - 1) {
+          if (isHeroHandoffLocked() && curRef.current === 0) return;
+
+          if (curRef.current < lastSlideIndex) {
             goToSlide(curRef.current + 1);
             return;
           }
 
-          // C) Slide 6 → Statement (dwell guard)
-          if (curRef.current === steps.length - 1 && Date.now() - slideArrivedAt >= 800) {
-            const stmtSection = document.getElementById('sbStatement');
-            if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
-              snapTo(stmtSection);
-            }
+          if (isOnLastSlide()) {
+            snapToStatement();
           }
           return;
         }
 
         if (scrollingUp) {
+          if (isStatementHandoffLocked() && isOnLastSlide()) return;
+
           if (curRef.current > 0) {
             goToSlide(curRef.current - 1);
           } else {
@@ -433,10 +583,11 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         }
       }
 
-      // D) StatementParticles → Carousel Slide 6
-      if (scrollingUp && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
+      // Limbo between slide 6 and statement (Lenis may have nudged scroll past the anchor)
+      if (scrollingDown && isNearLastSlideScroll(scrollY, vh) && !isStatementPrimaryView(vh) && !isBelowSnapCorridor(scrollY, vh)) {
         e.preventDefault();
-        goToSlide(steps.length - 1);
+        snapToStatement();
+        return;
       }
     };
 
@@ -456,35 +607,51 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
       const swipingUp = deltaY > 0;
       const swipingDown = deltaY < 0;
 
-      // A) Hero → Carousel Slide 1
-      if (swipingUp && scrollY < heroH * 0.9) {
-        goToSlide(0);
+      // Product grid and below — normal scroll, no snap interception
+      if (isBelowSnapCorridor(scrollY, vh)) return;
+
+      // A) Hero → Carousel Slide 1 (single snap)
+      if (swipingUp && isInHeroZone(scrollY, heroH)) {
+        snapToFirstSlide();
         return;
       }
 
       // B) Carousel Slide 1 → Hero
-      if (swipingDown && curRef.current === 0 && scrollY >= heroH * 0.5 && scrollY < heroH + 80) {
+      if (swipingDown && curRef.current === 0 && !isHeroHandoffLocked() && scrollY >= heroH * 0.35 && scrollY < heroH + vh * 0.15) {
         snapTo(0);
+        return;
+      }
+
+      // C) Slide 6 → Statement (only at carousel exit — not from product grid)
+      if (swipingUp && shouldSnapSlide6ToStatement(scrollY, vh)) {
+        snapToStatement();
+        return;
+      }
+
+      // D) Statement → Carousel Slide 6 (single snap)
+      if (swipingDown && shouldSnapToLastSlideFromStatement(scrollY, vh)) {
+        snapToLastSlide();
         return;
       }
 
       if (isInCarouselZone(scrollY, heroH, vh)) {
         if (swipingUp) {
-          if (curRef.current < steps.length - 1) {
+          if (isHeroHandoffLocked() && curRef.current === 0) return;
+
+          if (curRef.current < lastSlideIndex) {
             goToSlide(curRef.current + 1);
             return;
           }
 
-          if (curRef.current === steps.length - 1 && Date.now() - slideArrivedAt >= 800) {
-            const stmtSection = document.getElementById('sbStatement');
-            if (stmtSection && stmtSection.getBoundingClientRect().top > 50) {
-              snapTo(stmtSection);
-            }
+          if (isOnLastSlide()) {
+            snapToStatement();
           }
           return;
         }
 
         if (swipingDown) {
+          if (isStatementHandoffLocked() && isOnLastSlide()) return;
+
           if (curRef.current > 0) {
             goToSlide(curRef.current - 1);
           } else {
@@ -494,9 +661,10 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         return;
       }
 
-      // D) Statement → Slide 6
-      if (swipingDown && scrollY >= heroH + 5.8 * vh && scrollY <= heroH + 6.2 * vh) {
-        goToSlide(steps.length - 1);
+      // Limbo between slide 6 and statement (Lenis may have nudged scroll past the anchor)
+      if (swipingUp && isNearLastSlideScroll(scrollY, vh) && !isStatementPrimaryView(vh) && !isBelowSnapCorridor(scrollY, vh)) {
+        snapToStatement();
+        return;
       }
     };
 
@@ -560,7 +728,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
           onClick={() => onSelectProductByHandle?.(PRODUCT_HANDLES[curRef.current])}
         >
           <span className="findex flex items-center justify-center pointer-events-none" id="findex" style={{ mixBlendMode: 'normal' }}>
-            <img src="/img_logo_white.png" alt="Spirit Being Logo" className="h-9 md:h-11 w-auto object-contain drop-shadow-md" />
+            <img src="/img_logo_white.webp" alt="Spirit Being Logo" className="h-9 md:h-11 w-auto object-contain drop-shadow-md" />
           </span>
 
           {SLIDES.map((slide, idx) => (
@@ -591,7 +759,6 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
             </div>
           ))}
 
-          <div className="liquid-fill" aria-hidden="true" />
         </div>
 
         {/* Content Section containing details per slide */}
@@ -651,12 +818,24 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         })}
         </div>
 
-        {/* Bottom nav — count left, paired arrow CTAs right */}
+        {/* Bottom nav — interactive numbers 01 to 06 left, paired arrow CTAs right */}
         <nav className="rail" aria-label="Collection slides">
-          <span className="rail-count" aria-live="polite">
-            <b id="railNum">01</b>
-            <span className="rail-count-total">/{String(SLIDES.length).padStart(2, '0')}</span>
-          </span>
+          <div className="rail-numbers" role="tablist" aria-label="Collection slide numbers">
+            {SLIDES.map((slide, idx) => (
+              <button
+                key={idx}
+                type="button"
+                className={`rail-num-btn ${idx === 0 ? 'active' : ''}`}
+                data-slide-index={idx}
+                onClick={() => handleDotClick(idx)}
+                aria-label={`Go to slide ${idx + 1}: ${slide.title.replace('\n', ' ')}`}
+                aria-selected={idx === 0}
+                role="tab"
+              >
+                <span className="rail-num-text">{String(idx + 1).padStart(2, '0')}</span>
+              </button>
+            ))}
+          </div>
 
           <div className="rail-arrows">
             <button

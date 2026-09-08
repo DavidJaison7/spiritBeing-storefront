@@ -112,11 +112,11 @@ export default function App() {
   const [isFaqView, setIsFaqView] = useState(false);
   const [isDesignSystemView, setIsDesignSystemView] = useState(false);
   const [isShopCategoryView, setIsShopCategoryView] = useState(false);
-  const [targetCategorySection, setTargetCategorySection] = useState('tshirts');
+  const [targetCategorySection, setTargetCategorySection] = useState('top');
   const [isCollectionView, setIsCollectionView] = useState(false);
   const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
 
-  const handleNavigateShopCategory = (sectionTarget = 'tshirts') => {
+  const handleNavigateShopCategory = (sectionTarget = 'top') => {
     setSelectedProduct(null);
     setIsOurStoryView(false);
     setIsBlogView(false);
@@ -126,7 +126,14 @@ export default function App() {
     setActiveCollectionId(null);
     setTargetCategorySection(sectionTarget);
     setIsShopCategoryView(true);
-    window.scrollTo(0, 0);
+    if (sectionTarget === 'top') {
+      window.scrollTo(0, 0);
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(0, { immediate: true });
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
   };
 
   const handleNavigateCollection = (collectionId: string) => {
@@ -509,6 +516,7 @@ export default function App() {
               }
             }}
             onAddToCart={handleAddToCart}
+            suppressFixedCtas={isCartOpen || isCheckoutOpen}
           />
         ) : isBlogView ? (
           <BlogView onClose={() => setIsBlogView(false)} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { CartItem, Product } from '../../types';
-import { X, Trash2, Plus, Minus, ArrowRight, ArrowUpRight, ShoppingBag, ShieldCheck, Sparkles } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowRight, ArrowUpRight, ShoppingBag, ShieldCheck, Sparkles } from 'lucide-react';
+import './CartDrawer.css';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -88,7 +89,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         </div>
 
         {/* Item List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-3.5 overscroll-contain flex flex-col justify-start" data-lenis-prevent>
+        <div className="flex-1 overflow-y-auto px-6 py-5 overscroll-contain flex flex-col justify-start" data-lenis-prevent>
           {items.length === 0 ? (
             <div className="h-full flex flex-col justify-between pt-4 pb-2">
               <div className="text-left space-y-2">
@@ -162,18 +163,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               )}
             </div>
           ) : (
-            <>
-              {/* Complimentary Gifts Perk Box */}
-              <div className="bg-gradient-to-r from-[#2040FF]/8 to-purple-500/8 border border-[#2040FF]/15 rounded-2xl p-3.5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#2040FF] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Sparkles className="w-4 h-4 fill-white" />
-                </div>
-                <div className="text-xs flex-grow">
-                  <p className="font-sans font-bold text-black uppercase tracking-wide text-[11px]">
-                    COMPLIMENTARY GIFTS INCLUDED
-                  </p>
-                  <p className="text-gray-600 text-[10px] mt-0.5 leading-snug">
-                    Weatherproof Sticker Pack + Metallic "Chosen One" Badge
+            <div className="sb-cart-items">
+              <div className="sb-cart-perk">
+                <Sparkles className="sb-cart-perk-icon w-3.5 h-3.5" strokeWidth={2.25} />
+                <div>
+                  <p className="sb-cart-perk-title">Complimentary gifts included</p>
+                  <p className="sb-cart-perk-copy">
+                    Weatherproof sticker pack + metallic &ldquo;Chosen One&rdquo; badge
                   </p>
                 </div>
               </div>
@@ -186,86 +182,75 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     ? item.product.colorImageMap[item.selectedColor][0]
                     : item.product.image;
 
+                const variantMeta = [
+                  `Size ${item.selectedSize}`,
+                  item.selectedColor,
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+
                 return (
-                  <div
+                  <article
                     key={`${item.product.id}-${item.selectedSize}-${item.selectedColor || 'default'}`}
-                    className="flex gap-4 p-4 rounded-2xl border border-black/6 bg-white shadow-sm hover:shadow-md transition-all relative group"
+                    className="sb-cart-item"
                   >
-                    {/* Image Thumbnail */}
-                    <div className="w-20 h-24 shrink-0 rounded-xl bg-[#f5f3ef] border border-black/5 overflow-hidden flex items-center justify-center p-1.5">
-                      <img
-                        src={displayImage}
-                        alt={item.product.title}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
+                    <div className="sb-cart-item__media">
+                      <img src={displayImage} alt={item.product.title} />
                     </div>
 
-                  {/* Details */}
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-sans font-bold uppercase text-xs sm:text-sm text-[#1A1A1A] leading-snug pr-2">
-                          {item.product.title}
-                        </h4>
-                        <button
-                          onClick={() =>
-                            onRemoveItem(item.product.id, item.selectedSize, item.selectedColor)
-                          }
-                          className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                          title="Remove item"
-                          aria-label="Remove item"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 stroke-[1.75]" />
-                        </button>
+                    <div className="sb-cart-item__body">
+                      <div>
+                        <div className="sb-cart-item__head">
+                          <h4 className="sb-cart-item__title">{item.product.title}</h4>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onRemoveItem(item.product.id, item.selectedSize, item.selectedColor)
+                            }
+                            className="sb-cart-item__remove"
+                            title="Remove item"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 stroke-[1.75]" />
+                          </button>
+                        </div>
+                        <p className="sb-cart-item__meta">{variantMeta}</p>
                       </div>
 
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/5 text-[#333] border border-black/10">
-                          SIZE: {item.selectedSize}
-                        </span>
-                        {item.selectedColor && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/5 text-[#333] border border-black/10">
-                            COLOR: {item.selectedColor}
-                          </span>
-                        )}
+                      <div className="sb-cart-item__foot">
+                        <div className="sb-cart-item__qty">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, -1)
+                            }
+                            className="sb-cart-item__qty-btn"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="sb-cart-item__qty-value">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, 1)
+                            }
+                            className="sb-cart-item__qty-btn"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <p className="sb-cart-item__price">
+                          ₹{(item.product.price * item.quantity).toFixed(2)}
+                        </p>
                       </div>
                     </div>
-
-                    {/* Quantity Stepper & Subtotal */}
-                    <div className="flex items-center justify-between pt-3 mt-2 border-t border-black/5">
-                      <div className="flex items-center bg-black/5 rounded-lg border border-black/10 p-0.5">
-                        <button
-                          onClick={() =>
-                            onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, -1)
-                          }
-                          className="w-6 h-6 rounded-md bg-white text-black flex items-center justify-center hover:bg-black hover:text-white transition-colors cursor-pointer shadow-xs"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="px-3 text-xs font-sans font-bold text-black">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, 1)
-                          }
-                          className="w-6 h-6 rounded-md bg-white text-black flex items-center justify-center hover:bg-black hover:text-white transition-colors cursor-pointer shadow-xs"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-
-                      <div className="font-sans font-bold text-sm text-[#1A1A1A]">
-                        ₹{(item.product.price * item.quantity).toFixed(2)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            </>
+                  </article>
+                );
+              })}
+            </div>
           )}
         </div>
 

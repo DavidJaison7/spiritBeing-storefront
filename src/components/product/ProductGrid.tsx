@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Product } from '../../types';
-import { Heart, ArrowRight } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 const getColorHex = (colorName: string) => {
   const normalized = colorName.toLowerCase();
@@ -220,15 +220,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            className="rail-arrow-btn rail-arrow-btn--prev sb-card-rail-arrow absolute left-1.5 sm:left-2.5 md:left-3 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              setActiveIndex((prev) => Math.max(prev - 1, 0));
+              setActiveIndex((prev) => (prev > 0 ? prev - 1 : productImages.length - 1));
             }}
             onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
             aria-label="Previous image"
           >
-            <ArrowRight className="w-4 h-4 rotate-180" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
         )}
 
@@ -236,15 +240,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/15 backdrop-blur-md text-white border border-white/20 hover:bg-black/30 hover:scale-105 transition-all opacity-0 group-hover:opacity-100 z-20 cursor-pointer"
+            className="rail-arrow-btn rail-arrow-btn--next sb-card-rail-arrow absolute right-1.5 sm:right-2.5 md:right-3 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              setActiveIndex((prev) => Math.min(prev + 1, productImages.length - 1));
+              setActiveIndex((prev) => (prev + 1) % productImages.length);
             }}
             onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
             aria-label="Next image"
           >
-            <ArrowRight className="w-4 h-4" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 6 15 12 9 18" />
+            </svg>
           </button>
         )}
 

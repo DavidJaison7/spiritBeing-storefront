@@ -1,11 +1,11 @@
-/** Dummy Instagram feed tiles — full-bleed photos from the Spirit Being asset library. */
+/** Instagram feed placeholder tiles — WebP for fast loads. */
 export const INSTAGRAM_FEED_IMAGES = [
-  '/products/product-main.jpg',
-  '/carousel-pngs/image 2003.png',
-  '/carousel-pngs/new-creation-model-acidwash.png',
-  '/products/product-sec1.jpg',
+  '/products/product-main.webp',
+  '/carousel-pngs/image 2003.webp',
+  '/carousel-pngs/new-creation-model-acidwash.webp',
+  '/products/product-sec1.webp',
   '/review-img/Unknown-3.webp',
   '/review-img/Unknown-5.webp',
-  '/archive/archive-1.png',
-  '/archive/archive-4.png',
-] as const;
+  '/review-img/Unknown.webp',
+  '/review-img/Unknown-2.webp',
+];
