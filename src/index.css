@@ -798,15 +798,22 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 /* Product Card Carousel Overlay Adaptation (All Responsiveness: Mobile, Tablet, Desktop) */
 .sb-card-rail-arrow {
   position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  margin-top: auto !important;
+  margin-bottom: auto !important;
   width: 40px;
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(18, 18, 20, 0.32);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  transform: translateY(-50%);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.18);
+  transform: none !important;
   opacity: 0.92;
   z-index: 25 !important;
   pointer-events: auto !important;
@@ -817,12 +824,12 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.6);
   background: rgba(18, 18, 20, 0.52);
-  transform: translateY(-50%) scale(1.06);
+  transform: scale(1.06) !important;
   opacity: 1 !important;
 }
 
 .sb-card-rail-arrow:active {
-  transform: translateY(-50%) scale(0.92);
+  transform: scale(0.92) !important;
   opacity: 1 !important;
 }
 
@@ -832,7 +839,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
     opacity: 0;
   }
   .group:hover .sb-card-rail-arrow {
-    opacity: 0.95;
+    opacity: 1;
   }
 }
 

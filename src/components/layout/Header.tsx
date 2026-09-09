@@ -51,8 +51,15 @@ export const Header: React.FC<HeaderProps> = ({
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [isPastCollectionProducts, setIsPastCollectionProducts] = useState(false);
   const [isPastShopHero, setIsPastShopHero] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Mega Menu State
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -243,6 +250,7 @@ export const Header: React.FC<HeaderProps> = ({
   const showHeaderStyle =
     isMegaOpen ||
     isNavigatingHome ||
+    (isMobile && (isOnCollectionHero || isOnShopHero)) ||
     ((currentView === 'product_detail' ||
       isPastShopHero ||
       isPastCollectionProducts ||
@@ -349,9 +357,9 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-5 md:px-12 py-2 md:py-2 ${isHeroHeaderContext ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'sb-header-chrome-transition' : ''} ${headerBg} ${textColor}`}>
+    <header className={`fixed top-0 left-0 w-full z-[90] flex justify-between items-center px-[clamp(12px,4vw,20px)] md:px-12 py-2 md:py-2 ${isHeroHeaderContext ? 'sb-header--hero' : ''} ${isMenuPanelOpen ? 'sb-header--mega-open' : ''} ${!isMenuPanelOpen ? 'sb-header-chrome-transition' : ''} ${headerBg} ${textColor}`}>
       {/* Left nav — mobile/tablet logo + plain links + desktop mega menus */}
-      <div className="relative z-[80] flex items-center gap-2 sm:gap-3 md:gap-4 md:w-1/3 min-w-0">
+      <div className="relative z-[80] flex items-center gap-[clamp(2px,1.5vw,8px)] sm:gap-3 md:gap-4 md:w-1/3 min-w-0">
         <button
           type="button"
           onClick={handleNavigateHomeClick}
@@ -365,7 +373,7 @@ export const Header: React.FC<HeaderProps> = ({
           />
         </button>
 
-        <div className={`flex md:hidden items-center gap-2 min-w-0 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
+        <div className={`flex md:hidden items-center gap-[clamp(1px,1vw,8px)] min-w-0 transition-all duration-300 ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}>
           <button
             type="button"
             className={`sb-nav-trigger sb-nav-trigger--mobile ${isShopMenuOpen ? 'is-active' : ''}`}
@@ -453,7 +461,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right nav — tablet/desktop: text links · mobile: cart icon + burger */}
-      <div className="relative z-[80] flex justify-end items-center gap-1 md:gap-6 md:w-1/3">
+      <div className="relative z-[80] flex justify-end items-center gap-[clamp(0px,1vw,4px)] md:gap-6 md:w-1/3">
         <button
           onClick={onNavigateOurStory}
           className={`hidden md:block text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity duration-300 cursor-pointer ${isDropdownOpen ? 'opacity-0 pointer-events-none' : ''}`}

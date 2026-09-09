@@ -313,16 +313,16 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
 
           {/* Main Headline */}
           <div className="mb-8 w-full">
-            <h2 className="text-5xl sm:text-6xl lg:text-[46px] xl:text-[58px] font-anton uppercase text-white tracking-normal leading-[1.1] flex flex-col items-start w-full">
-              <span>WHAT OTHER SPIRIT</span>
-              <span className="flex items-baseline gap-2 sm:gap-3 mt-1 flex-wrap lg:flex-nowrap justify-between w-full lg:w-auto">
-                <span>BEINGS</span>
-                <span className="text-[#0B3DFF] font-script capitalize font-normal tracking-wide text-[46px] sm:text-[58px] lg:text-[38px] xl:text-[50px] relative whitespace-nowrap lg:ml-auto">
-                  Are Saying
+            <h2 className="text-[clamp(2.5rem,5vw,3.5rem)] font-anton uppercase text-white tracking-normal leading-[1.1] flex flex-col items-start w-full">
+              <span>What Other Spirit</span>
+              <span>
+                Beings
+                <span className="text-[#0B3DFF] font-script capitalize font-normal tracking-wide text-[clamp(2.5rem,4.5vw,3rem)] relative whitespace-nowrap lg:ml-auto">
+                  {' '}Are Saying
                 </span>
               </span>
             </h2>
-            <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#5B5E66] mt-4 font-mono">
+            <p className="text-[clamp(10px,2vw,12px)] uppercase tracking-[0.2em] text-[#5B5E66] mt-4 font-mono">
               About {product.title}
             </p>
           </div>
@@ -331,8 +331,8 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
           <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#0D0E11] border border-white/8">
             {/* Score Card */}
             <div className="flex flex-col justify-center">
-              <div className="flex items-baseline gap-3">
-                <span className="font-anton text-7xl sm:text-[90px] text-white tracking-normal leading-none">
+              <div className="flex items-end gap-3 mb-2">
+                <span className="font-anton text-[clamp(4.5rem,8vw,6rem)] text-white tracking-normal leading-none">
                   {avgScore}
                 </span>
                 <span className="text-xs sm:text-sm text-[#5B5E66] font-mono tracking-widest">Out of 5</span>
@@ -354,7 +354,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
                 <b className="text-white font-semibold">{totalCount}</b> spirits rated this drop
               </p>
 
-              <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B3DFF]/40 bg-[#0B3DFF]/10 text-[#9FB3FF] text-[10px] uppercase tracking-widest self-start">
+              <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B3DFF]/40 bg-[#0B3DFF]/10 text-[#9FB3FF] text-[clamp(9px,1.5vw,10px)] uppercase tracking-widest self-start">
                 <span>RECOMMENDED BY {recPercent}%</span>
               </div>
             </div>
@@ -372,7 +372,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
                     }`}
                 >
                   <span
-                    className="col-span-5 sm:col-span-4 text-[10px] sm:text-[11px] text-[#8A8D95] font-medium tracking-wider uppercase truncate"
+                    className="col-span-5 sm:col-span-4 text-[clamp(10px,1.5vw,11px)] text-[#8A8D95] font-medium tracking-wider uppercase truncate"
                     title={getStarLabel(stars)}
                   >
                     {getStarLabel(stars)}
@@ -405,7 +405,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAllPhotosModal(true)}
-                  className="px-4 py-1.5 rounded-2xl border border-white/20 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
+                  className="px-4 py-1.5 rounded-2xl border border-white/20 text-[clamp(9px,1.5vw,10px)] font-mono font-bold uppercase tracking-[0.2em] text-[#A0A4B0] hover:text-white hover:border-white hover:bg-white/5 transition-all cursor-pointer select-none"
                 >
                   SEE ALL
                 </button>
@@ -668,13 +668,15 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
                       <div>
                         <h4 className="text-sm font-bold text-white leading-tight flex items-center gap-2">
                           <span>{rev.name}</span>
+                        </h4>
+                        <div className="flex items-center gap-2 mb-1.5">
                           {rev.verified && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0B3DFF]/20 text-[#8FA6FF] border border-[#0B3DFF]/30 uppercase">
-                              ✓ VERIFIED BUYER
+                            <span className="text-[clamp(9px,1.5vw,10px)] font-bold px-2 py-0.5 rounded-full bg-[#0B3DFF]/20 text-[#8FA6FF] border border-[#0B3DFF]/30 uppercase">
+                              VERIFIED
                             </span>
                           )}
-                        </h4>
-                        <p className="text-[10px] text-[#5B5E66] uppercase tracking-wider mt-0.5">
+                        </div>
+                        <p className="text-[clamp(9px,1.5vw,10px)] text-[#5B5E66] uppercase tracking-wider mt-0.5">
                           {rev.date}
                         </p>
                       </div>
@@ -720,7 +722,8 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
                   )}
 
                   {/* Footer Helpful Vote */}
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-[#5B5E66]">
+                  <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[clamp(10px,1.5vw,11px)] text-[#5B5E66]">
+                    <span className="uppercase tracking-widest font-mono">Was this helpful?</span>
                     <button
                       type="button"
                       onClick={() => handleToggleHelpful(rev.id)}

@@ -126,6 +126,7 @@
   letter-spacing: .15em;
   text-transform: uppercase;
   color: var(--ash);
+  white-space: nowrap;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .9s ease .28s, transform .9s ease .28s;
@@ -359,50 +360,50 @@
   }
 
   .sb-copy h2 {
-    font-size: clamp(19px, 5.6vw, 34px);
+    font-size: clamp(22px, 6.5vw, 36px);
     line-height: 1.04;
     letter-spacing: -0.008em;
   }
 
   .sb-copy h2 .row.script {
-    font-size: 1.26em;
+    font-size: 1.35em;
     line-height: 0.95;
   }
 
   .sb-context {
     margin-top: clamp(14px, 2.4vh, 20px);
-    max-width: 23rem;
-    font-size: 11px;
-    letter-spacing: .08em;
-    line-height: 1.75;
+    max-width: 26rem;
+    font-size: 12.5px;
+    letter-spacing: .04em;
+    line-height: 1.65;
   }
 
   .sb-refs {
-    margin-top: 8px;
-    font-size: 8.5px;
-    letter-spacing: .18em;
+    margin-top: 10px;
+    font-size: clamp(7.5px, 2.5vw, 10px);
+    letter-spacing: clamp(0.08em, 0.2vw, 0.15em);
     line-height: 1.75;
-    max-width: 20rem;
+    max-width: 100%;
   }
 
   .sb-community {
-    margin-top: clamp(14px, 2.4vh, 22px);
-    gap: 10px;
+    margin-top: clamp(36px, 5vh, 48px);
+    gap: 12px;
   }
 
   .sb-community .invite {
-    font-size: 9.5px;
+    font-size: 11px;
     letter-spacing: 0.2em;
     text-align: center;
-    max-width: 18rem;
+    max-width: 20rem;
     line-height: 1.5;
   }
 
   .discord-cta {
-    padding: 14px 24px;
-    font-size: 10px;
+    padding: clamp(12px, 2vh, 16px) clamp(20px, 5vw, 28px);
+    font-size: 11px;
     letter-spacing: 0.2em;
-    gap: 10px;
+    gap: 12px;
   }
 
   .sb-statement .hint {

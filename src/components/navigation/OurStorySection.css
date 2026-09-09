@@ -20,24 +20,26 @@
 
 /* ---------- giant title ---------- */
 .sb-our-story .title-wrap {
-  padding: 16vh 6vw 4vh;
+  padding: max(16vh, 120px) 6vw 4vh;
   overflow: visible;
 }
 
 .sb-our-story .title {
   font-family: 'Anton', sans-serif;
-  font-size: clamp(90px, 17vw, 300px);
+  font-size: clamp(48px, 15vw, 300px);
   line-height: .86;
   letter-spacing: .005em;
   text-transform: uppercase;
   color: var(--white);
   margin: 0;
+  white-space: nowrap;
 }
 
 .sb-our-story .title .title-main {
   display: block;
   will-change: transform;
   transition: transform 0.08s ease-out;
+  white-space: nowrap;
 }
 
 .sb-our-story .title .script {

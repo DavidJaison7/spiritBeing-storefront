@@ -6,7 +6,7 @@
 
 .sb-collection-view__hero {
   position: relative;
-  min-height: clamp(320px, 52vh, 520px);
+  min-height: clamp(240px, 38vh, 520px);
   overflow: hidden;
   display: flex;
   align-items: flex-end;

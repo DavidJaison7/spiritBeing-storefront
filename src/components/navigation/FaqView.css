@@ -12,7 +12,7 @@
   --body: 'Archivo', sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --unfold: 760ms;
-  --header-offset: 52px;
+  --header-offset: 96px;
 
   background: var(--paper);
   color: var(--ink);

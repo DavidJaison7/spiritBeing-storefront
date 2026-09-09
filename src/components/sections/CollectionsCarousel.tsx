@@ -73,6 +73,7 @@ const SLIDES: SlideData[] = [
 interface CollectionsCarouselProps {
   onSelectProductByHandle?: (handle: string) => void;
   products?: Product[];
+  onAddToCart?: (product: Product, size: string, color?: string) => void;
 }
 
 const PRODUCT_HANDLES = [
@@ -86,12 +87,16 @@ const PRODUCT_HANDLES = [
 
 export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   onSelectProductByHandle,
-  products = []
+  products = [],
+  onAddToCart
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [wishlistActive, setWishlistActive] = useState<boolean[]>([false, false, false, false, false, false]);
-
   const curRef = useRef<number>(0);
+  const [wishlistActive, setWishlistActive] = useState<boolean[]>(SLIDES.map(() => false));
+  const [showSizesForIdx, setShowSizesForIdx] = useState<number | null>(null);
+  const [addingSize, setAddingSize] = useState<{ idx: number; size: string } | null>(null);
+  const [addedSuccessIdx, setAddedSuccessIdx] = useState<number | null>(null);
+
   const transitionRef = useRef<((next: number, dir: number) => void) | null>(null);
   const goToSlideRef = useRef<((next: number) => void) | null>(null);
 
@@ -784,20 +789,97 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                 <p className="verse">{slide.verse}</p>
                 <div className="price flex items-center gap-3">
                   {slide.price}
-                  {isSoldOut && (
-                    <span className="text-[10px] font-sans font-extrabold text-[#FF3E3E] tracking-widest uppercase border border-[#FF3E3E]/40 px-2.5 py-0.5 rounded bg-[#FF3E3E]/10 select-none shadow-[0_0_10px_rgba(255,62,62,0.15)]">
-                      Sold Out
-                    </span>
-                  )}
                 </div>
               <div className="actions">
-                <button
-                  onClick={() => onSelectProductByHandle?.(PRODUCT_HANDLES[idx])}
-                  className="view cursor-pointer"
-                  type="button"
-                >
-                  View Piece <span>&#8594;</span>
-                </button>
+                {showSizesForIdx === idx ? (
+                  <div className="flex items-center gap-1.5 min-h-[44px]">
+                    {(() => {
+                      if (!product || !product.sizes || product.sizes.length === 0) return null;
+                      return product.sizes.map((size) => {
+                        const isAdding = addingSize?.idx === idx && addingSize?.size === size;
+                        
+                        return (
+                          <button
+                            key={size}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (addingSize || addedSuccessIdx !== null) return;
+                              
+                              setAddingSize({ idx, size });
+                              setTimeout(() => {
+                                setShowSizesForIdx(null);
+                                setAddedSuccessIdx(idx);
+                                setTimeout(() => {
+                                  onAddToCart?.(product, size, product.colors?.[0] || 'Black');
+                                  setAddingSize(null);
+                                  // Keep showing ADDED while cart opens, reset after 2.5s
+                                  setTimeout(() => setAddedSuccessIdx(null), 2500);
+                                }, 500);
+                              }, 400);
+                            }}
+                            className={`w-10 h-10 rounded-full border border-white/40 text-white flex items-center justify-center text-[12px] font-bold tracking-widest transition-all cursor-pointer ${
+                              isAdding 
+                                ? 'bg-white text-black scale-110 shadow-[0_0_15px_rgba(255,255,255,0.5)]' 
+                                : 'hover:bg-white hover:text-black'
+                            }`}
+                            type="button"
+                            title={`Add Size ${size} to Bag`}
+                          >
+                            {isAdding ? (
+                              <svg className="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                            ) : (
+                              size
+                            )}
+                          </button>
+                        );
+                      });
+                    })()}
+                  </div>
+                ) : isSoldOut ? (
+                  <div className="flex items-center min-h-[44px]">
+                    <span className="text-[11px] font-sans font-extrabold text-[#FF3E3E] tracking-[0.2em] uppercase border border-[#FF3E3E]/40 px-3 py-1.5 rounded bg-[#FF3E3E]/10 select-none shadow-[0_0_10px_rgba(255,62,62,0.15)]">
+                      Sold Out
+                    </span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (addingSize || addedSuccessIdx !== null) return;
+                      
+                      const isNoSizeCategory = product && (product.category === 'Caps' || product.category === 'Tote Bags' || (product.sizes && product.sizes.includes('ONE SIZE')));
+                      const hasSizes = !isNoSizeCategory && product && product.sizes && product.sizes.length > 0;
+                      
+                      if (hasSizes) {
+                        setShowSizesForIdx(idx);
+                      } else if (product) {
+                        setAddedSuccessIdx(idx);
+                        setTimeout(() => {
+                          onAddToCart?.(product, 'OS', product.colors?.[0] || 'Black');
+                          // Keep showing ADDED while cart opens, reset after 2.5s
+                          setTimeout(() => setAddedSuccessIdx(null), 2500);
+                        }, 500);
+                      } else {
+                        onSelectProductByHandle?.(PRODUCT_HANDLES[idx]);
+                      }
+                    }}
+                    className="view cursor-pointer min-h-[28px]"
+                    type="button"
+                  >
+                    {addedSuccessIdx === idx ? (
+                      <span className="flex items-center gap-2 text-[#22c55e] font-bold tracking-widest uppercase text-sm">
+                        <svg className="w-4 h-4 text-[#22c55e]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Added
+                      </span>
+                    ) : (
+                      <>Add to Bag <span>&#8594;</span></>
+                    )}
+                  </button>
+                )}
                 <button
                   className={`wish ${wishlistActive[idx] ? 'active' : ''}`}
                   onClick={() => toggleWishlist(idx)}
@@ -809,7 +891,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                     </svg>
                   </span>
                   <span className="label">
-                    {wishlistActive[idx] ? 'Liked' : 'Drop Like'}
+                    {wishlistActive[idx] ? 'Blessed' : 'Bless this DROP'}
                   </span>
                 </button>
               </div>
@@ -818,23 +900,11 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
         })}
         </div>
 
-        {/* Bottom nav — interactive numbers 01 to 06 left, paired arrow CTAs right */}
+        {/* Bottom nav — slide numbers 01/06 left, paired arrow CTAs right */}
         <nav className="rail" aria-label="Collection slides">
-          <div className="rail-numbers" role="tablist" aria-label="Collection slide numbers">
-            {SLIDES.map((slide, idx) => (
-              <button
-                key={idx}
-                type="button"
-                className={`rail-num-btn ${idx === 0 ? 'active' : ''}`}
-                data-slide-index={idx}
-                onClick={() => handleDotClick(idx)}
-                aria-label={`Go to slide ${idx + 1}: ${slide.title.replace('\n', ' ')}`}
-                aria-selected={idx === 0}
-                role="tab"
-              >
-                <span className="rail-num-text">{String(idx + 1).padStart(2, '0')}</span>
-              </button>
-            ))}
+          <div className="slide-counter-display font-sans font-bold flex items-baseline gap-1 select-none" aria-live="polite">
+            <span id="railNum" className="text-[20px] sm:text-[24px] md:text-[28px] tracking-tight text-white">01</span>
+            <span className="text-[12px] sm:text-[14px] md:text-[16px] tracking-widest text-[#888888] font-normal">/{String(SLIDES.length).padStart(2, '0')}</span>
           </div>
 
           <div className="rail-arrows">

@@ -13,7 +13,7 @@
   --ease:cubic-bezier(.22,.61,.36,1);
   background:var(--bg);
   color:var(--text);
-  padding:0 0 96px;
+  padding:96px 0 96px;
   min-height: 100vh;
 }
 

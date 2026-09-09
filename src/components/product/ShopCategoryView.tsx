@@ -186,10 +186,10 @@ export const ShopCategoryView: React.FC<ShopCategoryViewProps> = ({
             className="sb-category-section"
           >
             <div className="flex items-baseline justify-between border-b border-[#000]/10 pb-4 mb-8">
-              <h2 className="text-2xl md:text-3xl font-mono font-bold tracking-tight text-[#1b1c1c] uppercase">
+              <h2 className="text-[clamp(1.5rem,3vw,2.25rem)] font-mono font-bold tracking-tight text-[#1b1c1c] uppercase">
                 CAPS
               </h2>
-              <span className="text-xs font-mono text-[#666666] uppercase tracking-wider">
+              <span className="text-[clamp(10px,1.5vw,12px)] font-mono text-[#666666] uppercase tracking-wider">
                 {capProducts.length} Items
               </span>
             </div>

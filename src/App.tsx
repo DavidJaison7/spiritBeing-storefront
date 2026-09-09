@@ -598,6 +598,7 @@ export default function App() {
                     }
                   }
                 }}
+                onAddToCart={handleAddToCart}
               />
             </div>
 

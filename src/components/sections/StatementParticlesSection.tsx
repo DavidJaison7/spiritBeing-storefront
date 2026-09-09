@@ -159,7 +159,8 @@ export const StatementParticlesSection: React.FC = () => {
       measureZone();
 
       engine = Engine.create({ enableSleeping: true });
-      engine.gravity.y = 1.1;
+      engine.gravity.y = 0.6;
+      engine.timing.timeScale = 0.75;
       engine.positionIterations = 6;
       engine.velocityIterations = 6;
 
@@ -195,12 +196,18 @@ export const StatementParticlesSection: React.FC = () => {
         const body = Bodies.rectangle(x, y, w * 0.9, h * 0.9, {
           chamfer: { radius: Math.min(w, h) * 0.16 },
           angle: (Math.random() - 0.5) * 1.1,
-          restitution: 0.3,
-          friction: 0.32,
-          frictionAir: 0.013,
-          density: 0.0012,
+          restitution: 0.6,
+          friction: 0.1,
+          frictionAir: 0.045,
+          density: 0.0005,
           sleepThreshold: 30
         });
+        
+        // Add a burst of initial downward velocity so they fall in faster on fresh load
+        if (!reduced) {
+          Body.setVelocity(body, { x: 0, y: 15 + Math.random() * 10 });
+        }
+
         (body as any).render = { img, w, h };
         Composite.add(engine.world, body);
         packets.push(body);
@@ -211,7 +218,7 @@ export const StatementParticlesSection: React.FC = () => {
         mouse.pixelRatio = 1;
         mouseConstraint = MouseConstraint.create(engine, {
           mouse,
-          constraint: { stiffness: 0.24, damping: 0.04, render: { visible: false } } as any
+          constraint: { stiffness: 0.05, damping: 0.1, render: { visible: false } } as any
         });
         Composite.add(engine.world, mouseConstraint);
         ['wheel', 'mousewheel', 'DOMMouseScroll'].forEach(ev =>
@@ -265,7 +272,7 @@ export const StatementParticlesSection: React.FC = () => {
         const dir = p.x < cx ? -1 : 1;
         const toSide = dir < 0 ? p.x - zone.x0 : zone.x1 - p.x;
         const toBottom = zone.y1 - p.y;
-        const k = 0.00058 * b.mass;
+        const k = 0.00065 * b.mass; // Adjusted for floaty gravity
 
         Sleeping.set(b, false);
         if (toBottom < toSide * 0.75) {
@@ -310,8 +317,9 @@ export const StatementParticlesSection: React.FC = () => {
         Body.applyForce(b, off, { x: (dx / d) * mag, y: (dy / d) * mag - mag * 0.22 });
 
         const v = Math.hypot(b.velocity.x, b.velocity.y);
-        if (v > 34) Body.setVelocity(b, { x: (b.velocity.x / v) * 34, y: (b.velocity.y / v) * 34 });
-        if (Math.abs(b.angularVelocity) > 0.7) Body.setAngularVelocity(b, Math.sign(b.angularVelocity) * 0.7);
+        // Hard cap velocity to keep them floating slowly even when swiped hard
+        if (v > 12) Body.setVelocity(b, { x: (b.velocity.x / v) * 12, y: (b.velocity.y / v) * 12 });
+        if (Math.abs(b.angularVelocity) > 0.15) Body.setAngularVelocity(b, Math.sign(b.angularVelocity) * 0.15);
       }
     }
 

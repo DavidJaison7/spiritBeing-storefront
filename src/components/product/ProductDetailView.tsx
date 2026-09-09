@@ -260,9 +260,9 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         {isSoldOut && (
           <>
             <div className="absolute inset-0 z-[15] pointer-events-none bg-gradient-to-b from-black/20 via-black/45 to-black/60" />
-            <div className="absolute inset-0 z-[18] pointer-events-none flex items-center justify-center p-6">
-              <span className="inline-flex items-center justify-center min-w-[108px] px-5 py-2.5 rounded-full border border-white/25 bg-black/40 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_10px_36px_rgba(0,0,0,0.28)]">
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-white">
+            <div className="absolute inset-0 z-[18] pointer-events-none flex items-center justify-center max-sm:p-3 sm:p-6">
+              <span className="inline-flex items-center justify-center min-w-fit max-sm:px-3 max-sm:py-1.5 sm:px-5 sm:py-2.5 rounded-full border border-white/25 bg-black/40 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_10px_36px_rgba(0,0,0,0.28)]">
+                <span className="font-mono max-sm:text-[8px] sm:text-[10px] font-medium uppercase max-sm:tracking-[0.15em] sm:tracking-[0.3em] text-white whitespace-nowrap">
                   Sold Out
                 </span>
               </span>
@@ -278,7 +278,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
               e.stopPropagation();
               onToggleWishlist(product.id);
             }}
-            className={`absolute top-3 right-3 z-30 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all cursor-pointer select-none ${
+            className={`absolute top-2 right-2 sm:top-3 sm:right-3 z-30 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all cursor-pointer select-none ${
               isSoldOut ? 'opacity-45 saturate-0' : ''
             } ${
               isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]/70 hover:text-[#1b1c1c]'
@@ -291,13 +291,12 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                 isWishlisted ? 'fill-[#2040FF] text-[#2040FF]' : 'text-[#1b1c1c]'
               }`}
             />
-            <span className={`text-[11px] font-mono font-bold ${isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]'}`}>
+            <span className={`text-[clamp(9px,2.5vw,11px)] font-mono font-bold ${isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]'}`}>
               {(product.likesCount || 280) + (isWishlisted ? 1 : 0)}
             </span>
           </button>
         )}
 
-        {/* Horizontal CSS Transform Slider */}
         <div
           className="w-full h-full flex flex-nowrap transition-transform duration-500 ease-out pointer-events-none"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
@@ -320,7 +319,6 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
           ))}
         </div>
 
-        {/* Left Arrow */}
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
@@ -340,7 +338,6 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
           </button>
         )}
 
-        {/* Right Arrow */}
         {productImages.length > 1 && !isSoldOut && (
           <button
             type="button"
@@ -360,7 +357,6 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
           </button>
         )}
 
-        {/* Carousel Indicator Dots in Bottom Center */}
         {productImages.length > 1 && !isSoldOut && (
           <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
             {productImages.map((_, idx) => (
@@ -380,7 +376,6 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         )}
       </div>
 
-      {/* Row of Selectors: Sizes on Left, Colors on Right */}
       {(() => {
         const isNoSizeCategory =
           product.title.toLowerCase().includes('cap') ||
@@ -397,7 +392,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         if (!hasSizes && !hasColors) return null;
 
         return (
-          <div className={`flex items-center ${hasSizes && hasColors ? 'justify-between' : hasSizes ? 'justify-start' : 'justify-end'} pt-2 px-1`}>
+          <div className={`flex items-center ${hasSizes && hasColors ? 'justify-between' : 'justify-start'} pt-2 px-1`}>
             {hasSizes && (
               <div className="flex items-center gap-1.5">
                 {product.sizes!.slice(0, 2).map((size) => {
@@ -461,14 +456,13 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
         );
       })()}
 
-      {/* Card Footer: Title & Price + Hover Add to Bag + Wishlist Heart */}
       <div className="flex items-start justify-between px-1 pt-2">
-        <div className="pr-2 flex-grow">
-          <h4 className="font-sans font-medium text-[14px] sm:text-[15px] text-[#1a1a1a] tracking-tight leading-snug group-hover:text-black">
+        <div className="pr-2 flex-grow min-w-0">
+          <h4 className="font-sans font-medium text-[clamp(11px,3vw,15px)] text-[#1a1a1a] tracking-tight leading-snug group-hover:text-black">
             {product.title}
           </h4>
           <div className="relative h-5 mt-1 overflow-hidden w-full">
-            <p className="absolute inset-x-0 top-0 font-sans text-[13px] sm:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
+            <p className="absolute inset-x-0 top-0 font-sans text-[clamp(11px,2.5vw,14px)] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
               ₹{product.price.toFixed(2)}
             </p>
             <button
@@ -479,7 +473,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = ({
                 if (!product.inStock) return;
                 onAddToCart(e, selectedSize, selectedColor);
               }}
-              className={`absolute inset-x-0 top-0 font-sans text-[12px] sm:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
+              className={`absolute inset-x-0 top-0 font-sans text-[clamp(10px,2.5vw,13px)] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
                 !product.inStock
                   ? 'text-gray-400 cursor-default'
                   : isAdded
@@ -522,6 +516,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [added, setAdded] = useState<boolean>(false);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
   const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
+  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
+  const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
   const thumbsScrollRef = React.useRef<HTMLDivElement>(null);
 
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
@@ -530,6 +526,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const isProductLiked = wishlist.includes(product.id);
   const [copied, setCopied] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isDescExpanded, setIsDescExpanded] = useState<boolean>(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -559,7 +556,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     }, 1400);
   };
 
-  // Update default state if product changes
   React.useEffect(() => {
     setSelectedSize(availableSizes[0] || 'M');
     setSelectedColor(product.colors && product.colors.length > 0 ? product.colors[0] : undefined);
@@ -573,9 +569,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   const triggerParticles = () => {
     const newParticles = Array.from({ length: 24 }).map((_, i) => {
-      // Balloon physics: float upwards (negative y) and drift slightly sideways (random x)
-      const x = (Math.random() - 0.5) * 120; // Sideways drift between -60 and +60
-      const y = -100 - Math.random() * 200;  // Float up by 100 to 300 pixels
+      const x = (Math.random() - 0.5) * 120;
+      const y = -100 - Math.random() * 200;
       const colors = ['#2040FF', '#6366F1', '#8B00FF', '#4F46E5', '#D946EF', '#4338CA', '#a5f3fc', '#ffffff'];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
       return {
@@ -583,7 +578,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         x,
         y,
         scale: 0.5 + Math.random() * 0.9,
-        delay: Math.random() * 0.4, // Rise one after another like a release of balloons
+        delay: Math.random() * 0.4,
         color: randomColor,
       };
     });
@@ -613,13 +608,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       const rect = section.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Determine sticky top offset (mobile: 56px, tablet: 64px, desktop: 80px)
       const stickyOffset = window.innerWidth >= 1024 ? 80 : (window.innerWidth >= 640 ? 64 : 56);
       const totalScrollableDistance = section.clientHeight - windowHeight;
 
       if (totalScrollableDistance <= 0) return;
 
-      // Calculate how far we've scrolled vertically into this sticky section
       const scrolled = stickyOffset - rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / totalScrollableDistance));
 
@@ -636,13 +629,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
 
-    // Synchronize with global Lenis smooth scroll if present
     const lenis = (window as any).lenis;
     if (lenis) {
       lenis.on('scroll', handleScroll);
     }
 
-    // Recalculate on layout/image size changes
     let ro: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(() => {
@@ -670,7 +661,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     .filter((p) => p.id !== product.id)
     .slice(0, 6);
 
-  // Dynamic images for the selected product and selected color variant
   const activeColorImages = (selectedColor && product.colorImageMap && product.colorImageMap[selectedColor] && product.colorImageMap[selectedColor].length > 0)
     ? product.colorImageMap[selectedColor]
     : (product.additionalImages && product.additionalImages.length > 0)
@@ -684,6 +674,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   const mobileGalleryImages = [mainFixedImage, ...secondaryImagesStack];
 
+  React.useEffect(() => {
+    if (thumbsScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = thumbsScrollRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollWidth > clientWidth);
+    }
+  }, [product, mobileGalleryImages.length]);
+
   const scrollThumbIntoView = (index: number) => {
     const container = thumbsScrollRef.current;
     if (!container) return;
@@ -691,19 +689,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     thumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };
 
-  const handleMobileThumbNext = () => {
-    if (mobileGalleryImages.length <= 1) return;
-    const next = (mobileActiveIndex + 1) % mobileGalleryImages.length;
-    setMobileActiveIndex(next);
-    scrollThumbIntoView(next);
-  };
-
   return (
-    <div className="w-full pt-14 md:pt-20 pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
-      {/* Top Section: Main Product Details (White Background Container) */}
+    <div className="w-full pt-[96px] md:pt-[112px] pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
+      <div className="relative">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-start">
-          {/* MOBILE + TABLET: Compact gallery + meta in first viewport */}
           <div className="lg:hidden sb-pdp-mobile w-full">
             <div className="sb-pdp-mobile-hero">
               <div className="sb-pdp-main-image">
@@ -713,11 +703,20 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 />
               </div>
 
-              <div className="sb-pdp-thumbs-wrap">
+              <div 
+                className="sb-pdp-thumbs-wrap"
+              >
                 <div
                   ref={thumbsScrollRef}
                   className="sb-pdp-thumbs"
                   aria-label="Product image thumbnails"
+                  onScroll={() => {
+                    if (thumbsScrollRef.current) {
+                      const { scrollLeft, scrollWidth, clientWidth } = thumbsScrollRef.current;
+                      setCanScrollLeft(scrollLeft > 0);
+                      setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
+                    }
+                  }}
                 >
                   {mobileGalleryImages.map((imgUrl, idx) => (
                     <button
@@ -736,11 +735,30 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   ))}
                 </div>
 
-                {mobileGalleryImages.length > 1 && (
+                {mobileGalleryImages.length > 1 && canScrollLeft && (
+                  <button
+                    type="button"
+                    className="sb-pdp-thumbs-prev"
+                    onClick={() => {
+                      if (thumbsScrollRef.current) {
+                        thumbsScrollRef.current.scrollBy({ left: -100, behavior: 'smooth' });
+                      }
+                    }}
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-4 h-4" strokeWidth={2.5} />
+                  </button>
+                )}
+
+                {mobileGalleryImages.length > 1 && canScrollRight && (
                   <button
                     type="button"
                     className="sb-pdp-thumbs-next"
-                    onClick={handleMobileThumbNext}
+                    onClick={() => {
+                      if (thumbsScrollRef.current) {
+                        thumbsScrollRef.current.scrollBy({ left: 100, behavior: 'smooth' });
+                      }
+                    }}
                     aria-label="Next image"
                   >
                     <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
@@ -781,7 +799,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
           </div>
 
-          {/* DESKTOP GALLERY (lg+): portrait main fixed + scrolling stack */}
           <div className="hidden lg:grid lg:col-span-8 w-full gap-1 items-start sb-pdp-desktop-gallery">
             <div className="lg:sticky lg:top-16 w-full self-start">
               <img
@@ -803,37 +820,38 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
           </div>
 
-          {/* Product details — mobile/tablet stack below hero · desktop far-right column */}
           <div className="sb-pdp-details-panel lg:col-span-4 lg:col-start-9 flex flex-col items-start text-left w-full lg:max-w-none lg:mx-0 lg:sticky lg:self-start lg:top-14 xl:top-16 lg:max-h-none px-0 transition-all duration-300">
             <div className="hidden md:block lg:block mb-3 lg:mb-4 2xl:mb-4 text-left w-full">
-              <h1 className="text-4xl sm:text-5xl 2xl:text-6xl font-sans font-medium text-black tracking-tight leading-[1.1] mb-3">
+              <h1 className="text-[clamp(28px,6vw,48px)] font-sans font-medium text-black tracking-tight leading-[1.1] mb-3">
                 {product.title}
               </h1>
 
-
-              {/* Price Row */}
               <div className="flex items-center gap-3 mt-1">
-                <p className="sb-pdp-desktop-price">
+                <p className="text-[clamp(18px,3vw,24px)] font-sans font-medium text-black">
                   ₹{product.price.toFixed(2)}
                 </p>
               </div>
             </div>
 
-            <p className="sb-pdp-desc w-full mb-3 lg:mb-3.5 2xl:mb-4 text-left md:text-justify">
+            <p 
+              className={`text-[clamp(14px,2vw,16px)] w-full mb-3 lg:mb-3.5 2xl:mb-4 text-left md:text-justify transition-all duration-300 cursor-pointer lg:cursor-text select-none lg:select-auto ${!isDescExpanded ? 'line-clamp-2 lg:line-clamp-none' : ''}`}
+              onClick={() => {
+                if (window.innerWidth < 1024) {
+                  setIsDescExpanded(!isDescExpanded);
+                }
+              }}
+              title={!isDescExpanded ? "Tap to read more" : "Tap to show less"}
+            >
               {product.description}
             </p>
 
-            {/* Sizes & Size Guide */}
             {availableSizes.length > 0 && !product.title.toLowerCase().includes('cap') && (
               <div className="space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans font-bold uppercase tracking-widest text-black">
-                    SELECT SIZE
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setShowSizeGuideModal(true)}
-                    className="text-[11px] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
+                <div className="flex justify-between items-center mb-5">
+                  <h3 className="text-xl md:text-2xl font-sans font-bold uppercase tracking-tight text-black">Sizes & Fit</h3>
+                  <button 
+                    onClick={() => document.getElementById('size-guide-content')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                    className="text-[clamp(10px,1.5vw,11px)] font-sans font-medium uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 cursor-pointer transition-colors"
                   >
                     SIZE GUIDE
                   </button>
@@ -859,10 +877,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             )}
 
-            {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="hidden md:block lg:block space-y-2.5 2xl:space-y-3.5 w-full mb-3 lg:mb-4 2xl:mb-5 text-left">
-                <span className="block text-xs font-sans font-bold uppercase tracking-widest text-black mb-2 2xl:mb-2.5">
+                <span className="block text-[clamp(10px,1.5vw,12px)] font-sans font-bold uppercase tracking-widest text-black mb-2 2xl:mb-2.5">
                   COLOR: <span className="text-gray-500 font-normal ml-1">{(selectedColor || product.color || 'BLACK').toUpperCase()}</span>
                 </span>
                 <div className="flex gap-2 2xl:gap-2.5 flex-wrap pt-0.5">
@@ -896,7 +913,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             )}
 
-            {/* Desktop: side-by-side CTAs (lg+ only) */}
             <div
               className={`sb-pdp-desktop-ctas hidden md:flex w-full mb-4 lg:mb-6 2xl:mb-8${
                 isProductLiked ? ' sb-pdp-desktop-ctas--blessed' : ''
@@ -913,7 +929,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     : 'border-black bg-transparent text-black hover:bg-black hover:text-white shadow-sm'
                 } ${isBouncing && product.inStock ? 'animate-bounce-click' : ''}`}
               >
-                {/* Confetti Particles */}
                 {product.inStock && particles.map((p) => (
                   <span
                     key={p.id}
@@ -929,7 +944,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     } as React.CSSProperties}
                   />
                 ))}
-                {/* Text Slide transition container */}
                 <div className="relative h-5 overflow-hidden w-full flex justify-center items-center pointer-events-none">
                   {!product.inStock ? (
                     <span className="flex items-center justify-center gap-2 opacity-100 translate-y-0 text-black/40">
@@ -955,11 +969,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </div>
               </button>
 
-              {/* Community Like Button Wrapper */}
               {onToggleWishlist && (
                 <div className="sb-pdp-desktop-bless-wrap relative">
                   {toastMessage && (
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 bg-white/95 text-black border border-black/5 px-4.5 py-2.5 rounded-full text-xs font-sans font-bold tracking-widest uppercase shadow-[0_8px_30px_rgba(0,0,0,0.06)] z-30 flex items-center gap-1.5 animate-cloud-toast pointer-events-none whitespace-nowrap">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 bg-white/95 text-black border border-black/5 px-4.5 py-2.5 rounded-full text-[clamp(9px,1.5vw,11px)] font-sans font-bold tracking-widest uppercase shadow-[0_8px_30px_rgba(0,0,0,0.06)] z-30 flex items-center gap-1.5 animate-cloud-toast pointer-events-none whitespace-nowrap">
                       <span>{toastMessage}</span>
                     </div>
                   )}
@@ -979,7 +992,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       }`}
                     title={isProductLiked ? 'Blessed by you!' : 'Bless this drop'}
                   >
-                    {/* Wavy Liquid fill background */}
                     <span
                       className={`absolute left-1/2 top-full w-[300px] h-[300px] bg-rose-500 rounded-[43%] z-0 pointer-events-none transition-transform duration-300 ${isProductLiked ? 'animate-wave-fill' : '-translate-x-1/2 translate-y-[10%]'
                         }`}
@@ -993,17 +1005,18 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     >
                       BLESS THIS DROP
                     </span>
-                    <span className={`relative z-10 px-1.5 py-0.5 rounded-full font-mono font-bold text-[10px] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
-                      {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className={`relative z-10 px-1.5 py-0.5 rounded-full font-mono font-bold text-[clamp(9px,1.5vw,10px)] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5 group-hover:bg-rose-100 group-hover:text-rose-600'}`}>
+                        {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
+                      </span>
+                    </div>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Share Drop Options */}
             <div className="w-full pb-4 pt-1 text-left">
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-widest text-black/55 block mb-2.5">
+              <span className="text-[clamp(10px,2vw,11px)] font-sans font-bold uppercase tracking-widest text-black/55 block mb-2.5">
                 Share this drop
               </span>
               <div className="sb-pdp-share-row">
@@ -1048,7 +1061,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </div>
 
-            {/* Spec Meta */}
             <div className="w-full pt-2 pb-6 2xl:pt-4 2xl:pb-8">
               <div className="sb-pdp-specs">
                 {product.material && (
@@ -1077,19 +1089,96 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         </section>
       </div>
 
-      {/* Middle Section: Full-Width Pitch Black Reviews (Straight Edges, No Curved Borders) */}
       <div className="w-full bg-[#000000] text-white border-y border-white/10 pt-10 pb-3 sm:pt-14 sm:pb-4 mt-0 mb-0">
         <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <ProductReviewsSection product={product} initialVisibleCount={2} loadMoreStep={4} loadMoreLabel="Show more" />
         </div>
       </div>
 
-      {/* Bottom Section: Curated Drops */}
+      {!suppressFixedCtas && (
+      <div className="sb-pdp-fixed-ctas md:hidden" role="region" aria-label="Product actions">
+        <div className="sb-pdp-fixed-ctas-inner">
+          <div className={`sb-pdp-mobile-ctas sb-pdp-mobile-ctas--fixed${
+            isProductLiked ? ' sb-pdp-mobile-ctas--blessed' : ''
+          }`}>
+            <button
+              disabled={!product.inStock}
+              onClick={handleAddToCart}
+              style={{ overflow: 'visible' }}
+              className={`sb-pdp-btn-primary sb-pdp-btn-primary--fixed sb-pdp-mobile-btn-primary relative ${
+                !product.inStock
+                  ? 'border-black/10 bg-black/5 text-black/40 cursor-not-allowed shadow-none'
+                  : added
+                  ? 'border-black bg-black text-white shadow-md'
+                  : 'border-black bg-transparent text-black hover:bg-black hover:text-white shadow-sm'
+              } ${isBouncing && product.inStock ? 'animate-bounce-click' : ''}`}
+            >
+              {product.inStock && particles.map((p) => (
+                <span
+                  key={p.id}
+                  className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    backgroundColor: p.color,
+                    '--tx': `${p.x}px`,
+                    '--ty': `${p.y}px`,
+                    '--scale': p.scale,
+                    animationDelay: `${p.delay}s`,
+                  } as React.CSSProperties}
+                />
+              ))}
+              {!product.inStock ? 'Sold Out' : added ? 'Added ✓' : 'Add to Bag'}
+            </button>
+
+            {onToggleWishlist && (
+              <div className="relative sb-pdp-mobile-bless-wrap flex">
+                <div className="relative w-full h-[48px]">
+                  {toastMessage && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black border border-black/5 px-3 py-1.5 rounded-full text-[clamp(9px,2vw,10px)] font-bold tracking-widest uppercase shadow-md z-30 pointer-events-none whitespace-nowrap">
+                      {toastMessage}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onToggleWishlist(product.id);
+                      if (!isProductLiked) {
+                        soundOptions.choir();
+                        setToastMessage('BLESSED ❤️');
+                        setTimeout(() => setToastMessage(null), 2000);
+                      }
+                    }}
+                    className={`sb-pdp-btn-bless ${isProductLiked ? 'is-blessed' : ''} px-4 w-full justify-center overflow-hidden transition-all duration-500`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 shrink-0 transition-transform duration-500 ${isProductLiked ? 'fill-white text-white scale-110' : 'text-rose-500'}`} />
+                    <span
+                      className={`relative z-10 whitespace-nowrap transition-all duration-500 overflow-hidden ${
+                        isProductLiked ? 'max-w-0 opacity-0 ml-0 mr-0' : 'max-w-[10rem] opacity-100 ml-1 mr-0.5'
+                      }`}
+                    >
+                      BLESS THIS DROP
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className={`relative z-10 shrink-0 px-1.5 py-0.5 rounded-full font-mono font-bold text-[clamp(9px,2vw,10px)] transition-colors duration-300 ${isProductLiked ? 'bg-white text-rose-600' : 'bg-black/5'}`}>
+                        {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      )}
+
+      </div>
+
       <div ref={relatedSectionRef} className="w-full h-[250vh] sm:h-[230vh] lg:h-[200vh] relative bg-[#fbf9f9]">
         <div className="sticky top-14 sm:top-16 lg:top-20 w-full pt-1 sm:pt-2 pb-4 overflow-hidden bg-[#fbf9f9]">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
             <div className="pb-3 sm:pb-4">
-              {/* Eyebrow */}
               <div className="flex items-center gap-2.5 mb-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0B3DFF] shadow-[0_0_12px_#0B3DFF]" />
                 <span className="text-xs uppercase tracking-[0.3em] text-[#8A8D95] font-semibold font-mono">
@@ -1097,7 +1186,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </span>
               </div>
 
-              {/* Main Headline — stacked mobile · inline on desktop */}
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
                 <h2 className="text-4xl sm:text-6xl font-anton uppercase text-black tracking-normal flex flex-col items-start leading-[0.92] lg:flex-row lg:items-baseline lg:gap-x-3 xl:gap-x-4">
                   <span>Chosen for</span>
@@ -1165,15 +1253,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </button>
             </div>
 
-            <div className="space-y-3 font-sans text-xs text-gray-700 leading-relaxed">
-              <p className="font-bold text-black uppercase tracking-wider text-[11px]">STANDARD DROP SHOULDER SIZE ESTIMATES</p>
-
-              {/* Size Table */}
-              <div className="overflow-x-auto pt-1">
-                <table className="w-full text-left text-xs border-collapse">
+            <div id="size-guide-content" className="w-full">
+              <p className="font-bold text-black uppercase tracking-wider text-[clamp(10px,2vw,11px)]">STANDARD DROP SHOULDER SIZE ESTIMATES</p>
+              <div className="mt-4 overflow-x-auto sb-scrollbar">
+                <table className="w-full text-left font-sans border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-black uppercase tracking-wider text-[10px]">
-                      <th className="py-2.5 pr-2 font-bold">SIZE</th>
+                    <tr className="border-b border-gray-200 text-black uppercase tracking-wider text-[clamp(9px,1.5vw,10px)]">
+                      <th className="py-2.5 font-bold whitespace-nowrap pr-4">Size</th>
                       <th className="py-2.5 px-2 font-bold">CHEST</th>
                       <th className="py-2.5 px-2 font-bold">SHOULDER</th>
                       <th className="py-2.5 pl-2 font-bold">LENGTH</th>
@@ -1190,73 +1276,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
           </div>
         </div>
-      )}
-
-      {/* Mobile + tablet: fixed bottom CTAs (hidden when cart/checkout overlays are open) */}
-      {!suppressFixedCtas && (
-      <div className="sb-pdp-fixed-ctas md:hidden" role="region" aria-label="Product actions">
-        <div className="sb-pdp-fixed-ctas-inner">
-          <div className="sb-pdp-mobile-ctas sb-pdp-mobile-ctas--fixed">
-            {onToggleWishlist && (
-              <div className="relative flex-1 min-w-0">
-                {toastMessage && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black border border-black/5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-md z-30 pointer-events-none whitespace-nowrap">
-                    {toastMessage}
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onToggleWishlist(product.id);
-                    if (!isProductLiked) {
-                      soundOptions.choir();
-                      setToastMessage('BLESSED ❤️');
-                      setTimeout(() => setToastMessage(null), 2000);
-                    }
-                  }}
-                  className={`sb-pdp-btn-bless ${isProductLiked ? 'is-blessed' : ''}`}
-                >
-                  <Heart className={`w-3.5 h-3.5 shrink-0 ${isProductLiked ? 'fill-white text-white' : 'text-rose-500'}`} />
-                  <span className="truncate">Bless the Drop</span>
-                  <span className={`shrink-0 px-1.5 py-0.5 rounded-full font-mono text-[9px] ${isProductLiked ? 'bg-white/20' : 'bg-black/5'}`}>
-                    {(product.likesCount || 280) + (isProductLiked ? 1 : 0)}
-                  </span>
-                </button>
-              </div>
-            )}
-
-            <button
-              disabled={!product.inStock}
-              onClick={handleAddToCart}
-              style={{ overflow: 'visible' }}
-              className={`sb-pdp-btn-primary sb-pdp-btn-primary--fixed relative ${
-                !product.inStock
-                  ? 'border-black/10 bg-black/5 text-black/40 cursor-not-allowed'
-                  : added
-                  ? 'border-black bg-black text-white'
-                  : 'bg-black text-white hover:bg-[#2040FF] hover:border-[#2040FF]'
-              } ${isBouncing && product.inStock ? 'animate-bounce-click' : ''}`}
-            >
-              {product.inStock && particles.map((p) => (
-                <span
-                  key={p.id}
-                  className="absolute pointer-events-none w-2 h-2 rounded-full z-20 animate-particle -ml-1 -mt-1"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    backgroundColor: p.color,
-                    '--tx': `${p.x}px`,
-                    '--ty': `${p.y}px`,
-                    '--scale': p.scale,
-                    animationDelay: `${p.delay}s`,
-                  } as React.CSSProperties}
-                />
-              ))}
-              {!product.inStock ? 'Sold Out' : added ? 'Added ✓' : 'Add to Bag'}
-            </button>
-          </div>
-        </div>
-      </div>
       )}
 
       <style>{`

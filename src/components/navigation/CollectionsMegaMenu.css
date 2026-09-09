@@ -1,7 +1,7 @@
 
 :root{
   --paper:#FBF9F9;
-  --void:#FBF9F9;
+  --void:#FFFFFF;
   --tile:#FFFFFF;
   --tile-2:#F0F0F0;
   --line:rgba(0,0,0,0.1);
@@ -253,10 +253,10 @@
 }
 
 .sb-nav-trigger--mobile{
-  font-size:11px;
-  letter-spacing:.14em;
+  font-size: clamp(8.5px, 3.5vw, 11px);
+  letter-spacing: clamp(0.06em, 0.4vw, 0.14em);
   padding:6px 0 8px;
-  gap:5px;
+  gap: clamp(2px, 1.5vw, 5px);
 }
 
 .sb-header--hero .sb-nav-trigger--mobile.is-active::after{
@@ -605,9 +605,7 @@
 }
 
 .sb-mega--hero .sb-mega-inner {
-  background: rgba(251, 249, 249, 0.84);
-  backdrop-filter: blur(22px) saturate(1.15);
-  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  background: #FFFFFF;
   border: none;
   box-shadow: 0 24px 64px -18px rgba(0, 0, 0, 0.34);
 }

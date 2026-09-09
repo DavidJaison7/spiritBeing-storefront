@@ -3,7 +3,7 @@ import { Volume2, VolumeX } from 'lucide-react';
 import { INITIAL_PRODUCTS } from '../../data/products';
 import './HeroSection.css';
 
-const HERO_VIDEO_SRC = '/can_u_change_the_background_202609081726_processed.webm';
+const HERO_VIDEO_SRC = '/hero-video.webm';
 const FOMO_ROTATE_MS = 7000;
 const HERO_VOLUME = 0.72;
 

@@ -160,9 +160,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {isSoldOut && (
           <>
             <div className="absolute inset-0 z-[15] pointer-events-none bg-gradient-to-b from-black/10 via-black/28 to-black/42" />
-            <div className="absolute inset-0 z-[18] pointer-events-none flex items-center justify-center p-6">
-              <span className="inline-flex items-center justify-center min-w-[108px] px-5 py-2.5 rounded-full border border-white/25 bg-black/40 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_10px_36px_rgba(0,0,0,0.28)]">
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-white">
+            <div className="absolute inset-0 z-[18] pointer-events-none flex items-center justify-center max-sm:p-3 sm:p-6">
+              <span className="inline-flex items-center justify-center min-w-fit max-sm:px-3 max-sm:py-1.5 sm:px-5 sm:py-2.5 rounded-full border border-white/25 bg-black/40 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_10px_36px_rgba(0,0,0,0.28)]">
+                <span className="font-mono max-sm:text-[8px] sm:text-[10px] font-medium uppercase max-sm:tracking-[0.15em] sm:tracking-[0.3em] text-white whitespace-nowrap">
                   Sold Out
                 </span>
               </span>
@@ -188,7 +188,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               isWishlisted ? 'fill-[#2040FF] text-[#2040FF]' : 'text-[#1b1c1c]'
             }`}
           />
-          <span className={`max-sm:text-[9px] sm:text-[11px] font-mono font-bold ${isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]'}`}>
+          <span className={`text-[clamp(9px,2.5vw,11px)] font-mono font-bold ${isWishlisted ? 'text-[#2040FF]' : 'text-[#1b1c1c]'}`}>
             {(product.likesCount || 280) + (isWishlisted ? 1 : 0)}
           </span>
         </button>
@@ -294,7 +294,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         if (!hasSizes && !hasColors && !hasColorsMobile) return null;
 
         return (
-          <div className={`flex items-center max-sm:pt-1.5 sm:pt-2 px-0.5 sm:px-1 ${hasSizes && (hasColors || hasColorsMobile) ? 'justify-between' : hasSizes ? 'justify-start' : 'justify-end'}`}>
+          <div className={`flex items-center max-sm:pt-1.5 sm:pt-2 px-0.5 sm:px-1 ${hasSizes && (hasColors || hasColorsMobile) ? 'justify-between' : 'justify-start'}`}>
             {hasSizes && (
               <div className="flex items-center gap-1 max-sm:gap-0.5 sm:gap-1.5">
                 {product.sizes!.slice(0, 2).map((size) => {
@@ -387,19 +387,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Card Footer: Title & Price + Add to Bag on hover */}
       <div className="flex items-start justify-between max-sm:px-0 sm:px-1 max-sm:pt-1.5 sm:pt-2">
         <div className="pr-1 sm:pr-2 flex-grow min-w-0">
-          <h3 className={`font-sans font-medium max-sm:text-[11px] sm:text-[14px] md:text-[15px] tracking-tight leading-snug line-clamp-2 ${
+          <h3 className={`font-sans font-medium text-[clamp(11px,3vw,15px)] tracking-tight leading-snug line-clamp-2 ${
             isSoldOut ? 'text-[#888888]' : 'text-[#1a1a1a] group-hover:text-black'
           }`}>
             {product.title}
           </h3>
           <div className="relative max-sm:h-4 sm:h-5 mt-0.5 sm:mt-1 overflow-hidden w-full">
             {isSoldOut ? (
-              <p className="font-sans max-sm:text-[10px] sm:text-[12px] text-[#999999] font-medium tracking-wide uppercase">
+              <p className="font-sans text-[clamp(10px,2.5vw,12px)] text-[#999999] font-medium tracking-wide uppercase">
                 Sold Out
               </p>
             ) : (
               <>
-                <p className="absolute inset-x-0 top-0 font-sans max-sm:text-[10px] sm:text-[13px] md:text-[14px] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
+                <p className="absolute inset-x-0 top-0 font-sans text-[clamp(10px,2.5vw,14px)] text-[#333333] font-normal tracking-tight transition-all duration-300 transform translate-y-0 group-hover:-translate-y-full group-hover:opacity-0">
                   ₹{product.price.toFixed(2)}
                 </p>
                 <button
@@ -408,7 +408,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     e.stopPropagation();
                     onAddToCart(e, selectedSize, selectedColor);
                   }}
-                  className={`absolute inset-x-0 top-0 font-sans max-sm:text-[9px] sm:text-[12px] md:text-[13px] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
+                  className={`absolute inset-x-0 top-0 font-sans text-[clamp(9px,2.5vw,13px)] font-bold tracking-wider text-left transition-all duration-300 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 uppercase ${
                     isAdded
                       ? 'text-green-600'
                       : 'text-[#2040FF] hover:text-[#001cbf] hover:underline'
