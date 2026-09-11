@@ -814,7 +814,7 @@
 /* Responsive mobile — square hero frame with 24px inset on all sides */
 @media (max-width: 767px) {
   .collections-carousel-wrapper .stage {
-    padding: clamp(12px, 2svh, 24px) 24px calc(clamp(3.5rem, 8svh, 4.25rem) + env(safe-area-inset-bottom, 0px));
+    padding: clamp(12px, 2svh, 24px) 24px calc(80px + env(safe-area-inset-bottom, 0px));
     overflow: hidden;
   }
 
@@ -843,20 +843,34 @@
   }
 
   .collections-carousel-wrapper .content {
-    flex: 0 1 auto;
-    display: block;
-    min-height: clamp(11rem, 25svh, 14.5rem);
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
     margin-top: -8px;
     padding: clamp(0.5rem, 2svh, 0.875rem) 5vw 0.25rem;
     width: 100%;
   }
 
   .collections-carousel-wrapper .txt.active {
-    flex: none;
+    position: relative;
+    flex: 1 1 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 24px;
+  }
+
+  .collections-carousel-wrapper .txt.active::-webkit-scrollbar {
+    display: none;
+    width: 0;
   }
 
   .collections-carousel-wrapper .txt.active .price {
@@ -911,8 +925,22 @@
 
   .collections-carousel-wrapper .actions {
     margin-top: 12px;
-    gap: 18px;
-    flex-wrap: wrap;
+    gap: 8px;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .collections-carousel-wrapper .view,
+  .collections-carousel-wrapper .wish {
+    flex: 1 1 50%;
+    min-height: 2.25rem;
+    padding: 0 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  
+  .collections-carousel-wrapper .wish {
+    padding: 0 6px;
   }
   .collections-carousel-wrapper .model {
     filter: none;
@@ -950,8 +978,11 @@
     will-change: auto;
   }
   .collections-carousel-wrapper .rail {
+    position: absolute;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    width: 100%;
     padding: 0 4vw 0 calc(24px + 5vw);
-    bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+    margin-top: 0;
   }
   .collections-carousel-wrapper .rail-numbers {
     gap: clamp(6px, 1.8vw, 10px);

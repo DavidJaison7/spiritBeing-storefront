@@ -829,12 +829,16 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                 <div className="price flex items-center gap-3">
                   {slide.price}
                 </div>
-              <div className="actions">
+              <div className="actions w-full grid grid-cols-2 gap-2 sm:gap-4 mt-2 sm:mt-5">
                 {showSizesForIdx === idx ? (
-                  <div className="flex items-center gap-1.5 min-h-[44px]">
+                  <div className="flex flex-wrap items-center gap-1.5 min-h-[36px] sm:min-h-[44px] col-span-2">
                     {(() => {
-                      if (!product || !product.sizes || product.sizes.length === 0) return null;
-                      return product.sizes.map((size) => {
+                      const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+                      const available = product?.sizes || [];
+                      return allSizes.map(size => {
+                        const isAvailable = available.includes(size);
+                        if (!isAvailable) return null;
+                        
                         const isAdding = addingSize?.idx === idx && addingSize?.size === size;
                         
                         return (
@@ -877,8 +881,8 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                     })()}
                   </div>
                 ) : isSoldOut ? (
-                  <div className="flex items-center min-h-[44px]">
-                    <span className="text-[11px] font-sans font-extrabold text-[#FF3E3E] tracking-[0.2em] uppercase border border-[#FF3E3E]/40 px-3 py-1.5 rounded bg-[#FF3E3E]/10 select-none shadow-[0_0_10px_rgba(255,62,62,0.15)]">
+                  <div className="flex items-center w-full h-[36px] sm:h-[44px]">
+                    <span className="text-[10px] font-sans font-extrabold text-[#FF3E3E] tracking-[0.2em] uppercase border border-[#FF3E3E]/40 px-3 py-1.5 rounded-lg bg-[#FF3E3E]/10 select-none shadow-[0_0_10px_rgba(255,62,62,0.15)] w-full text-center flex items-center justify-center h-full">
                       Sold Out
                     </span>
                   </div>
@@ -904,11 +908,11 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                         onSelectProductByHandle?.(PRODUCT_HANDLES[idx]);
                       }
                     }}
-                    className="view cursor-pointer min-h-[28px]"
+                    className="view cursor-pointer w-full h-[36px] sm:h-[44px] px-1 sm:px-6 flex items-center justify-center text-[9px] sm:text-[11px]"
                     type="button"
                   >
                     {addedSuccessIdx === idx ? (
-                      <span className="flex items-center gap-2 text-[#22c55e] font-bold tracking-widest uppercase text-sm">
+                      <span className="flex items-center justify-center gap-1 sm:gap-2 text-[#22c55e] font-bold tracking-widest uppercase">
                         <svg className="w-4 h-4 text-[#22c55e]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                         </svg>
@@ -920,11 +924,11 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
                   </button>
                 )}
                 <button
-                  className={`wish ${wishlistActive[idx] ? 'active' : ''}`}
+                  className={`wish w-full h-[36px] sm:h-[44px] px-1 sm:px-5 flex items-center justify-center text-[9px] sm:text-[11px] ${wishlistActive[idx] ? 'active' : ''}`}
                   onClick={() => toggleWishlist(idx)}
                   type="button"
                 >
-                  <span className="heart">
+                  <span className="heart scale-75 sm:scale-100 flex-shrink-0">
                     <svg viewBox="0 0 24 24">
                       <path d="M12 21s-7.5-4.9-10-9.2C.4 8.4 2.2 4.5 6 4.5c2.2 0 3.6 1.2 4.5 2.6.4.6.7 1.2 1.5 1.2s1.1-.6 1.5-1.2c.9-1.4 2.3-2.6 4.5-2.6 3.8 0 5.6 3.9 4 7.3-2.5 4.3-10 9.2-10 9.2z" />
                     </svg>
