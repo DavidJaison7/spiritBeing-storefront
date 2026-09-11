@@ -27,6 +27,9 @@
   inset: 0;
   overflow: hidden;
   background: #000;
+  opacity: var(--sb-reveal, 1);
+  transform: scale(calc(1 + 0.14 * (1 - var(--sb-reveal, 1))));
+  filter: blur(calc(24px * (1 - var(--sb-focus, 1))));
 }
 
 .hero-video-section .hero-video-layer {
@@ -165,6 +168,7 @@
   pointer-events: none;
   position: absolute;
   inset: 0;
+  opacity: var(--sb-chrome, 1);
 }
 
 .hero-video-section .hero-vignette-top {
@@ -194,7 +198,6 @@
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
-  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.32));
 }
 
 .hero-logo-btn {
@@ -231,6 +234,7 @@
   bottom: var(--hero-dock-bottom);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
+  opacity: var(--sb-chrome, 1);
 }
 
 .hero-dock-inner {
@@ -356,6 +360,24 @@
 .hero-sound-btn:hover {
   background: rgba(0, 0, 0, 0.65);
   border-color: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes ux-ground-bounce {
+  0% { transform: translateY(0); animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1); }
+  16.6% { transform: translateY(-32px); animation-timing-function: cubic-bezier(0.8, 0.0, 1.0, 1.0); }
+  33.3% { transform: translateY(0); animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1); }
+  46.6% { transform: translateY(-20px); animation-timing-function: cubic-bezier(0.8, 0.0, 1.0, 1.0); }
+  60% { transform: translateY(0); animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1); }
+  70% { transform: translateY(-11px); animation-timing-function: cubic-bezier(0.8, 0.0, 1.0, 1.0); }
+  80% { transform: translateY(0); animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1); }
+  86.6% { transform: translateY(-5px); animation-timing-function: cubic-bezier(0.8, 0.0, 1.0, 1.0); }
+  93.3% { transform: translateY(0); animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1); }
+  96.6% { transform: translateY(-2px); animation-timing-function: cubic-bezier(0.8, 0.0, 1.0, 1.0); }
+  100% { transform: translateY(0); }
+}
+
+.hero-sound-btn.animate-attention-bounce {
+  animation: ux-ground-bounce 2s 1 forwards;
 }
 
 .hero-fomo-card {

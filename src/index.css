@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Pinyon+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Quintessential&display=swap');
 @import "./design-system/index.css";
 
 /* Lenis Smooth Scroll Base Styles */
@@ -463,9 +463,6 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 
 /* open: morph to X */
 .sb-burger[aria-expanded="true"] { 
-  position:fixed;
-  top:40px;
-  right:40px;
   color: #1b1c1c !important; 
   z-index: 95 !important;
   transition: color 0.3s ease;
@@ -492,9 +489,9 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 .sb-menu-drawer{
   font-family: 'Archivo', sans-serif;
   position:fixed;z-index:80;
-  top:24px;right:24px;bottom:auto;
-  max-height:calc(100dvh - 48px);
-  width:min(300px, calc(100vw - 48px));
+  top:12px;right:12px;bottom:auto;
+  max-height:calc(100dvh - 24px);
+  width:min(312px, calc(100vw - 24px));
   background:#fbf9f9;
   color:#1b1c1c;
   border:1px solid rgba(0,0,0,0.06);
@@ -509,7 +506,9 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 @media (min-width: 768px) {
   .sb-menu-drawer {
-    width:min(312px, calc(100vw - 48px));
+    top: 8px;
+    right: 24px;
+    width:min(336px, calc(100vw - 40px));
   }
 }
 .sb-menu-drawer.is-open{
@@ -518,11 +517,11 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   transition:transform .44s cubic-bezier(.22,1.06,.36,1),visibility 0s 0s;
 }
 
-.sb-drawer-head{margin-bottom:8px;padding-right:36px}
+.sb-drawer-head{margin-bottom:16px;padding-right:36px}
 .sb-drawer-greeting{
   margin:0;
   font-family:'Anton', sans-serif;
-  font-size:22px;
+  font-size:26px;
   line-height:1;
   letter-spacing:.01em;
   text-transform:uppercase;
@@ -530,7 +529,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-drawer-subline{
   margin:3px 0 0;
-  font-size:11px;
+  font-size:11.5px;
   line-height:1.35;
   color:#737373;
   letter-spacing:.01em;
@@ -545,23 +544,23 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-drawer-user-main{display:flex;align-items:center;gap:10px;min-width:0}
 .sb-drawer-avatar{
-  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
   display:grid;place-items:center;
   background:#0B3DFF;color:#fff;
-  font-size:11px;font-weight:700;letter-spacing:.04em;
+  font-size:12px;font-weight:700;letter-spacing:.04em;
 }
 .sb-drawer-user-meta{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
 .sb-drawer-user-name{
-  font-size:12px;font-weight:600;line-height:1.2;color:#1b1c1c;
+  font-size:14px;font-weight:600;line-height:1.2;color:#1b1c1c;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .sb-drawer-user-email{
-  font-size:10px;line-height:1.3;color:#737373;
+  font-size:12px;line-height:1.3;color:#737373;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .sb-drawer-signout{
   margin-top:8px;padding:0;background:none;border:0;cursor:pointer;
-  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#8a8a8a;
+  font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#8a8a8a;
   transition:color .2s ease;
 }
 .sb-drawer-signout:hover{color:#1b1c1c}
@@ -585,12 +584,12 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 }
 .sb-drawer-order-label{
   display:block;
-  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
   color:#0B3DFF;margin-bottom:3px;
 }
 .sb-drawer-order-detail{
   display:block;
-  font-size:11px;font-weight:600;line-height:1.35;color:#1b1c1c;
+  font-size:13px;font-weight:600;line-height:1.35;color:#1b1c1c;
 }
 
 .sb-menu-drawer-top{min-height:0}
@@ -612,8 +611,8 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 .sb-links{display:flex;flex-direction:column;padding:0;margin:0;list-style:none}
 .sb-links a, .sb-links button {
   display:block;
-  padding:7px 0;color:#3f3f3f;text-decoration:none;
-  font-size:14px;font-weight:500;letter-spacing:-.01em;
+  padding:8px 0;color:#3f3f3f;text-decoration:none;
+  font-size:16px;font-weight:500;letter-spacing:-.01em;
   background: none; border: none; font-family: inherit; width: 100%; text-align: left; cursor: pointer;
   transition:color .25s ease;
 }
@@ -635,13 +634,13 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 .sb-foot{margin-top:auto;padding-top:0;padding-bottom:4px;}
 .sb-touch{font-family:'Archivo', sans-serif;}
 .sb-touch span{
-  display:block;font-size:10px;line-height:1.35;color:#8a8a8a;
+  display:block;font-size:12px;line-height:1.35;color:#8a8a8a;
   font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;
 }
 .sb-touch a{
   position:relative;display:inline-block;
   color:#111827;text-decoration:none;
-  font-size:13px;font-weight:500;letter-spacing:0;line-height:1.25;
+  font-size:15px;font-weight:500;letter-spacing:0;line-height:1.25;
   text-transform:lowercase;
 }
 .sb-touch a::after{
@@ -654,10 +653,10 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 
 @media(max-width:560px){
   .sb-menu-drawer{
-    width:min(288px, calc(100vw - 48px));
+    width:min(296px, calc(100vw - 48px));
   }
-  .sb-drawer-greeting{font-size:20px}
-  .sb-links a, .sb-links button{font-size:13.5px;padding:6px 0}
+  .sb-drawer-greeting{font-size:24px}
+  .sb-links a, .sb-links button{font-size:15px;padding:6px 0}
 }
 
 @media(prefers-reduced-motion:reduce){

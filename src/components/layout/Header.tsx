@@ -570,7 +570,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="sb-drawer-head">
         <p className="sb-drawer-greeting">{getDrawerGreeting()}</p>
         {!currentUser && (
-          <p className="sb-drawer-subline">Track orders, saves, and your Spirit Being profile.</p>
+          <p className="sb-drawer-subline">Manage your orders and your Spirit Being profile.</p>
         )}
       </div>
 

@@ -158,10 +158,6 @@ export default function App() {
   const handleNavigateHome = () => {
     const isOnSubPage = selectedProduct || isOurStoryView || isBlogView || isFaqView || isDesignSystemView || isShopCategoryView || isCollectionView;
     if (isOnSubPage) {
-      window.scrollTo(0, 0);
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(0, { immediate: true });
-      }
       setSelectedProduct(null);
       setSelectedProductColor(undefined);
       setIsOurStoryView(false);
@@ -171,6 +167,13 @@ export default function App() {
       setIsShopCategoryView(false);
       setIsCollectionView(false);
       setActiveCollectionId(null);
+      
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(0, { immediate: true });
+        }
+      }, 50);
     } else if ((window as any).lenis) {
       (window as any).lenis.scrollTo(0, { duration: 1.1 });
     } else {

@@ -312,38 +312,85 @@
 .collections-carousel-wrapper .view {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-size: clamp(10px, 1.2vw, 14px);
-  letter-spacing: .3em;
+  justify-content: center;
+  gap: 10px;
+  min-height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: 0.5rem;
+  background: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(11, 61, 255, 0.7);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--warm);
-  border-bottom: 1px solid rgba(242,240,234,.3);
-  padding-bottom: 9px;
-  transition: border-color .3s, gap .3s;
+  color: #fff;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 16px rgba(11, 61, 255, 0.35), inset 0 0 8px rgba(11, 61, 255, 0.2);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.collections-carousel-wrapper .view::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+  pointer-events: none;
+}
+
+.collections-carousel-wrapper .view:hover::before {
+  transform: translateX(100%);
 }
 
 .collections-carousel-wrapper .view:hover {
-  border-color: var(--warm);
-  gap: 20px;
+  background: rgba(11, 61, 255, 0.1);
+  color: #fff;
+  border-color: rgba(11, 61, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px rgba(11, 61, 255, 0.6), inset 0 0 12px rgba(11, 61, 255, 0.4);
+}
+
+.collections-carousel-wrapper .view:active {
+  transform: translateY(0);
 }
 
 .collections-carousel-wrapper .wish {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  letter-spacing: .3em;
+  justify-content: center;
+  gap: 8px;
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 0.5rem;
+  background: rgba(10, 10, 10, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gray);
-  transition: color .3s;
+  color: rgba(255, 255, 255, 0.9);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15), inset 0 0 6px rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
 }
 
 .collections-carousel-wrapper .wish:hover {
-  color: var(--warm);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.35), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.collections-carousel-wrapper .wish:active {
+  transform: translateY(0);
 }
 
 .collections-carousel-wrapper .wish .heart {
@@ -362,7 +409,9 @@
 }
 
 .collections-carousel-wrapper .wish.active {
-  color: var(--warm);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 @keyframes cute-heart-pop {

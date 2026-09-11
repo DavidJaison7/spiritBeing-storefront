@@ -38,6 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const pointerStartXRef = useRef<number | null>(null);
+  const pointerStartYRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
   const lastWheelTimeRef = useRef<number>(0);
 
@@ -70,12 +71,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handlePointerDown = (e: React.PointerEvent) => {
     pointerStartXRef.current = e.clientX;
+    pointerStartYRef.current = e.clientY;
     isDraggingRef.current = false;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (pointerStartXRef.current === null) return;
-    if (Math.abs(e.clientX - pointerStartXRef.current) > 8) {
+    if (pointerStartXRef.current === null || pointerStartYRef.current === null) return;
+    const diffX = Math.abs(e.clientX - pointerStartXRef.current);
+    const diffY = Math.abs(e.clientY - pointerStartYRef.current);
+    if (diffX > 8 || diffY > 8) {
       isDraggingRef.current = true;
     }
   };
@@ -84,6 +88,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     if (pointerStartXRef.current === null) return;
     const diffX = pointerStartXRef.current - e.clientX;
     pointerStartXRef.current = null;
+    pointerStartYRef.current = null;
 
     if (Math.abs(diffX) > 25 && productImages.length > 1) {
       const now = Date.now();

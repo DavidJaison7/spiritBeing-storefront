@@ -690,7 +690,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   };
 
   return (
-    <div className="w-full pt-[96px] md:pt-[112px] pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
+    <div className="w-full pt-[76px] md:pt-[84px] pb-0 lg:pb-12 flex flex-col gap-6 sm:gap-8 relative">
       <div className="relative">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-start">
@@ -768,7 +768,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               <div className="sb-pdp-mobile-meta">
                 <h1 className="sb-pdp-mobile-title">{product.title}</h1>
-                <p className="sb-pdp-mobile-price">₹{product.price.toFixed(2)}</p>
+                <div className="flex flex-col gap-0.5 mb-1">
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="sb-pdp-mobile-price">₹{product.price.toFixed(2)}</p>
+                    <span className="text-[13px] text-gray-500 font-medium">MRP</span>
+                  </div>
+                  <p className="text-[11.5px] text-gray-500">inclusive of taxes</p>
+                </div>
 
                 {product.colors && product.colors.length > 0 && (
                   <div className="sb-pdp-mobile-colors">
@@ -826,21 +832,24 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 {product.title}
               </h1>
 
-              <div className="flex items-center gap-3 mt-1">
-                <p className="text-[clamp(18px,3vw,24px)] font-sans font-medium text-black">
-                  ₹{product.price.toFixed(2)}
-                </p>
+              <div className="flex flex-col gap-0.5 mt-1">
+                <div className="flex items-baseline gap-1.5">
+                  <p className="text-[clamp(18px,3vw,24px)] font-sans font-medium text-black">
+                    ₹{product.price.toFixed(2)}
+                  </p>
+                  <span className="text-[clamp(13px,1.5vw,15px)] text-gray-500 font-medium">MRP</span>
+                </div>
+                <p className="text-[11.5px] md:text-[11px] lg:text-[11.5px] text-gray-500">inclusive of taxes</p>
               </div>
             </div>
 
             <p 
-              className={`text-[clamp(14px,2vw,16px)] w-full mb-3 lg:mb-3.5 2xl:mb-4 text-left md:text-justify transition-all duration-300 cursor-pointer lg:cursor-text select-none lg:select-auto ${!isDescExpanded ? 'line-clamp-2 lg:line-clamp-none' : ''}`}
+              className={`text-[14px] md:text-[12px] lg:text-[12.5px] w-full mb-3 lg:mb-3.5 2xl:mb-4 text-left md:text-justify transition-all duration-300 cursor-pointer lg:cursor-text select-none lg:select-auto ${!isDescExpanded ? 'line-clamp-2 lg:line-clamp-none' : ''}`}
               onClick={() => {
                 if (window.innerWidth < 1024) {
                   setIsDescExpanded(!isDescExpanded);
                 }
               }}
-              title={!isDescExpanded ? "Tap to read more" : "Tap to show less"}
             >
               {product.description}
             </p>
@@ -863,10 +872,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`w-10 h-10 lg:w-11 lg:h-11 2xl:w-12 2xl:h-12 rounded-[14px] 2xl:rounded-[16px] font-sans text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                        className={`w-10 h-10 lg:w-10 lg:h-10 rounded-lg font-sans text-xs font-semibold transition-all duration-200 flex items-center justify-center cursor-pointer border ${
                           isSelected
-                            ? 'bg-black text-white shadow-md scale-[1.03]'
-                            : 'bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                            ? 'border-black bg-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
+                            : 'border-[#e5e5e5] bg-white text-[#444] hover:border-black hover:text-black hover:-translate-y-0.5 hover:shadow-sm'
                         }`}
                       >
                         {size}
@@ -893,15 +902,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                           setSelectedColor(color);
                           setMobileActiveIndex(0);
                         }}
-                        className={`flex items-center gap-2 2xl:gap-2.5 px-3.5 py-2 2xl:px-4 2xl:py-2.5 rounded-[14px] 2xl:rounded-[16px] border cursor-pointer transition-all font-sans text-xs font-bold ${isSelected
-                            ? 'border-black bg-black text-white shadow-md scale-[1.03]'
-                            : 'border-black/10 bg-[#f5f4f0] text-black hover:bg-[#eae8e2]'
+                        className={`flex items-center gap-2 px-3.5 py-2 rounded-lg border cursor-pointer transition-all duration-200 font-sans text-[11.5px] font-semibold tracking-wide ${
+                          isSelected
+                            ? 'border-black bg-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
+                            : 'border-[#e5e5e5] bg-white text-[#444] hover:border-black hover:text-black hover:-translate-y-0.5 hover:shadow-sm'
                           }`}
                         title={color}
                         aria-label={`Select ${color}`}
                       >
                         <span
-                          className={`w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full border ${isSelected ? 'border-white/40' : 'border-black/10'
+                          className={`w-3.5 h-3.5 rounded-full border ${isSelected ? 'border-white/40' : 'border-black/10 shadow-inner'
                             }`}
                           style={{ backgroundColor: colorHex }}
                         />

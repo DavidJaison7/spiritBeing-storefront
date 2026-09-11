@@ -1,11 +1,13 @@
 import React, { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { INITIAL_PRODUCTS } from '../../data/products';
+import { SpiritIntro, SpiritLogo, type SpiritLogoHandle } from '../loader/SpiritIntro';
 import './HeroSection.css';
 
-const HERO_VIDEO_SRC = '/hero-video.webm';
+const HERO_VIDEO_SRC = '/stitched_processed.webm';
+const HERO_AUDIO_SRC = '/Iron-Dominion.opus';
 const FOMO_ROTATE_MS = 7000;
-const HERO_VOLUME = 0.72;
+const HERO_VOLUME = 1.0;
 
 interface HeroSectionProps {
   onNavigateShopCategory?: (sectionTarget?: string) => void;
@@ -26,91 +28,126 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const userWantsSoundRef = useRef(false);
+  const heroLogoRef = useRef<SpiritLogoHandle>(null);
+  const userWantsSoundRef = useRef(true);
   const heroVisibleRef = useRef(true);
 
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const [activeFomoIndex, setActiveFomoIndex] = useState(0);
   const [isFomoPaused, setIsFomoPaused] = useState(false);
+  const [introFinished, setIntroFinished] = useState(false);
 
   const activeFomoDrop = HERO_FOMO_DROPS[activeFomoIndex] ?? HERO_FOMO_DROPS[0];
 
-  const syncVideoAudio = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
+  const syncAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
     const shouldPlayAudible = userWantsSoundRef.current && heroVisibleRef.current;
-    video.volume = HERO_VOLUME;
-    video.muted = !shouldPlayAudible;
+    audio.volume = HERO_VOLUME;
+    audio.muted = !shouldPlayAudible;
   }, []);
 
-  const startHeroPlayback = useCallback(async () => {
-    const video = videoRef.current;
-    if (!video) return;
+  const startAudioPlayback = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-    video.loop = true;
-    video.playsInline = true;
-    syncVideoAudio();
+    audio.loop = true;
+    syncAudio();
 
     try {
-      await video.play();
+      await audio.play();
     } catch {
       // Browser autoplay policy requires muted playback without user gesture
-      video.muted = true;
+      audio.muted = true;
+      userWantsSoundRef.current = false;
+      setSoundOn(false);
       try {
-        await video.play();
+        await audio.play();
       } catch {
         // Silently catch
       }
     }
-  }, [syncVideoAudio]);
+  }, [syncAudio]);
 
   useLayoutEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    video.loop = true;
-    video.playsInline = true;
-    video.muted = true;
-    video.defaultMuted = true;
-    video.volume = HERO_VOLUME;
+    const audio = audioRef.current;
+    if (video) {
+      video.loop = true;
+      video.playsInline = true;
+      video.muted = true;
+      video.defaultMuted = true;
+    }
+    if (audio) {
+      audio.loop = true;
+      audio.muted = !userWantsSoundRef.current;
+      audio.defaultMuted = false;
+      audio.volume = HERO_VOLUME;
+    }
   }, []);
 
   useEffect(() => {
+    if (introFinished) {
+      void startAudioPlayback();
+    }
+  }, [introFinished, startAudioPlayback]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    const audio = audioRef.current;
+    if (!video || !audio) return;
 
-    void startHeroPlayback();
+    void video.play().catch(() => {});
 
-    // Guard against video pausing at loop boundary
+    // Guard against video/audio pausing at loop boundary
     const handleEnded = () => {
       video.currentTime = 0;
       void video.play().catch(() => {});
     };
+    
+    const handleAudioEnded = () => {
+      audio.currentTime = 0;
+      void audio.play().catch(() => {});
+    };
 
     const retryOnReady = () => {
-      syncVideoAudio();
       void video.play().catch(() => {});
+      syncAudio();
+      if (introFinished) {
+        void audio.play().catch(() => {
+          audio.muted = true;
+          userWantsSoundRef.current = false;
+          setSoundOn(false);
+        });
+      }
     };
 
     const handleVisibility = () => {
       if (!document.hidden && heroVisibleRef.current) {
         void video.play().catch(() => {});
+        if (introFinished) {
+          void audio.play().catch(() => {});
+        }
       }
     };
 
     video.addEventListener('ended', handleEnded);
+    audio.addEventListener('ended', handleAudioEnded);
     video.addEventListener('loadeddata', retryOnReady, { once: true });
     video.addEventListener('canplay', retryOnReady, { once: true });
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       video.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('ended', handleAudioEnded);
       video.removeEventListener('loadeddata', retryOnReady);
       video.removeEventListener('canplay', retryOnReady);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [startHeroPlayback, syncVideoAudio]);
+  }, [introFinished, syncAudio]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -135,7 +172,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   useEffect(() => {
     const section = sectionRef.current;
     const video = videoRef.current;
-    if (!section || !video) return;
+    const audio = audioRef.current;
+    if (!section || !video || !audio) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -144,19 +182,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
         if (!inHero) {
           video.pause();
-          syncVideoAudio();
+          audio.pause();
+          syncAudio();
           return;
         }
 
-        syncVideoAudio();
+        syncAudio();
         void video.play().catch(() => {});
+        void audio.play().catch(() => {});
       },
       { threshold: [0, 0.25, 0.5] },
     );
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, [syncVideoAudio]);
+  }, [syncAudio]);
 
   useEffect(() => {
     if (HERO_FOMO_DROPS.length <= 1 || isFomoPaused) return;
@@ -171,14 +211,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }, [isFomoPaused]);
 
   const toggleSound = () => {
-    const video = videoRef.current;
-    if (!video) return;
+    const audio = audioRef.current;
+    if (!audio) return;
 
     const next = !userWantsSoundRef.current;
     userWantsSoundRef.current = next;
     setSoundOn(next);
-    syncVideoAudio();
-    void video.play().catch(() => {});
+    syncAudio();
+    void audio.play().catch(() => {});
   };
 
   const scrollToShop = () => {
@@ -212,6 +252,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           preload="auto"
           loop
         />
+        <audio
+          ref={audioRef}
+          src={HERO_AUDIO_SRC}
+          loop
+          preload="auto"
+        />
       </div>
 
       <div className="hero-vignette-top" aria-hidden="true" />
@@ -224,11 +270,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           onClick={() => onNavigateHome?.()}
           aria-label="Go to home"
         >
-          <img
-            src="/updated_main_logo.webp"
-            alt="Spirit Being"
+          <SpiritLogo
+            ref={heroLogoRef}
             className="hero-logo"
-            draggable={false}
+            initiallyVisible
           />
         </button>
       </div>
@@ -239,7 +284,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={toggleSound}
-              className={`hero-sound-btn${soundOn ? ' is-on' : ''}`}
+              className={`hero-sound-btn${soundOn ? ' is-on' : ''}${introFinished ? ' animate-attention-bounce' : ''}`}
               aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}
               aria-pressed={soundOn}
             >
@@ -293,6 +338,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </button>
         </div>
       </div>
+      <SpiritIntro heroLogo={heroLogoRef} autoPlay oncePerSession={true} onDone={() => setIntroFinished(true)} />
     </section>
   );
 };

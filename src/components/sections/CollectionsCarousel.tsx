@@ -100,6 +100,33 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   const transitionRef = useRef<((next: number, dir: number) => void) | null>(null);
   const goToSlideRef = useRef<((next: number) => void) | null>(null);
 
+  const isDraggingRef = useRef<boolean>(false);
+  const pointerStartXRef = useRef<number | null>(null);
+  const pointerStartYRef = useRef<number | null>(null);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerStartXRef.current = e.clientX;
+    pointerStartYRef.current = e.clientY;
+    isDraggingRef.current = false;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (pointerStartXRef.current === null || pointerStartYRef.current === null) return;
+    const diffX = Math.abs(e.clientX - pointerStartXRef.current);
+    const diffY = Math.abs(e.clientY - pointerStartYRef.current);
+    if (diffX > 8 || diffY > 8) {
+      isDraggingRef.current = true;
+    }
+  };
+
+  const handlePointerUp = () => {
+    pointerStartXRef.current = null;
+    pointerStartYRef.current = null;
+    setTimeout(() => {
+      isDraggingRef.current = false;
+    }, 50);
+  };
+
   const toggleWishlist = (idx: number) => {
     setWishlistActive(prev => {
       const next = [...prev];
@@ -723,14 +750,25 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
   }, []);
 
   return (
-    <div className="collections-carousel-wrapper" id="collections-section" ref={containerRef}>
+    <div 
+      className="collections-carousel-wrapper" 
+      id="collections-section" 
+      ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
       {/* Sticky Stage Container */}
       <div className="stage">
         {/* Frame Section with Background & Model overlays */}
         <div
           className="frame cursor-pointer"
           id="frame"
-          onClick={() => onSelectProductByHandle?.(PRODUCT_HANDLES[curRef.current])}
+          onClick={() => {
+            if (isDraggingRef.current) return;
+            onSelectProductByHandle?.(PRODUCT_HANDLES[curRef.current]);
+          }}
         >
           <span className="findex flex items-center justify-center pointer-events-none" id="findex" style={{ mixBlendMode: 'normal' }}>
             <img src="/img_logo_white.webp" alt="Spirit Being Logo" className="h-9 md:h-11 w-auto object-contain drop-shadow-md" />
@@ -742,6 +780,7 @@ export const CollectionsCarousel: React.FC<CollectionsCarouselProps> = ({
               className={`panel ${idx === 0 ? 'active' : ''} cursor-pointer`}
               onClick={(e) => {
                 e.stopPropagation();
+                if (isDraggingRef.current) return;
                 onSelectProductByHandle?.(PRODUCT_HANDLES[idx]);
               }}
               title={`View ${slide.title.replace('\n', ' ')}`}
