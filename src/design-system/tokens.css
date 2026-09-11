@@ -62,11 +62,11 @@
   --sb-color-glass-panel: rgba(255, 255, 255, 0.7);
 
   /* ─── Typography: families ─── */
-  --sb-font-display: 'Anton', sans-serif;
-  --sb-font-body: 'Archivo', sans-serif;
+  --sb-font-display: 'Anton', Impact, sans-serif;
+  --sb-font-body: 'Archivo', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', Arial, 'Noto Sans', sans-serif;
   --sb-font-script: 'Great Vibes', cursive;
   --sb-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
-  --sb-font-sans: 'Inter', sans-serif;
+  --sb-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', Arial, 'Noto Sans', sans-serif;
 
   /* ─── Typography: scale ─── */
   --sb-text-2xs: 8px;

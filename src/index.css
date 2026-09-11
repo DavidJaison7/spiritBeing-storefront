@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Quintessential&display=swap');
+
 @import "./design-system/index.css";
 
 /* Lenis Smooth Scroll Base Styles */
@@ -39,14 +39,17 @@ body {
     background-color: var(--sb-color-paper);
     color: var(--sb-color-ink);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   .font-headline {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--sb-font-display);
   }
 
   .font-sans {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--sb-font-sans);
   }
 
   .font-body-garamond {
@@ -58,7 +61,7 @@ body {
   }
 
   .font-anton {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--sb-font-display);
   }
 
   .font-script {
