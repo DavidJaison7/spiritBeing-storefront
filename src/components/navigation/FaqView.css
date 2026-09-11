@@ -8,7 +8,7 @@
   --line: rgba(0, 0, 0, 0.1);
   --line-soft: rgba(0, 0, 0, 0.06);
   --display: 'Anton', sans-serif;
-  --script: 'Pinyon Script', cursive;
+  --script: var(--sb-font-script, 'Great Vibes', cursive);
   --body: 'Archivo', sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --unfold: 760ms;
