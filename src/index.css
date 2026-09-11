@@ -39,17 +39,14 @@ body {
     background-color: var(--sb-color-paper);
     color: var(--sb-color-ink);
     overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
 
   .font-headline {
-    font-family: var(--sb-font-display);
+    font-family: 'Anton', sans-serif;
   }
 
   .font-sans {
-    font-family: var(--sb-font-sans);
+    font-family: 'Inter', sans-serif;
   }
 
   .font-body-garamond {
@@ -61,7 +58,7 @@ body {
   }
 
   .font-anton {
-    font-family: var(--sb-font-display);
+    font-family: 'Anton', sans-serif;
   }
 
   .font-script {
