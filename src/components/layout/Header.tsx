@@ -657,12 +657,12 @@ export const Header: React.FC<HeaderProps> = ({
               }
             }}
           >
-            <span className="txt">{currentUser ? 'My orders & receipts' : 'Track your order'}</span>
+            <span className="txt">{currentUser ? 'My Orders & Receipts' : 'Track your order'}</span>
           </a>
         </li>
         <li>
           <a href="#" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(false); }}>
-            <span className="txt">Returns &amp; exchanges</span>
+            <span className="txt">Returns & Exchanges</span>
           </a>
         </li>
         <li>

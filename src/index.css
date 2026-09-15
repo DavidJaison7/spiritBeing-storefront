@@ -487,7 +487,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 
 /* the drawer */
 .sb-menu-drawer{
-  font-family: 'Archivo', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position:fixed;z-index:80;
   top:12px;right:12px;bottom:auto;
   max-height:calc(100dvh - 24px);
@@ -613,7 +613,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
   display:block;
   padding:8px 0;color:#3f3f3f;text-decoration:none;
   font-size:16px;font-weight:500;letter-spacing:-.01em;
-  background: none; border: none; font-family: inherit; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: none; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 100%; text-align: left; cursor: pointer;
   transition:color .25s ease;
 }
 .sb-links .txt{position:relative;display:inline-block}
@@ -632,7 +632,7 @@ body.menu-open{/* overflow:hidden disabled to prevent compositor layout shifting
 
 /* pinned footer */
 .sb-foot{margin-top:auto;padding-top:0;padding-bottom:4px;}
-.sb-touch{font-family:'Archivo', sans-serif;}
+.sb-touch{font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;}
 .sb-touch span{
   display:block;font-size:12px;line-height:1.35;color:#8a8a8a;
   font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;

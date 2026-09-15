@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpiritBeing Architecture — Supabase & Shopify Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0d;
+      --card-bg: rgba(18, 20, 26, 0.88);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.15);
+      --text: #f0f2f5;
+      --text-muted: #9499a6;
+      --accent: #0b3dff;
+      --accent-bright: #3861fb;
+      --accent-glow: rgba(56, 97, 251, 0.28);
+      --shopify-green: #008060;
+      --shopify-bright: #10b981;
+      --supabase-emerald: #3ecf8e;
+      --danger-red: #ef4444;
+      --gold: #f59e0b;
+      --purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 97, 251, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(62, 207, 142, 0.06) 0%, transparent 40%);
+    }
+
+    /* Top Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 32px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(9, 10, 13, 0.85);
+      backdrop-filter: blur(14px);
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      font-family: 'Anton', sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .badge-deck {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: rgba(56, 97, 251, 0.15);
+      color: #8bb1ff;
+      border: 1px solid rgba(56, 97, 251, 0.35);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Slide Viewport */
+    main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 36px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 16px 36px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(18px) scale(0.98);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1340px;
+      margin: 0 auto;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .slide::-webkit-scrollbar { display: none; }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Typography & Slide Elements */
+    .slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-bright);
+      margin-bottom: 6px;
+    }
+
+    .slide-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 10px var(--accent-bright);
+    }
+
+    .slide-title {
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .slide-subtitle {
+      font-size: clamp(13px, 1.2vw, 15.5px);
+      color: var(--text-muted);
+      line-height: 1.45;
+      max-width: 950px;
+      margin-bottom: 20px;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .card:hover {
+      border-color: var(--card-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-glow-blue {
+      border-color: rgba(56, 97, 251, 0.35);
+      background: linear-gradient(145deg, rgba(20, 26, 46, 0.92), rgba(13, 15, 22, 0.96));
+    }
+
+    .card-glow-green {
+      border-color: rgba(62, 207, 142, 0.35);
+      background: linear-gradient(145deg, rgba(16, 38, 30, 0.92), rgba(12, 22, 18, 0.96));
+    }
+
+    .card-glow-shopify {
+      border-color: rgba(0, 128, 96, 0.45);
+      background: linear-gradient(145deg, rgba(14, 34, 26, 0.92), rgba(10, 20, 16, 0.96));
+    }
+
+    .card-glow-danger {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: linear-gradient(145deg, rgba(42, 18, 18, 0.92), rgba(20, 10, 10, 0.96));
+    }
+
+    .card-glow-gold {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: linear-gradient(145deg, rgba(38, 28, 14, 0.92), rgba(18, 14, 8, 0.96));
+    }
+
+    .card h3 {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    /* Pills & Badges */
+    .pill {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .pill-blue { background: rgba(56, 97, 251, 0.2); color: #8bb1ff; border: 1px solid rgba(56, 97, 251, 0.3); }
+    .pill-green { background: rgba(62, 207, 142, 0.2); color: #6ee7b7; border: 1px solid rgba(62, 207, 142, 0.3); }
+    .pill-shopify { background: rgba(0, 128, 96, 0.25); color: #86efac; border: 1px solid rgba(0, 128, 96, 0.4); }
+    .pill-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .pill-gold { background: rgba(245, 158, 11, 0.2); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .pill-purple { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.35); }
+
+    /* Interactive Tab Containers */
+    .interactive-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent-bright);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.28s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Code Snippet Box */
+    .code-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: rgba(6, 7, 10, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #93c5fd;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    .code-comment { color: #64748b; font-style: italic; }
+    .code-kw { color: #f472b6; font-weight: 600; }
+    .code-str { color: #fef08a; }
+    .code-fn { color: #4ade80; }
+    .code-var { color: #67e8f9; }
+
+    /* Flow Diagrams */
+    .flow-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .flow-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .flow-content h4 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .flow-content p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Data Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+    }
+
+    .data-table th {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      font-weight: 700;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #f1f5f9;
+    }
+
+    /* Bottom Control Bar */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 32px;
+      border-top: 1px solid var(--card-border);
+      background: rgba(9, 10, 13, 0.88);
+      backdrop-filter: blur(14px);
+      z-index: 50;
+    }
+
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dots-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .dot.active {
+      width: 22px;
+      border-radius: 12px;
+      background: var(--accent-bright);
+      box-shadow: 0 0 10px var(--accent-bright);
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-nav:active {
+      transform: scale(0.97);
+    }
+
+    .kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .btn-fullscreen {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.2s;
+    }
+    .btn-fullscreen:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand">
+      <span class="brand-logo">SPIRITBEING</span>
+      <span class="badge-deck">Production Architecture Deck</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span class="slide-counter" id="slideNum">01 / 10</span>
+      <button class="btn-fullscreen" id="fsBtn" title="Toggle Fullscreen">⛶</button>
+    </div>
+  </header>
+
+  <!-- Slide Viewport -->
+  <main id="slideContainer">
+
+    <!-- SLIDE 1: SYSTEM OVERVIEW -->
+    <div class="slide active">
+      <div class="slide-tag">Executive Summary</div>
+      <h1 class="slide-title">The Complete Production Architecture</h1>
+      <p class="slide-subtitle">
+        How <strong>SpiritBeing Storefront</strong> orchestrates a 3-way headless ecosystem for extreme frontend speed, zero payment liability, and rich community features.
+      </p>
+
+      <div class="grid-3">
+        <div class="card card-glow-blue">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="pill pill-blue">FRONTEND HOST (Hostinger / Vercel)</span>
+            <span style="font-size: 18px;">⚡</span>
+          </div>
+          <h3>React + TypeScript SPA</h3>
+          <p>Custom editorial luxury streetwear UI. Lenis smooth scroll, fluid interactive drawers, WebGL particle statements, and lightning-fast edge caching.</p>
+        </div>
+
+        <div class="card card-glow-shopify">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="pill pill-shopify">COMMERCE &amp; CHECKOUT (Shopify)</span>
+            <span style="font-size: 18px;">🛍️</span>
+          </div>
+          <h3>Shop Pay &amp; Storefront API</h3>
+          <p>PCI-DSS Level 1 payment vault. 1-click Shop Pay checkouts (UPI, Cards), live warehouse stock control, and 100% of financial revenue analytics.</p>
+        </div>
+
+        <div class="card card-glow-green">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="pill pill-green">COMMUNITY CLOUD (Supabase)</span>
+            <span style="font-size: 18px;">🐘</span>
+          </div>
+          <h3>PostgreSQL &amp; Auth Cloud</h3>
+          <p>Google OAuth &amp; OTP customer sessions, customer address books, photo reviews with "Verified Buyer" badges, and real-time live drop tickers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: HOW CODE WORKS (DATA FLOW) -->
+    <div class="slide">
+      <div class="slide-tag">Code Mechanics</div>
+      <h1 class="slide-title">How the Code Operates (End-to-End Flow)</h1>
+      <p class="slide-subtitle">
+        Understanding the exact journey from a customer clicking a tee to order completion and database synchronization.
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+              <h4>Storefront GraphQL Query</h4>
+              <p>React queries Shopify Storefront API on page load to fetch live variants, prices (₹), and <code>availableForSale</code> boolean.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 8px;">
+<span class="code-kw">query</span> GetProduct($handle: <span class="code-str">String!</span>) {
+  product(handle: $handle) {
+    title
+    variants(first: 5) {
+      nodes { id availableForSale }
+    }
+  }
+}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+              <h4>Shop Pay Hand-off</h4>
+              <p>When user clicks "Checkout", app creates a Shopify Checkout URL and redirects them to Shop Pay's secure payment vault.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 8px;">
+<span class="code-comment">// Generate 1-click Shop Pay URL</span>
+<span class="code-kw">const</span> checkoutUrl = 
+  <span class="code-str">`https://${store}/cart/c/${cartId}`</span>;
+window.location.href = checkoutUrl;
+          </div>
+        </div>
+
+        <div class="card card-glow-green">
+          <div class="flow-step">
+            <div class="flow-num" style="background: var(--supabase-emerald); color: #000;">3</div>
+            <div class="flow-content">
+              <h4>Supabase Webhook &amp; Auth</h4>
+              <p>Shopify sends an <code>orders/create</code> webhook to Supabase, unlocking "Verified Buyer" permissions for that customer email.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 8px;">
+<span class="code-comment">-- Verified buyer check rule</span>
+<span class="code-kw">UPDATE</span> reviews
+<span class="code-kw">SET</span> is_verified_buyer = <span class="code-kw">TRUE</span>
+<span class="code-kw">WHERE</span> customer_email = <span class="code-var">NEW.email</span>;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: WHERE BUGS HAPPEN (FAILURE POINTS) -->
+    <div class="slide">
+      <div class="slide-tag">Debugging &amp; Resilience</div>
+      <h1 class="slide-title">Where Bugs Will Happen (And How We Prevent Them)</h1>
+      <p class="slide-subtitle">
+        Critical edge cases in production and the proven defense mechanisms implemented in our codebase.
+      </p>
+
+      <div class="interactive-tabs">
+        <button class="tab-btn active" onclick="switchBugTab(0)">Bug 1: Drop Overselling</button>
+        <button class="tab-btn" onclick="switchBugTab(1)">Bug 2: Auth Token Expiry</button>
+        <button class="tab-btn" onclick="switchBugTab(2)">Bug 3: 25MB Photo Uploads</button>
+        <button class="tab-btn" onclick="switchBugTab(3)">Bug 4: Hostinger CORS</button>
+      </div>
+
+      <div class="tab-panel active" id="bugTab0">
+        <div class="card card-glow-danger">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="color: #fca5a5;">⚠️ Edge Case: Overselling on High-Demand Drop Launches</h3>
+            <span class="pill pill-danger">Concurrency Risk</span>
+          </div>
+          <p style="margin-bottom: 12px; color: #fecaca;">
+            <strong>Scenario:</strong> 50 users simultaneously hit "Buy" for the last 3 units of "Spirit Gives Life Tee (Size L)".<br>
+            <strong>The Fix:</strong> The frontend never decides stock availability. Shopify holds an atomic <strong>Inventory Lock</strong> at the checkout boundary. If stock reaches 0, Shopify automatically prevents payment completion.
+          </p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5); padding: 10px 14px; border-radius: 8px; color: #f87171;">
+            Shopify API response: { error: "INVENTORY_OUT_OF_STOCK", variantId: "gid://shopify/ProductVariant/..." } → Frontend triggers real-time "Sold Out" toast.
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="bugTab1">
+        <div class="card card-glow-blue">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="color: #93c5fd;">⚠️ Edge Case: Auth State Race Condition (Session Desync)</h3>
+            <span class="pill pill-blue">Auth Lifecycle</span>
+          </div>
+          <p style="margin-bottom: 12px; color: #bfdbfe;">
+            <strong>Scenario:</strong> User leaves tab open overnight. JWT token expires, causing profile or review fetch to fail.<br>
+            <strong>The Fix:</strong> Supabase client handles seamless background token rotation (<code>autoRefreshToken: true</code>). React subscribes to <code>supabase.auth.onAuthStateChange()</code> to seamlessly update user state without logging them out.
+          </p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5); padding: 10px 14px; border-radius: 8px; color: #60a5fa;">
+            Event: 'TOKEN_REFRESHED' → Updates cached JWT in memory without page reload.
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="bugTab2">
+        <div class="card card-glow-gold">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="color: #fde047;">⚠️ Edge Case: Giant 25MB iPhone 4K Photo Uploads</h3>
+            <span class="pill pill-gold">Storage &amp; Performance</span>
+          </div>
+          <p style="margin-bottom: 12px; color: #fef08a;">
+            <strong>Scenario:</strong> Customer uploads an uncompressed 25MB HEIC/JPEG outfit photo, blowing up storage bandwidth.<br>
+            <strong>The Fix:</strong> Client-side HTML5 Canvas compression before upload. Compress images to WebP / max 1600px width (under 400KB) before transmitting to Supabase Storage.
+          </p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5); padding: 10px 14px; border-radius: 8px; color: #facc15;">
+            Compression pipeline: 24.8 MB raw HEIC → 320 KB optimized WebP image (98.7% bandwidth savings).
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="bugTab3">
+        <div class="card card-glow-green">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="color: #86efac;">⚠️ Edge Case: Hostinger Production Domain CORS Blocks</h3>
+            <span class="pill pill-green">Network Configuration</span>
+          </div>
+          <p style="margin-bottom: 12px; color: #d1fae5;">
+            <strong>Scenario:</strong> Custom domain <code>https://spiritbeing.in</code> gets blocked by Supabase Auth redirects or API calls.<br>
+            <strong>The Fix:</strong> Explicitly add <code>https://spiritbeing.in</code> and wildcard <code>https://*.spiritbeing.in</code> to the Supabase Allowed Callback URLs &amp; Web Origins list.
+          </p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5); padding: 10px 14px; border-radius: 8px; color: #34d399;">
+            Configured in: Supabase Dashboard → Authentication → URL Configuration → Redirect URLs.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: SECURITY & RISK MANAGEMENT -->
+    <div class="slide">
+      <div class="slide-tag">Risk &amp; Compliance</div>
+      <h1 class="slide-title">What Risks Do We Deal With? (And How We Win)</h1>
+      <p class="slide-subtitle">
+        A breakdown of payment liability, database protection, and credential hygiene.
+      </p>
+
+      <div class="grid-3">
+        <div class="card card-glow-shopify">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-shopify">PAYMENT SECURITY</span>
+            <span>🔒</span>
+          </div>
+          <h3>Zero PCI-DSS Liability</h3>
+          <p>Because customers enter credit card numbers, UPI IDs, and CVVs on <strong>Shopify's Shop Pay domain</strong>, our storefront never touches or stores raw card data. 100% compliant by design.</p>
+        </div>
+
+        <div class="card card-glow-green">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-green">DATABASE DEFENSE</span>
+            <span>🛡️</span>
+          </div>
+          <h3>Postgres Row-Level Security</h3>
+          <p>Even if an attacker intercepts our public API keys, PostgreSQL verifies <code>auth.uid() = user_id</code>. Nobody can view or edit someone else's addresses or order records.</p>
+        </div>
+
+        <div class="card card-glow-danger">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-danger">KEY HYGIENE</span>
+            <span>🔑</span>
+          </div>
+          <h3>Public vs Secret Keys</h3>
+          <p><code>VITE_SUPABASE_ANON_KEY</code> is safe for the browser. The Supabase <code>service_role</code> master key is <strong>NEVER</strong> included in frontend code to prevent full database bypass.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: ADMIN PRIVILEGES (SHOPIFY VS SUPABASE) -->
+    <div class="slide">
+      <div class="slide-tag">Operations &amp; Control</div>
+      <h1 class="slide-title">Admin Privileges: Shopify vs. Supabase</h1>
+      <p class="slide-subtitle">
+        How store managers divide daily operations between the two administrative control centers.
+      </p>
+
+      <table class="data-table card" style="display: table;">
+        <thead>
+          <tr>
+            <th style="width: 28%;">Operational Task</th>
+            <th style="width: 36%; color: #86efac;">Shopify Admin Panel</th>
+            <th style="width: 36%; color: #6ee7b7;">Supabase Admin Studio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Product Pricing &amp; Garment Sizes</strong></td>
+            <td>✓ Full control (Add tees, edit prices in ₹, upload model photos)</td>
+            <td>— Not involved (Catalog syncs from Shopify)</td>
+          </tr>
+          <tr>
+            <td><strong>Payments &amp; Bank Payouts</strong></td>
+            <td>✓ View Shop Pay settlements, net payout balances, bank transfers</td>
+            <td>— No financial data stored</td>
+          </tr>
+          <tr>
+            <td><strong>Order Fulfillment &amp; Shipping Labels</strong></td>
+            <td>✓ Print invoices, generate India Post / Delhivery tracking codes</td>
+            <td>— Stores tracking copy for fast customer portal lookup</td>
+          </tr>
+          <tr>
+            <td><strong>Customer Photo Reviews Moderation</strong></td>
+            <td>— Standard text reviews only</td>
+            <td>✓ <strong>Full control</strong> (Delete spam, approve photos, toggle Verified badge)</td>
+          </tr>
+          <tr>
+            <td><strong>User Accounts &amp; OAuth Logins</strong></td>
+            <td>✓ Shopify checkout customer history</td>
+            <td>✓ <strong>Full control</strong> (Google OAuth, reset passwords, ban accounts)</td>
+          </tr>
+          <tr>
+            <td><strong>Sales &amp; Conversion Analytics</strong></td>
+            <td>✓ <strong>100% of Revenue, AOV, Gross Margin, Return rates</strong></td>
+            <td>✓ Community engagement analytics (Likes, wishlists, views)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SLIDE 6: INVENTORY SYNC & DROP PROTECTION -->
+    <div class="slide">
+      <div class="slide-tag">Supply Chain</div>
+      <h1 class="slide-title">How Inventory Connects &amp; Stays Accurate</h1>
+      <p class="slide-subtitle">
+        Real-time multi-channel inventory control ensuring zero overselling across limited drop releases.
+      </p>
+
+      <div class="grid-2">
+        <div class="card card-glow-shopify">
+          <h3>1. Single Source of Truth</h3>
+          <p style="margin-bottom: 12px;">Shopify is the authoritative inventory master. When warehouse staff scan items in or adjust stock:</p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #d1fae5;">
+            <li>📦 <strong>Warehouse Adjustments:</strong> Instantly reflected in Storefront API.</li>
+            <li>🔄 <strong>Real-time Variant Polling:</strong> When a user picks 'Size M', app queries live availability.</li>
+            <li>🚫 <strong>Automated Sold Out Switch:</strong> UI disables "Add to Bag" and switches to "Notify Me" automatically.</li>
+          </ul>
+        </div>
+
+        <div class="card card-glow-blue">
+          <h3>2. Drop Launch Protection</h3>
+          <p style="margin-bottom: 12px;">During high-traffic drops (e.g. 500 visitors competing for 50 pieces):</p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #bfdbfe;">
+            <li>⚡ <strong>Cart Reservation:</strong> Shopify reserves inventory for active checkout sessions for 10 minutes.</li>
+            <li>⏱️ <strong>Cart Abandonment Release:</strong> If payment isn't finished in 10 min, stock unlocks for the next waiting customer.</li>
+            <li>🛡️ <strong>Zero Stale Reads:</strong> Checkout step executes direct inventory reservation check.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: OAUTH DEEP DIVE -->
+    <div class="slide">
+      <div class="slide-tag">Identity Architecture</div>
+      <h1 class="slide-title">OAuth Deep Dive: Google Login to Verified Buyer</h1>
+      <p class="slide-subtitle">
+        How the customer identity bridge connects Google One-Tap authentication with Shopify orders.
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+              <h4>1-Click Google Sign-In</h4>
+              <p>User clicks "Continue with Google". Supabase handles OAuth 2.0 PKCE authentication securely.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 6px;">
+<span class="code-kw">await</span> supabase.auth.<span class="code-fn">signInWithOAuth</span>({
+  provider: <span class="code-str">'google'</span>,
+  options: { redirectTo: callbackUrl }
+});
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+              <h4>Email As The Identity Bridge</h4>
+              <p>When user buys on Shop Pay with <code>rahul@gmail.com</code>, Shopify records the customer email in the order receipt.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 6px;">
+<span class="code-comment">// Order receipt created</span>
+{
+  order_id: <span class="code-str">"#SB-10492"</span>,
+  customer_email: <span class="code-str">"rahul@gmail.com"</span>
+}
+          </div>
+        </div>
+
+        <div class="card card-glow-green">
+          <div class="flow-step">
+            <div class="flow-num" style="background: var(--supabase-emerald); color: #000;">3</div>
+            <div class="flow-content">
+              <h4>Automatic "Verified Buyer" Match</h4>
+              <p>When user posts an outfit photo review, Supabase cross-checks their email and auto-awards the green badge.</p>
+            </div>
+          </div>
+          <div class="code-box" style="margin-top: 6px;">
+<span class="code-comment">-- SQL cross-check</span>
+<span class="code-kw">SELECT EXISTS</span> (
+  <span class="code-kw">SELECT</span> 1 <span class="code-kw">FROM</span> orders
+  <span class="code-kw">WHERE</span> email = user_email
+);
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: FUTURE ANALYTICS -->
+    <div class="slide">
+      <div class="slide-tag">Growth &amp; Insights</div>
+      <h1 class="slide-title">How in Future We Can Do Data Analytics</h1>
+      <p class="slide-subtitle">
+        Building a unified intelligence pipeline across Shopify, Supabase, and modern analytics tools.
+      </p>
+
+      <div class="grid-3">
+        <div class="card card-glow-shopify">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-shopify">COMMERCE ANALYTICS</span>
+            <span>📊</span>
+          </div>
+          <h3>Shopify Native Dashboards</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: #d1fae5; margin-top: 8px;">
+            <li>• Gross &amp; Net Revenue in ₹</li>
+            <li>• Checkout Conversion Rate (%)</li>
+            <li>• Average Order Value (AOV)</li>
+            <li>• Top Performing Sizes &amp; Drops</li>
+          </ul>
+        </div>
+
+        <div class="card card-glow-blue">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-blue">USER BEHAVIOR</span>
+            <span>🔥</span>
+          </div>
+          <h3>PostHog / GA4 Heatmaps</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: #bfdbfe; margin-top: 8px;">
+            <li>• Carousel Swipe Drop-off</li>
+            <li>• Bag Open-to-Checkout Funnel</li>
+            <li>• Button click heatmaps</li>
+            <li>• Mobile vs Desktop conversion</li>
+          </ul>
+        </div>
+
+        <div class="card card-glow-green">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="pill pill-green">COMMUNITY SQL</span>
+            <span>🐘</span>
+          </div>
+          <h3>Supabase Custom Queries</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: #a7f3d0; margin-top: 8px;">
+            <li>• Most-wishlisted upcoming designs</li>
+            <li>• Photo review engagement &amp; likes</li>
+            <li>• Customer geographic heatmaps</li>
+            <li>• Repeat customer loyalty index</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: FUTURE REAL-TIME FEATURES -->
+    <div class="slide">
+      <div class="slide-tag">Future Roadmap</div>
+      <h1 class="slide-title">Real-Time Production Features to Build Next</h1>
+      <p class="slide-subtitle">
+        High-impact features we can add using Supabase WebSockets &amp; Realtime channels.
+      </p>
+
+      <div class="grid-3">
+        <div class="card card-glow-blue">
+          <div style="font-size: 20px; margin-bottom: 8px;">🔥</div>
+          <h3>Live Viewers Ticker</h3>
+          <p style="margin-bottom: 10px;">Display real-time urgency on product detail pages using Supabase Realtime Presence.</p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 6px; color: #93c5fd;">
+            "🔥 19 people looking at this tee right now"
+          </div>
+        </div>
+
+        <div class="card card-glow-danger">
+          <div style="font-size: 20px; margin-bottom: 8px;">⚡</div>
+          <h3>Drop Scarcity Bar</h3>
+          <p style="margin-bottom: 10px;">When stock for a size drops below 5 units, trigger a live pulsating scarcity badge.</p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 6px; color: #fca5a5;">
+            "⚠️ Only 2 pieces remaining in Size L!"
+          </div>
+        </div>
+
+        <div class="card card-glow-green">
+          <div style="font-size: 20px; margin-bottom: 8px;">💬</div>
+          <h3>Live Community Likes</h3>
+          <p style="margin-bottom: 10px;">Instant, zero-reload like counts on customer outfit reviews via Supabase Broadcast channels.</p>
+          <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 6px; color: #86efac;">
+            Heart icon increments smoothly across all screens in real-time.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: PRODUCTION CHECKLIST & SUMMARY -->
+    <div class="slide">
+      <div class="slide-tag">Action Plan</div>
+      <h1 class="slide-title">Production Rollout Checklist</h1>
+      <p class="slide-subtitle">
+        Step-by-step readiness checklist for launching the SpiritBeing Storefront into production.
+      </p>
+
+      <div class="grid-2">
+        <div class="card card-glow-green">
+          <h3>Phase 1: Backend Foundation (Ready)</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #d1fae5; margin-top: 10px;">
+            <li>✓ Run <code>supabase_schema.sql</code> in Supabase SQL Editor</li>
+            <li>✓ Setup Google Cloud Console OAuth Client ID</li>
+            <li>✓ Configure <code>review-photos</code> public Storage bucket</li>
+            <li>✓ Put Supabase URL &amp; Anon Key into <code>.env</code></li>
+          </ul>
+        </div>
+
+        <div class="card card-glow-shopify">
+          <h3>Phase 2: Commerce &amp; Hostinger Deployment</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #d1fae5; margin-top: 10px;">
+            <li>✓ Verify Shopify Storefront API Access Token</li>
+            <li>✓ Test 1-click Shop Pay test checkout flow</li>
+            <li>✓ Deploy Vite bundle to Hostinger / Vercel</li>
+            <li>✓ Add production domain <code>spiritbeing.in</code> to Supabase CORS settings</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px; text-align: center; background: rgba(255,255,255,0.03);">
+        <p style="font-size: 13.5px; color: #fff; font-weight: 600;">
+          🚀 <strong>Ready to Build:</strong> Unmatched luxury design aesthetic + 100% bank-grade Shop Pay safety + scalable Postgres cloud.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <footer>
+    <div class="controls-left">
+      <button class="btn-nav" id="prevBtn">← Previous</button>
+      <button class="btn-nav" id="nextBtn">Next →</button>
+      <span style="font-size: 12px; color: var(--text-muted); margin-left: 12px;">
+        Navigate with <span class="kbd">←</span> <span class="kbd">→</span> or <span class="kbd">Space</span>
+      </span>
+    </div>
+
+    <div class="dots-container" id="dots"></div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.getElementById('dots');
+    const slideNum = document.getElementById('slideNum');
+    let currentSlide = 0;
+
+    // Initialize navigation dots
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (idx === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => goToSlide(idx));
+      dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlide() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+      slideNum.textContent = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(idx) {
+      currentSlide = idx;
+      updateSlide();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Spacebar' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Fullscreen toggle
+    document.getElementById('fsBtn').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Interactive Tab switching on Slide 3 (Bugs)
+    function switchBugTab(tabIdx) {
+      const buttons = document.querySelectorAll('#bugTab0, #bugTab1, #bugTab2, #bugTab3');
+      const allBtns = document.querySelectorAll('.slide:nth-child(3) .tab-btn');
+      allBtns.forEach((btn, i) => btn.classList.toggle('active', i === tabIdx));
+      buttons.forEach((panel, i) => panel.classList.toggle('active', i === tabIdx));
+    }
+  </script>
+</body>
+</html>
